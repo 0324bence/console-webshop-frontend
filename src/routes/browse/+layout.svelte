@@ -20,7 +20,11 @@
         </div>
         <div id="right-container">
             <Cart />
-            <UserPlaceholder />
+            <div id="nologin">
+                <a href="/auth/login">Bejelentkezés</a>
+                <a href="/auth/register">Regisztráció</a>
+            </div>
+            <!-- <UserPlaceholder /> -->
         </div>
     </div>
     <div id="content">
