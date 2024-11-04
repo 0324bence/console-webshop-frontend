@@ -35,6 +35,19 @@
 <style lang="scss">
     @import "$lib/styles/variables.scss";
 
+    #nologin {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 1rem;
+
+        a {
+            color: $color-white;
+            font-size: 1.3rem;
+        }
+    }
+
     #window-container {
         display: flex;
         flex-direction: column;

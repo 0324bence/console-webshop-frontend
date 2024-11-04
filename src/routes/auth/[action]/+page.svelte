@@ -1,5 +1,6 @@
 <script lang="ts">
     import type { ActionData, PageData } from "../../../../.svelte-kit/types/src/routes/auth/[action]/$types";
+    import Controller from "$lib/svgs/Controller.svelte";
 
     export let data: PageData;
     export let form: ActionData;
@@ -9,46 +10,77 @@
     <title>{data.action === "login" ? "Bejelentkezés" : "Regisztráció"}</title>
 </svelte:head>
 
-<div id="container">
-    <form method="post">
-        <h1>{data.action === "login" ? "Bejelentkezés" : "Regisztráció"}</h1>
-        <div class="group">
-            <label for="name">Felhasználó név</label>
-            <input type="text" id="name" name="name" required />
-        </div>
-
-        {#if data.action === "register"}
+<div id="main-container">
+    <div id="left-container">
+        <form method="post">
+            <h1>{data.action === "login" ? "Bejelentkezés" : "Regisztráció"}</h1>
             <div class="group">
-                <label for="email">E-Mail</label>
-                <input type="text" id="email" name="email" required />
+                <label for="name">Felhasználó név</label>
+                <input type="text" id="name" name="name" required />
             </div>
-        {/if}
 
-        <div class="group">
-            <label for="password">Jelszó</label>
-            <input type="password" name="password" id="password" />
+            {#if data.action === "register"}
+                <div class="group">
+                    <label for="email">E-mail</label>
+                    <input type="text" id="email" name="email" required />
+                </div>
+            {/if}
+
+            <div class="group">
+                <label for="password">Jelszó</label>
+                <input type="password" name="password" id="password" />
+            </div>
+
+            <span id="error">{form?.message || ""}</span>
+
+            {#if data.action === "login"}
+                <a href="register">Regisztráció</a>
+            {/if}
+
+            <input
+                type="submit"
+                formaction="?/{data.action}"
+                value={data.action === "login" ? "Bejelentkezés" : "Regisztráció"}
+            />
+        </form>
+    </div>
+    <div id="right-container">
+        <div id="svg-container">
+            <Controller />
         </div>
-
-        <span id="error">{form?.message || ""}</span>
-
-        {#if data.action === "login"}
-            <a href="register">Regisztráció</a>
-        {/if}
-
-        <input
-            type="submit"
-            formaction="?/{data.action}"
-            value={data.action === "login" ? "Bejelentkezés" : "Regisztráció"}
-        />
-    </form>
+    </div>
 </div>
 
 <style lang="scss">
-    #container {
+    @import "$lib/styles/variables.scss";
+
+    #main-container {
         display: flex;
         height: 100vh;
-        flex-direction: column;
+    }
+    #left-container {
+        flex: 1;
+        display: flex;
         justify-content: center;
+        align-items: center;
+    }
+
+    #right-container {
+        padding: 1rem;
+        padding-right: 0;
+        flex: 1;
+        display: flex;
+        justify-content: end;
+        align-items: end;
+
+        #svg-container {
+            height: 50%;
+
+            svg {
+                width: 100%;
+                height: 100%;
+            }
+        }
     }
     form {
         display: flex;
@@ -58,11 +90,15 @@
         width: 20rem;
         margin: 0 auto;
         padding: 1rem;
-        border: #007bff 2px solid;
+        border: $color-dark-blue 2px solid;
         border-radius: 2rem;
+        background-color: $color-blue;
+        font-family: "Roboto", sans-serif;
 
         h1 {
             text-align: center;
+            font-weight: bold;
+            color: $color-white;
         }
 
         .group {
@@ -71,28 +107,32 @@
             gap: 0.5rem;
         }
         label {
-            font-weight: bold;
+            color: $color-white;
         }
 
         input {
             padding: 0.5rem;
-            color: black;
-            border: 1px solid #ccc;
+            color: $color-black;
+            border: 1px solid $color-dark-blue;
             border-radius: 0.25rem;
             background-color: hsl(0, 0%, 90%);
         }
 
         input[type="submit"] {
-            background-color: #007bff;
-            color: white;
+            background-color: $color-light-blue;
+            color: $color-dark-blue;
+            border: $color-dark-blue 1px solid;
             border: none;
             border-radius: 0.25rem;
             padding: 0.5rem;
+            width: 50%;
+            margin-left: auto;
+            margin-right: auto;
             cursor: pointer;
         }
 
         input[type="submit"]:hover {
-            background-color: #0056b3;
+            background-color: darken($color-light-blue, 10%);
         }
 
         #error {
@@ -102,7 +142,7 @@
 
         a {
             text-align: center;
-            color: #007bff;
+            color: $color-white;
             text-decoration: underline;
         }
     }
