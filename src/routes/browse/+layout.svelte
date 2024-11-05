@@ -3,6 +3,11 @@
     import Logo from "$lib/svgs/Logo.svelte";
     import Search from "$lib/svgs/Search.svelte";
     import UserPlaceholder from "$lib/svgs/UserPlaceholder.svelte";
+    import type { LayoutData } from "./$types";
+
+    export let data: LayoutData;
+
+    let userMenu = false;
 </script>
 
 <div id="window-container">
@@ -20,10 +25,24 @@
         </div>
         <div id="right-container">
             <Cart />
-            <div id="nologin">
-                <a href="/auth/login">Bejelentkezés</a>
-                <a href="/auth/register">Regisztráció</a>
-            </div>
+            {#if data.token === null}
+                <div id="nologin">
+                    <a href="/auth/login">Bejelentkezés</a>
+                    <a href="/auth/register">Regisztráció</a>
+                </div>
+            {:else}
+                <button
+                    id="user-button"
+                    on:click={() => {
+                        userMenu = !userMenu;
+                    }}
+                >
+                    <UserPlaceholder />
+                </button>
+                <div id="user-menu" class={userMenu ? "" : "hidden"}>
+                    <h1>teszt</h1>
+                </div>
+            {/if}
             <!-- <UserPlaceholder /> -->
         </div>
     </div>
@@ -63,6 +82,7 @@
         gap: 2rem;
         align-items: center;
         background-color: $color-blue;
+        position: relative;
 
         #logo-container {
             height: 100%;
@@ -108,6 +128,33 @@
             gap: 2rem;
             height: 100%;
             padding: 0.8rem;
+
+            button {
+                background: none;
+                border: none;
+                cursor: pointer;
+            }
+
+            #user-menu {
+                position: absolute;
+                z-index: -1;
+                top: 100%;
+                right: 0;
+                background-color: $color-white;
+                border: 1px solid $color-dark-blue;
+                width: 20rem;
+                height: 10rem;
+                display: block;
+                pointer-events: all;
+                transition: transform 0.3s;
+                transform: translateY(0%);
+
+                &.hidden {
+                    transform: translateY(-100%);
+                    display: hidden;
+                    pointer-events: none;
+                }
+            }
         }
     }
 
