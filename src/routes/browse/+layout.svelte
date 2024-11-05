@@ -8,6 +8,8 @@
     export let data: LayoutData;
 
     let userMenu = false;
+
+    console.log(JSON.stringify(data));
 </script>
 
 <div id="window-container">
@@ -40,7 +42,7 @@
                     <UserPlaceholder />
                 </button>
                 <div id="user-menu" class={userMenu ? "" : "hidden"}>
-                    <h1>teszt</h1>
+                    <a href="/auth/logout" class="menu-item" data-sveltekit-reload> Kijelentkezés </a>
                 </div>
             {/if}
             <!-- <UserPlaceholder /> -->
@@ -76,6 +78,7 @@
 
     #header {
         width: 100%;
+        z-index: 2;
         height: 10rem;
         padding: 1rem 2rem 1rem 2rem;
         display: flex;
@@ -127,7 +130,7 @@
             display: flex;
             gap: 2rem;
             height: 100%;
-            padding: 0.8rem;
+            padding: 1.8rem;
 
             button {
                 background: none;
@@ -137,22 +140,40 @@
 
             #user-menu {
                 position: absolute;
+                display: flex;
+                flex-direction: column;
+                gap: 1rem;
+                align-items: stretch;
                 z-index: -1;
                 top: 100%;
                 right: 0;
-                background-color: $color-white;
+                background-color: $color-dark-blue;
                 border: 1px solid $color-dark-blue;
                 width: 20rem;
-                height: 10rem;
-                display: block;
                 pointer-events: all;
                 transition: transform 0.3s;
-                transform: translateY(0%);
+                // transform: translateY(0%);
+                visibility: visible;
 
                 &.hidden {
-                    transform: translateY(-100%);
-                    display: hidden;
+                    // transform: translateY(-100%);
                     pointer-events: none;
+                    display: none;
+                    // visibility: hidden;
+                }
+
+                .menu-item {
+                    background-color: $color-white;
+                    padding: 0.5rem;
+                    display: flex;
+                    align-items: center;
+
+                    color: $color-black;
+                    font-size: 1.2rem;
+
+                    text-decoration: none;
+
+                    cursor: pointer;
                 }
             }
         }
