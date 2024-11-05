@@ -42,6 +42,7 @@
                     <UserPlaceholder />
                 </button>
                 <div id="user-menu" class={userMenu ? "" : "hidden"}>
+                    <a href="/profile" class="menu-item"> Profil </a>
                     <a href="/auth/logout" class="menu-item" data-sveltekit-reload> Kijelentkezés </a>
                 </div>
             {/if}
@@ -79,7 +80,7 @@
     #header {
         width: 100%;
         z-index: 2;
-        height: 10rem;
+        height: 7rem;
         padding: 1rem 2rem 1rem 2rem;
         display: flex;
         gap: 2rem;
@@ -130,7 +131,7 @@
             display: flex;
             gap: 2rem;
             height: 100%;
-            padding: 1.8rem;
+            padding: 0.7rem;
 
             button {
                 background: none;
@@ -142,7 +143,7 @@
                 position: absolute;
                 display: flex;
                 flex-direction: column;
-                gap: 1rem;
+                gap: 0.2rem;
                 align-items: stretch;
                 z-index: -1;
                 top: 100%;
