@@ -2,5 +2,5 @@ import { redirect } from "@sveltejs/kit";
 import type { PageServerLoad } from "./$types";
 
 export const load: PageServerLoad = ({ cookies }) => {
-    return redirect(302, "/browse");
+    return redirect(302, "/main");
 };
