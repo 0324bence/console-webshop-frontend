@@ -1,6 +1,7 @@
 <script lang="ts">
     import type { ActionData, PageData } from "../../../../.svelte-kit/types/src/routes/auth/[action]/$types";
     import Controller from "$lib/svgs/Controller.svelte";
+    import Logo from "$lib/svgs/Logo.svelte";
 
     export let data: PageData;
     export let form: ActionData;
@@ -12,6 +13,16 @@
 
 <div id="main-container">
     <div id="left-container">
+        <button
+            on:click={() => {
+                history.back();
+            }}
+            class="logo"
+            title="logo"
+        >
+            <Logo />
+        </button>
+
         <form method="post">
             <h1>{data.action === "login" ? "Bejelentkezés" : "Regisztráció"}</h1>
             <div class="group">
@@ -61,8 +72,20 @@
     #left-container {
         flex: 1;
         display: flex;
+        flex-direction: column;
         justify-content: center;
         align-items: center;
+        gap: 5rem;
+
+        .logo {
+            background: none;
+            border: none;
+
+            cursor: pointer;
+            display: block;
+            width: 55%;
+            margin-left: 5%;
+        }
     }
 
     #right-container {
@@ -115,7 +138,6 @@
             color: $color-black;
             border: 1px solid $color-dark-blue;
             border-radius: 0.25rem;
-            background-color: hsl(0, 0%, 90%);
         }
 
         input[type="submit"] {
