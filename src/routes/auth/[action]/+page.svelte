@@ -33,7 +33,7 @@
             {#if data.action === "register"}
                 <div class="group">
                     <label for="email">E-mail</label>
-                    <input type="text" id="email" name="email" required />
+                    <input type="email" id="email" name="email" required />
                 </div>
             {/if}
 
