@@ -1,5 +1,10 @@
 <script lang="ts">
     import UserPlaceholder from "$lib/svgs/UserPlaceholder.svelte";
+    import type { PageData } from "./$types";
+
+    export let data: PageData;
+
+    console.log(data);
 </script>
 
 <div class="main-container">
@@ -9,26 +14,28 @@
             <UserPlaceholder />
         </div>
         <div class="infos">
-            <h1>Username</h1>
+            <h1>{data.user.name}</h1>
             <div class="row">
                 <span>Csatlakozott:</span>
-                <span>2040. 01. 01.</span>
+                <span>{new Date(data.user.regDate).toLocaleDateString()}</span>
+            </div>
+            <div class="row">
+                <span>Email:</span>
+                <span>{data.user.email}</span>
             </div>
             <div class="row">
                 <span>Hirdetések:</span>
-                <span>5</span>
+                <span>????</span>
             </div>
             <div class="row">
                 <span>Értékelés:</span>
-                <span>5/5</span>
+                <span>????</span>
             </div>
         </div>
         <div class="bio">
-            <p>
-                Lorem ipsum dolor Lorem ipsum dolor sit amet consectetur, adipisicing elit. Odit sint et repellendus
-                aliquid doloremque explicabo sit ipsa ex, quo labore maiores non quidem quas dolor eum quibusdam facere
-                accusantium animi laudantium corporis? Officia eveniet recusandae alias in, maiores, error eaque sequi
-                consectetur, repellat iusto facere ipsa soluta sunt assumenda! A!
+            <h2>Rólam</h2>
+            <p class={data.user.bio == "" ? "empty" : ""}>
+                {data.user.bio || "Nincs megadva"}
             </p>
         </div>
         <!-- </div> -->
@@ -56,7 +63,23 @@
             }
 
             .infos {
-                width: 25%;
+                width: 40%;
+
+                span:first-child {
+                    font-weight: bold;
+                }
+            }
+
+            .bio {
+                display: flex;
+                flex-direction: column;
+                align-items: start;
+                justify-content: start;
+                height: 8rem;
+
+                .empty {
+                    font-style: italic;
+                }
             }
         }
     }
