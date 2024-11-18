@@ -10,9 +10,15 @@
     let userMenu = false;
 
     console.log(JSON.stringify(data));
+
+    function closeMenu() {
+        if (userMenu) userMenu = false;
+    }
 </script>
 
-<div id="window-container">
+<!-- svelte-ignore a11y-no-static-element-interactions -->
+<!-- svelte-ignore a11y-click-events-have-key-events -->
+<div id="window-container" on:click={closeMenu}>
     <div id="header">
         <div id="logo-container">
             <Logo />
@@ -35,7 +41,7 @@
             {:else}
                 <button
                     id="user-button"
-                    on:click={() => {
+                    on:click|stopPropagation={() => {
                         userMenu = !userMenu;
                     }}
                 >
