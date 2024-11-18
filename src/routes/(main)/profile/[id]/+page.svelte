@@ -1,8 +1,13 @@
 <script lang="ts">
     import UserPlaceholder from "$lib/svgs/UserPlaceholder.svelte";
+    import { error } from "@sveltejs/kit";
     import type { PageData } from "./$types";
 
     export let data: PageData;
+
+    if (!data.user) {
+        error(404, "User not found");
+    }
 
     console.log(data);
 </script>

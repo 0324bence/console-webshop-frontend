@@ -1,6 +1,7 @@
 import { redirect } from "@sveltejs/kit";
 import type { LayoutServerLoad } from "./$types";
 import apiPath from "$lib/apiPath";
+import type { User } from "$lib/types/User";
 
 export const load: LayoutServerLoad = async ({ cookies }) => {
     const token = cookies.get("token");
@@ -18,8 +19,8 @@ export const load: LayoutServerLoad = async ({ cookies }) => {
         cookies.delete("token", { path: "/" });
         return redirect(302, "/auth");
     }
-    const user = await res.json();
+    const user: User = await res.json();
     return {
-        user
+        ownUser: user
     };
 };
