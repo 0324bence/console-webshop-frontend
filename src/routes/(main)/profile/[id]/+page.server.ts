@@ -1,6 +1,6 @@
 import apiPath from "$lib/apiPath";
 import type { User } from "$lib/types/User";
-import { error } from "console";
+import { error } from "@sveltejs/kit";
 import type { PageServerLoad } from "./$types";
 
 export const load: PageServerLoad = async ({ params, parent }) => {
