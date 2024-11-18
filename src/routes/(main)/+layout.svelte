@@ -42,7 +42,7 @@
                     <UserPlaceholder />
                 </button>
                 <div id="user-menu" class={userMenu ? "" : "hidden"}>
-                    <a href="/main/profile" class="menu-item"> Profil </a>
+                    <a href="/profile" class="menu-item"> Profil </a>
                     <a href="/auth/logout" class="menu-item" data-sveltekit-reload> Kijelentkezés </a>
                 </div>
             {/if}

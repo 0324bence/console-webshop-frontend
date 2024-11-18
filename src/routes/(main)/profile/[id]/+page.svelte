@@ -60,10 +60,11 @@
             padding: 0 10rem 0 10rem;
             .pic {
                 height: 50%;
+                margin-right: 10rem;
             }
 
             .infos {
-                width: 40%;
+                width: 30%;
 
                 span:first-child {
                     font-weight: bold;

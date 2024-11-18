@@ -1,8 +1,8 @@
 import { redirect } from "@sveltejs/kit";
-import type { PageServerLoad } from "./$types";
+import type { LayoutServerLoad } from "./$types";
 import apiPath from "$lib/apiPath";
 
-export const load: PageServerLoad = async ({ cookies }) => {
+export const load: LayoutServerLoad = async ({ cookies }) => {
     const token = cookies.get("token");
     if (token === undefined) {
         return redirect(302, "/auth");
@@ -20,7 +20,6 @@ export const load: PageServerLoad = async ({ cookies }) => {
     }
     const user = await res.json();
     return {
-        token,
         user
     };
 };
