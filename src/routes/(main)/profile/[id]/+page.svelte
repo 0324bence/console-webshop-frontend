@@ -10,14 +10,26 @@
     }
 
     console.log(data);
+
+    let pictureForm: HTMLFormElement;
 </script>
 
 <div class="main-container">
     <div id="profile-container">
         <!-- <div id="profile"> -->
-        <div class="pic">
+        <form method="post" action="?/picture" class="pic" enctype="multipart/form-data" bind:this={pictureForm}>
             <UserPlaceholder />
-        </div>
+            <input
+                type="file"
+                name="file"
+                id="file"
+                accept=".jpg,.png,.webp,.gif,.avif"
+                multiple={false}
+                on:change={() => {
+                    pictureForm.submit();
+                }}
+            />
+        </form>
         <div class="infos">
             <h1>{data.user.name}</h1>
             <div class="row">
@@ -49,6 +61,8 @@
 </div>
 
 <style lang="scss" scoped>
+    @import "$lib/styles/variables.scss";
+
     .main-container {
         width: 100%;
         height: 100%;
@@ -66,6 +80,38 @@
             .pic {
                 height: 50%;
                 margin-right: 10rem;
+                position: relative;
+
+                input {
+                    position: absolute;
+                    width: 100%;
+                    height: 100%;
+                    border: 1px solid red;
+                    top: 0;
+                    left: 0;
+                    border-radius: 50%;
+
+                    visibility: hidden;
+
+                    &:hover::before {
+                        content: "Kép módosítása";
+                        background-color: rgba(0, 0, 0, 0.5);
+                    }
+
+                    &::before {
+                        content: "";
+                        position: absolute;
+                        width: 100%;
+                        height: 100%;
+                        top: 0;
+                        left: 0;
+                        visibility: visible;
+                        display: grid;
+                        place-items: center;
+                        color: $color-white;
+                        cursor: pointer;
+                    }
+                }
             }
 
             .infos {
