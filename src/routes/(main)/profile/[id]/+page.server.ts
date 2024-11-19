@@ -17,7 +17,12 @@ export const load: PageServerLoad = async ({ params, parent }) => {
     }
 
     try {
-        const user: User = await fetch(`${apiPath}/user/${params.id}`).then(res => res.json());
+        const req = await fetch(`${apiPath}/user/${params.id}`);
+
+        if (!req.ok) {
+            return error(req.status, (await req.json())["message"]);
+        }
+        const user: User = await req.json();
 
         return {
             user
