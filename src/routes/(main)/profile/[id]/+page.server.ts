@@ -13,6 +13,7 @@ export const load: PageServerLoad = async ({ params, parent }) => {
 
     if (Number(params.id) === ownUser.id) {
         return {
+            isOwn: true,
             user: ownUser
         };
     }
@@ -26,6 +27,7 @@ export const load: PageServerLoad = async ({ params, parent }) => {
         const user: User = await req.json();
 
         return {
+            isOwn: false,
             user
         };
     } catch {

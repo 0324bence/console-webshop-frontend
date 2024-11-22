@@ -2,6 +2,7 @@
     import UserPlaceholder from "$lib/svgs/UserPlaceholder.svelte";
     import { error } from "@sveltejs/kit";
     import type { PageData } from "./$types";
+    import { invalidateAll, onNavigate } from "$app/navigation";
 
     export let data: PageData;
 
@@ -9,7 +10,7 @@
         error(404, "User not found");
     }
 
-    console.log(data);
+    // console.log(data)
 
     let pictureForm: HTMLFormElement;
 </script>
@@ -18,17 +19,19 @@
     <div id="profile-container">
         <!-- <div id="profile"> -->
         <form method="post" action="?/picture" class="pic" enctype="multipart/form-data" bind:this={pictureForm}>
-            <UserPlaceholder />
-            <input
-                type="file"
-                name="file"
-                id="file"
-                accept=".jpg,.png,.webp,.gif,.avif"
-                multiple={false}
-                on:change={() => {
-                    pictureForm.submit();
-                }}
-            />
+            <UserPlaceholder url={data.user.picture} />
+            {#if data.isOwn}
+                <input
+                    type="file"
+                    name="file"
+                    id="file"
+                    accept=".jpg,.png,.webp,.gif,.avif"
+                    multiple={false}
+                    on:change={() => {
+                        pictureForm.submit();
+                    }}
+                />
+            {/if}
         </form>
         <div class="infos">
             <h1>{data.user.name}</h1>
@@ -50,7 +53,9 @@
             </div>
         </div>
         <div class="bio">
-            <h2>Rólam</h2>
+            <div class="row">
+                <h2>Rólam</h2>
+            </div>
             <p class={data.user.bio == "" ? "empty" : ""}>
                 {data.user.bio || "Nincs megadva"}
             </p>

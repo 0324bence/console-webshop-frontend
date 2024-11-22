@@ -46,7 +46,7 @@ export const actions = {
 
         console.log(`${apiPath}/user/create`);
 
-        const res = await fetch(`${apiPath}/user/create`, {
+        const res = await fetch(`${apiPath}/user`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"

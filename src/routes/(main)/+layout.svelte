@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { onNavigate } from "$app/navigation";
     import Cart from "$lib/svgs/Cart.svelte";
     import Logo from "$lib/svgs/Logo.svelte";
     import Search from "$lib/svgs/Search.svelte";
@@ -14,6 +15,10 @@
     function closeMenu() {
         if (userMenu) userMenu = false;
     }
+
+    onNavigate(() => {
+        console.log("navigated");
+    });
 </script>
 
 <!-- svelte-ignore a11y-no-static-element-interactions -->
