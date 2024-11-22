@@ -22,7 +22,14 @@ export const load: PageServerLoad = async ({ params, parent }) => {
         const req = await fetch(`${apiPath}/user/${params.id}`);
 
         if (!req.ok) {
-            return error(req.status, (await req.json())["message"]);
+            const json = await req.json();
+            let message = "";
+            if (typeof json.message === "string") {
+                message = json.message;
+            } else {
+                message = json.message[0].message;
+            }
+            return error(req.status, message);
         }
         const user: User = await req.json();
 
@@ -60,7 +67,49 @@ export const actions = {
             })
         });
         if (!req.ok) {
-            return error(req.status, (await req.json())["message"]);
+            const json = await req.json();
+            let message = "";
+            if (typeof json.message === "string") {
+                message = json.message;
+            } else {
+                message = json.message[0].message;
+            }
+            return error(req.status, message);
+        }
+        return "ok";
+    },
+    bio: async ({ cookies, request }) => {
+        const token = cookies.get("token");
+        if (token === undefined) {
+            return error(401, "Unauthorized");
+        }
+
+        const data = await request.formData();
+        const bio = data.get("editedBio");
+        if (bio === null) {
+            return error(400, "No bio provided");
+        }
+
+        const req = await fetch(`${apiPath}/user`, {
+            method: "PATCH",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`
+            },
+            body: JSON.stringify({
+                bio
+            })
+        });
+        if (!req.ok) {
+            const json = await req.json();
+            console.log(json);
+            let message = "";
+            if (typeof json.message === "string") {
+                message = json.message;
+            } else {
+                message = json.message[0];
+            }
+            return error(req.status, message);
         }
         return "ok";
     }

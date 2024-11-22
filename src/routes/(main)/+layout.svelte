@@ -38,7 +38,7 @@
         </div>
         <div id="right-container">
             <Cart />
-            {#if data.token === null}
+            {#if data.token === null || data.ownUser === null}
                 <div id="nologin">
                     <a href="/auth/login">Bejelentkezés</a>
                     <a href="/auth/register">Regisztráció</a>
@@ -50,7 +50,7 @@
                         userMenu = !userMenu;
                     }}
                 >
-                    <UserPlaceholder />
+                    <UserPlaceholder url={data.ownUser.picture} />
                 </button>
                 <div id="user-menu" class={userMenu ? "" : "hidden"}>
                     <a href="/profile" class="menu-item"> Profil </a>

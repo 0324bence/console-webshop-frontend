@@ -13,6 +13,18 @@
     // console.log(data)
 
     let pictureForm: HTMLFormElement;
+    let bioForm: HTMLFormElement;
+
+    let editingBio = false;
+
+    let editedBio = data.user.bio;
+
+    function bioButtonClick() {
+        if (editingBio) {
+            bioForm.submit();
+        }
+        editingBio = !editingBio;
+    }
 </script>
 
 <div class="main-container">
@@ -52,14 +64,30 @@
                 <span>????</span>
             </div>
         </div>
-        <div class="bio">
+        <form method="post" action="?/bio" class="bio" bind:this={bioForm}>
             <div class="row">
                 <h2>Rólam</h2>
+                {#if data.isOwn}
+                    <button on:click={bioButtonClick} type="button">
+                        {!editingBio ? "Módosít" : "Mentés"}
+                    </button>
+                {/if}
+                {#if editingBio}
+                    <div class="counter">
+                        <span>{editedBio.length}</span>
+                        <span>/</span>
+                        <span>1000</span>
+                    </div>
+                {/if}
             </div>
-            <p class={data.user.bio == "" ? "empty" : ""}>
-                {data.user.bio || "Nincs megadva"}
-            </p>
-        </div>
+            {#if editingBio}
+                <textarea id="editedBio" name="editedBio" bind:value={editedBio} maxlength="1000"></textarea>
+            {:else}
+                <p class={data.user.bio == "" ? "empty" : ""}>
+                    {data.user.bio || "Nincs megadva"}
+                </p>
+            {/if}
+        </form>
         <!-- </div> -->
     </div>
     <div id="adverts"></div>
@@ -119,6 +147,12 @@
                 }
             }
 
+            .row {
+                display: flex;
+                align-items: start;
+                gap: 0.2rem;
+            }
+
             .infos {
                 width: 30%;
 
@@ -133,6 +167,28 @@
                 align-items: start;
                 justify-content: start;
                 height: 8rem;
+                max-width: 30%;
+
+                .counter {
+                    margin-left: 1rem;
+                }
+
+                textarea {
+                    min-width: 20rem;
+                    max-width: 25rem;
+                }
+
+                button {
+                    background: none;
+                    border: none;
+                    cursor: pointer;
+                    color: $color-blue;
+                    font-size: 0.7rem;
+
+                    &:hover {
+                        text-decoration: underline;
+                    }
+                }
 
                 .empty {
                     font-style: italic;
