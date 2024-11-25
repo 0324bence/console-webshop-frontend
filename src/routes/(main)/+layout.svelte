@@ -155,7 +155,7 @@
                 position: absolute;
                 display: flex;
                 flex-direction: column;
-                gap: 0.2rem;
+                gap: 2px;
                 align-items: stretch;
                 z-index: -1;
                 top: 100%;
