@@ -10,8 +10,6 @@
 
     let userMenu = false;
 
-    console.log(JSON.stringify(data));
-
     function closeMenu() {
         if (userMenu) userMenu = false;
     }
@@ -53,8 +51,9 @@
                     <UserPlaceholder url={data.ownUser.picture} />
                 </button>
                 <div id="user-menu" class={userMenu ? "" : "hidden"}>
-                    <a href="/profile" class="menu-item"> Profil </a>
-                    <a href="/auth/logout" class="menu-item" data-sveltekit-reload> Kijelentkezés </a>
+                    <a href="/profile" class="menu-item">Profil</a>
+                    <a href="/advert/create" class="menu-item">Új hirdetés</a>
+                    <a href="/auth/logout" class="menu-item" data-sveltekit-reload>Kijelentkezés</a>
                 </div>
             {/if}
             <!-- <UserPlaceholder /> -->
@@ -187,6 +186,10 @@
                     text-decoration: none;
 
                     cursor: pointer;
+
+                    &:hover {
+                        background-color: darken($color-white, 10%);
+                    }
                 }
             }
         }
