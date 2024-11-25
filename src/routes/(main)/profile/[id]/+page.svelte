@@ -23,7 +23,12 @@
         if (editingBio) {
             bioForm.submit();
         }
+
         editingBio = !editingBio;
+    }
+
+    function autofocus(node: HTMLElement) {
+        node.focus();
     }
 </script>
 
@@ -81,7 +86,8 @@
                 {/if}
             </div>
             {#if editingBio}
-                <textarea id="editedBio" name="editedBio" bind:value={editedBio} maxlength="1000"></textarea>
+                <textarea id="editedBio" name="editedBio" use:autofocus bind:value={editedBio} maxlength="1000"
+                ></textarea>
             {:else}
                 <p class={data.user.bio == "" ? "empty" : ""}>
                     {data.user.bio || "Nincs megadva"}
@@ -176,6 +182,7 @@
                 textarea {
                     min-width: 20rem;
                     max-width: 25rem;
+                    height: 100%;
                 }
 
                 button {
