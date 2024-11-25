@@ -25,9 +25,9 @@
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <div id="window-container" on:click={closeMenu}>
     <div id="header">
-        <div id="logo-container">
+        <a href="/" id="logo-container">
             <Logo />
-        </div>
+        </a>
         <div id="center-container">
             <form>
                 <input type="text" placeholder="Keresés..." />
@@ -101,6 +101,7 @@
 
         #logo-container {
             height: 100%;
+            display: block;
         }
 
         #center-container {
