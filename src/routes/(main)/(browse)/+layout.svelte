@@ -1,3 +1,4 @@
+<slot></slot>
 <div class="main-container">
     <div id="filter-container"></div>
     <div id="sorting-container"></div>
