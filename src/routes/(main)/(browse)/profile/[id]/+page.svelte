@@ -80,12 +80,12 @@
                 <div class="counter">
                     <span>{editedBio.length}</span>
                     <span>/</span>
-                    <span>1000</span>
+                    <span>700</span>
                 </div>
             {/if}
         </div>
         {#if editingBio}
-            <textarea id="editedBio" name="editedBio" use:autofocus bind:value={editedBio} maxlength="1000"></textarea>
+            <textarea id="editedBio" name="editedBio" use:autofocus bind:value={editedBio} maxlength="700"></textarea>
         {:else}
             <p class={data.user.bio == "" ? "empty" : ""}>
                 {data.user.bio || "Nincs megadva"}
