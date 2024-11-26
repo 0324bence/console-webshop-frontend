@@ -1,6 +1,6 @@
 <script lang="ts">
     import { enhance } from "$app/forms";
-    function _arrayBufferToBase64(buffer: ArrayBuffer) {
+    import arrayBufferToBase64 from "$lib/arrayBufferToBase64";
         let binary = "";
         let bytes = new Uint8Array(buffer);
         let len = bytes.byteLength;
@@ -17,7 +17,7 @@
 
         const target = event.target as HTMLInputElement;
 
-        let eventFiles: FileList | null | undefined = null;
+        let eventFiles: FileList | null | undefined;
 
         if (event instanceof DragEvent) {
             eventFiles = event.dataTransfer?.files;
@@ -30,7 +30,7 @@
         imageFiles = [];
         for (let i = 0; i < eventFiles.length; i++) {
             const file = eventFiles[i];
-            const base64 = await file.arrayBuffer().then(buffer => _arrayBufferToBase64(buffer));
+            const base64 = await file.arrayBuffer().then(buffer => arrayBufferToBase64(buffer));
             let localFiles = [];
             localFiles.push(base64);
             imageFiles = [...imageFiles, ...localFiles];
