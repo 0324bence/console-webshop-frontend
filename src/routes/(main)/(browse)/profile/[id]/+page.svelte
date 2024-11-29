@@ -120,7 +120,6 @@
                 position: absolute;
                 width: 100%;
                 height: 100%;
-                border: 1px solid red;
                 top: 0;
                 left: 0;
                 border-radius: 50%;
