@@ -4,13 +4,18 @@
     import { onMount } from "svelte";
     import type { ActionData, PageData } from "./$types";
     import apiPath from "$lib/apiPath";
+    import { base } from "$app/paths";
 
     export let data: PageData;
     export let form: ActionData;
 
     let brandId: number = Number(form?.manufacturer) || 1;
 
-    let imageFiles: string[] = [];
+    let imageFiles: { base64: string; aspect: string }[] = [];
+
+    let mainPicture: number | null = null;
+
+    $: console.log(mainPicture);
 
     async function handleFiles(event: Event | DragEvent) {
         event.preventDefault();
@@ -28,12 +33,16 @@
         if (!eventFiles) return;
 
         for (let i = 0; i < eventFiles.length; i++) {
-            const file = eventFiles[i];
+            const file = eventFiles[i] as File;
             const base64 = await file.arrayBuffer().then(buffer => arrayBufferToBase64(buffer));
-            let localFiles = [];
-            localFiles.push(base64);
-            imageFiles = [...imageFiles, ...localFiles];
-            console.log(imageFiles);
+            const image = new Image();
+            image.src = "data:image/jpeg;base64," + base64;
+            image.onload = () => {
+                let localFiles = [];
+                localFiles.push({ base64, aspect: `${image.width} / ${image.height}` });
+                imageFiles = [...imageFiles, ...localFiles];
+                console.log(imageFiles);
+            };
         }
         target.files = null;
     }
@@ -42,6 +51,14 @@
 
     function manufacturerSelect() {
         manufacturerForm.submit();
+    }
+
+    function checkboxChange(index: number) {
+        if (mainPicture === index) {
+            mainPicture = null;
+        } else {
+            mainPicture = index;
+        }
     }
 
     console.log(form);
@@ -60,7 +77,7 @@
         method="post"
         use:enhance={({ formData, cancel }) => {
             for (const key in imageFiles) {
-                formData.append("filelist", imageFiles[key]);
+                formData.append("filelist", imageFiles[key].base64);
             }
             return;
         }}
@@ -138,21 +155,33 @@
                     />
                 </div>
             </div>
-            <div class="image">
-                <label class="checkbox-container" for="image1primary" title="Fő kép">
-                    <input type="checkbox" name="image1primary" id="image1primary" />
-                    <span class="checkmark"></span>
-                </label>
-                <img
-                    src="https://images.pexels.com/photos/956981/milky-way-starry-sky-night-sky-star-956981.jpeg?auto=compress&cs=tinysrgb&w=600"
-                    alt="a"
-                    style="aspect-ratio: 16 / 9;"
-                />
-                <textarea name="image1desc" id="image1desc" placeholder="Leaírás..."></textarea>
+            <div class="images">
+                <!-- TODO height bug -->
+                {#each imageFiles as image, index}
+                    <div class="image">
+                        <label class="checkbox-container" for={`image${index}primary`} title="Fő kép">
+                            <input
+                                type="checkbox"
+                                name={`image${index}primary`}
+                                id={`image${index}primary`}
+                                checked={mainPicture === index}
+                                value={index}
+                                on:change={() => {
+                                    checkboxChange(index);
+                                }}
+                            />
+                            <span class="checkmark"></span>
+                        </label>
+                        <img
+                            src={`data:image/jpeg;base64,${image.base64}`}
+                            alt="uploaded"
+                            style={`aspect-ratio: ${image.aspect};`}
+                        />
+                        <textarea name={`image${index}desc`} id={`image${index}desc`} placeholder="Leaírás..."
+                        ></textarea>
+                    </div>
+                {/each}
             </div>
-            {#each imageFiles as image}
-                <img src={"data:image/jpeg;base64," + image} alt="kép" />
-            {/each}
         </div>
         <div class="submit-row"><button type="submit">Létrehozás</button></div>
     </form>
@@ -210,6 +239,19 @@
             align-items: stretch;
             padding: 0.5rem;
             gap: 0.5rem;
+            // overflow-y: auto;
+
+            .images {
+                display: flex;
+                flex-direction: column;
+                align-items: stretch;
+                padding: 0.5rem;
+                gap: 0.5rem;
+                flex-grow: 1;
+                // overflow-y: auto;
+                max-height: 100%;
+                width: 100%;
+            }
 
             .image {
                 position: relative;
