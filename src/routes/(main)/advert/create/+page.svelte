@@ -117,9 +117,6 @@
         </div>
 
         <div class="right-side">
-            {#each imageFiles as image}
-                <img src={"data:image/jpeg;base64," + image} alt="kép" />
-            {/each}
             <!-- <img
             src="https://images.pexels.com/photos/956981/milky-way-starry-sky-night-sky-star-956981.jpeg?auto=compress&cs=tinysrgb&w=600"
             alt="a"
@@ -141,6 +138,21 @@
                     />
                 </div>
             </div>
+            <div class="image">
+                <label class="checkbox-container" for="image1primary" title="Fő kép">
+                    <input type="checkbox" name="image1primary" id="image1primary" />
+                    <span class="checkmark"></span>
+                </label>
+                <img
+                    src="https://images.pexels.com/photos/956981/milky-way-starry-sky-night-sky-star-956981.jpeg?auto=compress&cs=tinysrgb&w=600"
+                    alt="a"
+                    style="aspect-ratio: 16 / 9;"
+                />
+                <textarea name="image1desc" id="image1desc" placeholder="Leaírás..."></textarea>
+            </div>
+            {#each imageFiles as image}
+                <img src={"data:image/jpeg;base64," + image} alt="kép" />
+            {/each}
         </div>
         <div class="submit-row"><button type="submit">Létrehozás</button></div>
     </form>
@@ -194,7 +206,99 @@
 
         .right-side {
             display: flex;
-            flex-wrap: wrap;
+            flex-direction: column;
+            align-items: stretch;
+            padding: 0.5rem;
+            gap: 0.5rem;
+
+            .image {
+                position: relative;
+                display: flex;
+                flex-direction: column;
+                padding: 0.2rem;
+                border: 1px solid $color-dark-blue;
+                border-radius: 10px;
+
+                textarea {
+                    resize: none;
+                    width: 100%;
+                    display: block;
+                    padding: 0;
+                    margin: 0;
+                    border: 1px solid $color-dark-blue;
+                    padding: 0.2rem;
+                }
+
+                img {
+                    width: 100%;
+                }
+
+                .checkbox-container {
+                    display: flex;
+                    gap: 0.1rem;
+                    position: absolute;
+                    top: 0.3rem;
+                    left: 0.3rem;
+                    cursor: pointer;
+                    -webkit-user-select: none;
+                    -moz-user-select: none;
+                    -ms-user-select: none;
+                    user-select: none;
+                    color: $color-white;
+                }
+
+                /* Hide the browser's default checkbox */
+                .checkbox-container input {
+                    opacity: 0;
+                    cursor: pointer;
+                    height: 0;
+                    width: 0;
+                }
+
+                /* Create a custom checkbox */
+                .checkmark {
+                    position: relative;
+                    border-radius: 5px;
+                    border: 1px solid $color-dark-blue;
+                    display: block;
+                    z-index: 2;
+                    top: 0;
+                    left: 0;
+                    height: 25px;
+                    width: 25px;
+                    background-color: $color-white;
+                }
+
+                .checkbox-container:hover input ~ .checkmark {
+                    background-color: darken($color-white, 20%);
+                }
+
+                .checkbox-container input:checked ~ .checkmark {
+                    background-color: #2196f3;
+                }
+
+                .checkbox-container .checkmark:after {
+                    left: 50%;
+                    transform-origin: center;
+                    top: 50%;
+                    width: 5px;
+                    height: 10px;
+                    border: solid white;
+                    border-width: 0 3px 3px 0;
+                    transform: translate(-50%, -50%) rotate(45deg);
+                    transition: opacity 0.2s ease;
+                }
+
+                .checkmark:after {
+                    content: "";
+                    position: absolute;
+                    opacity: 0;
+                }
+
+                .checkbox-container input:checked ~ .checkmark:after {
+                    opacity: 1;
+                }
+            }
 
             .file-input {
                 position: relative;
@@ -204,9 +308,9 @@
                     background-color: $color-blue;
                     display: grid;
                     place-items: center;
-                    width: min-content;
+                    width: 100%;
                     padding: 0.2rem;
-                    font-size: 3rem;
+                    font-size: 1.5rem;
                     color: $color-white;
                     border-radius: 7px;
                 }
@@ -241,11 +345,6 @@
                         cursor: pointer;
                     }
                 }
-            }
-
-            img {
-                width: 100px;
-                height: 100px;
             }
         }
 
