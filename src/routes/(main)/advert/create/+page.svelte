@@ -8,7 +8,6 @@
     import { base } from "$app/paths";
 
     export let data: PageData;
-    export let form: ActionData;
 
     let models: Model[];
 
@@ -20,7 +19,7 @@
 
     let descValue: string = "";
 
-    $: console.log(mainPicture);
+    let formLoading: boolean = false;
 
     async function handleFiles(event: Event | DragEvent) {
         event.preventDefault();
@@ -63,23 +62,28 @@
             mainPicture = index;
         }
     }
-
-    console.log(form);
-
-    onMount(async () => {});
 </script>
 
 <div id="main-content">
+    {#if formLoading}
+        <div id="loadingcover"></div>
+    {/if}
     <h1>Hirdetés létrehozása</h1>
     <form
         action="?/submit"
         method="post"
         use:enhance={({ formData, cancel }) => {
+            formLoading = true;
             for (const key in imageFiles) {
                 formData.append("filelist", imageFiles[key].base64);
             }
             formData.append("mainPictureIndex", mainPicture.toString());
-            return;
+            return async ({ update }) => {
+                formLoading = false;
+                update();
+                imageFiles = [];
+                /*TODO redirect to advert*/
+            };
         }}
         enctype="multipart/form-data"
         id="main-form"
@@ -199,6 +203,7 @@
     @import "$lib/styles/variables";
 
     #main-content {
+        position: relative;
         height: 100%;
         width: 100%;
         display: flex;
@@ -207,6 +212,17 @@
         justify-content: center;
         gap: 15px;
     }
+
+    #loadingcover {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 100;
+    }
+
     #main-form {
         $backround: darken($color-white, 3%);
 
