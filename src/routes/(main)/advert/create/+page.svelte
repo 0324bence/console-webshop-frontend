@@ -13,7 +13,9 @@
 
     let imageFiles: { base64: string; aspect: string }[] = [];
 
-    let mainPicture: number | null = null;
+    let mainPicture: number = 0;
+
+    let descValue: string = "";
 
     $: console.log(mainPicture);
 
@@ -54,9 +56,7 @@
     }
 
     function checkboxChange(index: number) {
-        if (mainPicture === index) {
-            mainPicture = null;
-        } else {
+        if (mainPicture !== index) {
             mainPicture = index;
         }
     }
@@ -85,25 +85,33 @@
         id="main-form"
     >
         <div class="left-side">
-            <div class="input-group">
+            <div class="input-group" id="title-group">
                 <label for="title">Cím:</label>
-                <input type="text" name="title" id="title" placeholder="Cím" required />
+                <input type="text" aria-multiline="true" name="title" id="title" placeholder="Cím" required />
             </div>
-            <div class="input-group">
-                <label for="description">Leírás:</label>
-                <textarea name="description" id="description" required placeholder="Leírás"></textarea>
+            <div class="input-group" id="description-group">
+                <div class="label">
+                    <label for="description">Leírás:</label>
+                    <div class="charcount">
+                        <span>{descValue.length}</span>
+                        <span>/</span>
+                        <span>1000</span>
+                    </div>
+                </div>
+                <textarea bind:value={descValue} name="description" id="description" required placeholder="Leírás"
+                ></textarea>
             </div>
-            <div class="input-group">
+            <div class="input-group" id="location-group">
                 <label for="locationId">Település:</label>
                 <select name="locationId" id="locationId" required>
                     <option value="1614">Kiskunfélegyháza</option>
                 </select>
             </div>
-            <div class="input-group">
+            <div class="input-group" id="price-group">
                 <label for="priceHuf">Ár:</label>
                 <input name="priceHuf" type="number" placeholder="0" id="priceHuf" required />
             </div>
-            <div class="input-group">
+            <div class="input-group" id="state-group">
                 <label for="stateId">Állapot:</label>
                 <select name="stateId" id="stateId" required>
                     {#each data.filters.states as state}
@@ -111,7 +119,13 @@
                     {/each}
                 </select>
             </div>
-            <form action="?/manufacturer" method="post" class="input-group" bind:this={manufacturerForm}>
+            <form
+                id="manufacturer-group"
+                action="?/manufacturer"
+                method="post"
+                class="input-group"
+                bind:this={manufacturerForm}
+            >
                 <label for="brandId">Gyártó:</label>
                 <select required bind:value={brandId} name="brandId" id="brandId" on:change={manufacturerSelect}>
                     {#each data.filters.manufacturers as manufacturer}
@@ -119,7 +133,7 @@
                     {/each}
                 </select>
             </form>
-            <div class="input-group">
+            <div class="input-group" id="model-group">
                 <label for="modelId">Modell:</label>
                 <select required name="modelId" id="modelId">
                     {#each form?.models || [] as model}
@@ -127,7 +141,7 @@
                     {/each}
                 </select>
             </div>
-            <div class="input-group">
+            <div class="input-group" id="revision-group">
                 <label for="revision">Revízió:</label>
                 <input name="revision" type="text" id="revision" placeholder="Revízio" />
             </div>
@@ -161,7 +175,7 @@
                     <div class="image">
                         <label class="checkbox-container" for={`image${index}primary`} title="Fő kép">
                             <input
-                                type="checkbox"
+                                type="radio"
                                 name={`image${index}primary`}
                                 id={`image${index}primary`}
                                 checked={mainPicture === index}
@@ -205,7 +219,7 @@
         display: grid;
         grid-template-rows: 1fr 10%;
         grid-template-columns: 1fr 1fr;
-        height: 70%;
+        height: 85%;
         gap: 1rem;
         width: 50%;
         background-color: $backround;
@@ -391,21 +405,49 @@
         }
 
         .left-side {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
+            // display: flex;
+            // flex-direction: column;
+            // align-items: center;
+            // justify-content: center;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: repeat(6, 1fr);
             height: 100%;
+            padding: 0.5rem;
             gap: 10px;
+
+            #title-group,
+            #description-group,
+            #location-group {
+                grid-column: span 2;
+            }
+
+            #description-group .label {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                width: 100%;
+
+                .charcount {
+                    display: flex;
+                    gap: 0.2rem;
+                }
+            }
 
             .input-group {
                 display: flex;
                 flex-direction: column;
                 align-items: flex-start;
                 justify-content: center;
-                width: 50%;
+                width: 100%;
 
-                font-size: 1.1rem;
+                font-size: 1.2rem;
+
+                input,
+                select,
+                textarea {
+                    font-size: 1.1rem;
+                }
 
                 input {
                     width: 100%;
