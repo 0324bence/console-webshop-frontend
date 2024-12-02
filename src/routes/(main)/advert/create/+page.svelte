@@ -9,7 +9,9 @@
     export let data: PageData;
     export let form: ActionData;
 
-    let brandId: number = Number(form?.manufacturer) || 1;
+    let models: [];
+
+    let brandId: number = Number(form?.manufacturer) || 0;
 
     let imageFiles: { base64: string; aspect: string }[] = [];
 
@@ -49,10 +51,10 @@
         target.files = null;
     }
 
-    let manufacturerForm: HTMLFormElement;
-
-    function manufacturerSelect() {
-        manufacturerForm.submit();
+    async function manufacturerSelect() {
+        const res = await fetch(`${apiPath}/filters/modelsForManufacturer?manufacturerId=${brandId}`);
+        const data = await res.json();
+        models = data;
     }
 
     function checkboxChange(index: number) {
@@ -63,10 +65,12 @@
 
     console.log(form);
 
-    onMount(() => {
-        fetch(`${apiPath}/filters/locations?query=b`)
-            .then(response => response.json())
-            .then(data => console.log(data));
+    onMount(async () => {
+        if (form?.manufacturer) {
+            const res = await fetch(`${apiPath}/filters/modelsForManufacturer?manufacturerId=${brandId}`);
+            const data = await res.json();
+            models = data;
+        }
     });
 </script>
 
@@ -119,24 +123,18 @@
                     {/each}
                 </select>
             </div>
-            <form
-                id="manufacturer-group"
-                action="?/manufacturer"
-                method="post"
-                class="input-group"
-                bind:this={manufacturerForm}
-            >
+            <div class="input-group" id="manufacturer-group">
                 <label for="brandId">Gyártó:</label>
                 <select required bind:value={brandId} name="brandId" id="brandId" on:change={manufacturerSelect}>
                     {#each data.filters.manufacturers as manufacturer}
                         <option value={manufacturer.id}>{manufacturer.name}</option>
                     {/each}
                 </select>
-            </form>
+            </div>
             <div class="input-group" id="model-group">
                 <label for="modelId">Modell:</label>
                 <select required name="modelId" id="modelId">
-                    {#each form?.models || [] as model}
+                    {#each models || [] as model}
                         <option value={model.id}>{model.name}</option>
                     {/each}
                 </select>
