@@ -239,7 +239,7 @@
             align-items: stretch;
             padding: 0.5rem;
             gap: 0.5rem;
-            // overflow-y: auto;
+            overflow-y: auto;
 
             .images {
                 display: flex;
@@ -248,7 +248,7 @@
                 padding: 0.5rem;
                 gap: 0.5rem;
                 flex-grow: 1;
-                // overflow-y: auto;
+                overflow-y: auto;
                 max-height: 100%;
                 width: 100%;
             }
