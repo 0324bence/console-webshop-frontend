@@ -4,12 +4,13 @@
     import { onMount } from "svelte";
     import type { ActionData, PageData } from "./$types";
     import apiPath from "$lib/apiPath";
+    import type { Model } from "$lib/types/";
     import { base } from "$app/paths";
 
     export let data: PageData;
     export let form: ActionData;
 
-    let models: [];
+    let models: Model[];
 
     let brandId: number = Number(form?.manufacturer) || 0;
 

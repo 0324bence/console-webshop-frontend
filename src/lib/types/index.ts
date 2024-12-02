@@ -7,4 +7,10 @@ interface User {
     regDate: Date;
 }
 
-export type { User };
+interface Model {
+    id: number;
+    name: string;
+    manufacturerId: number;
+}
+
+export type { User, Model };

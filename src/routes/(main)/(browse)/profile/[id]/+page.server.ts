@@ -1,5 +1,5 @@
 import apiPath from "$lib/apiPath";
-import type { User } from "$lib/types/User";
+import type { User } from "$lib/types";
 import { error } from "@sveltejs/kit";
 import type { PageServerLoad } from "./$types";
 import type { Actions } from "./$types";
