@@ -12,7 +12,7 @@
 
     let models: Model[];
 
-    let brandId: number = Number(form?.manufacturer) || 0;
+    let brandId: number = 0;
 
     let imageFiles: { base64: string; aspect: string }[] = [];
 
@@ -66,13 +66,7 @@
 
     console.log(form);
 
-    onMount(async () => {
-        if (form?.manufacturer) {
-            const res = await fetch(`${apiPath}/filters/modelsForManufacturer?manufacturerId=${brandId}`);
-            const data = await res.json();
-            models = data;
-        }
-    });
+    onMount(async () => {});
 </script>
 
 <div id="main-content">
@@ -84,6 +78,7 @@
             for (const key in imageFiles) {
                 formData.append("filelist", imageFiles[key].base64);
             }
+            formData.append("mainPictureIndex", mainPicture.toString());
             return;
         }}
         enctype="multipart/form-data"

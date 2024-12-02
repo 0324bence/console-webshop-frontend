@@ -9,7 +9,7 @@ export const actions = {
     submit: async ({ cookies, request }) => {
         const token = cookies.get("token");
         const data = await request.formData();
-        const files = data.getAll("filelist");
+        const files = data.getAll("filelist") as string[];
         const title = data.get("title");
         const description = data.get("description");
         const locationId = data.get("locationId");
@@ -18,6 +18,11 @@ export const actions = {
         const brandId = data.get("brandId");
         const modelId = data.get("modelId");
         const revision = data.get("revision");
+        const mainPictureIndex = data.get("mainPictureIndex");
+        let pictureDescriptions = [];
+        for (let i = 0; i < files.length; i++) {
+            pictureDescriptions.push(data.get(`image${i}desc`));
+        }
 
         const body = {
             title,
@@ -39,21 +44,35 @@ export const actions = {
             body: JSON.stringify(body)
         });
         const res = await req.json();
-        console.log(res);
-    },
-    manufacturer: async ({ cookies, request }) => {
-        console.log("manufacturer");
-        const data = await request.formData();
-        const brand = data.get("brandId");
 
-        const res = await fetch(`${apiPath}/filters/modelsForManufacturer?manufacturerId=${brand}`);
-        const body = await res.json();
+        for (const index in files) {
+            const file = files[index];
+            const req = await fetch(`${apiPath}/adverts/${res.id}/pictures`, {
+                method: "POST",
+                headers: {
+                    authorization: "Bearer " + token,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    data: file,
+                    description: pictureDescriptions[index]
+                })
+            });
 
-        if (res.status == 200) {
-            return {
-                manufacturer: brand?.toString(),
-                models: body
-            };
+            if (index == mainPictureIndex) {
+                const resp = await req.json();
+                console.log("picId", resp.id);
+                const primaryReq = await fetch(`${apiPath}/adverts/${res.id}/primaryPicture`, {
+                    method: "POST",
+                    headers: {
+                        authorization: "Bearer " + token,
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        picId: resp.id
+                    })
+                });
+            }
         }
     }
 } satisfies Actions;
