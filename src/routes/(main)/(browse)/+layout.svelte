@@ -1,8 +1,32 @@
+<script lang="ts">
+    import type { PageData } from "./$types";
+
+    export let data: PageData;
+
+    console.log(data);
+</script>
+
 <slot></slot>
 <div class="main-container">
-    <div id="filter-container"></div>
+    <form id="filter-container" method="post" action="/search?/filters">
+        <button id="search" type="submit">Keresés</button>
+        <div id="state">
+            {#each data.filters.states as state}
+                <label for={"states" + state.id}>{state.name}</label>
+                <input
+                    type="checkbox"
+                    name="state"
+                    id={"states" + state.id}
+                    value={state.id}
+                    checked={data.activeFilters.states.includes(state.id)}
+                />
+            {/each}
+        </div>
+    </form>
     <div id="sorting-container"></div>
-    <div id="advert-container"></div>
+    <div id="advert-container">
+        {data.adverts.items.length}
+    </div>
 </div>
 
 <style lang="scss" scoped>
