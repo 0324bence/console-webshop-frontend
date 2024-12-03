@@ -13,4 +13,31 @@ interface Model {
     manufacturerId: number;
 }
 
-export type { User, Model };
+interface Advert {
+    id: number;
+    title: string;
+    ownerId: number;
+    description: string;
+    locationId: number;
+    priceHuf: number;
+    stateId: number;
+    modelId: number;
+    revision: string;
+    viewCount: number;
+    isSold: number;
+}
+
+interface Picture {
+    id: number;
+    data: string;
+    description: string;
+    advertId: number;
+    isPriority: 1 | 0;
+}
+
+interface LocalAdvert extends Advert {
+    pictures: Picture[];
+    mainPicture: Picture;
+}
+
+export type { User, Model, Advert, Picture, LocalAdvert };
