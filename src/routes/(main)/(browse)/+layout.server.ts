@@ -35,9 +35,17 @@ export const load: LayoutServerLoad = async ({ cookies, url }) => {
     //states
     const activeStates = url.searchParams.get("stateIds")?.split(",").map(Number) || [];
 
+    //manufacturers
+    const activeManufacturers = url.searchParams.get("manufacturerIds")?.split(",").map(Number) || [];
+
+    //models
+    const activeModels = url.searchParams.get("modelIds")?.split(",").map(Number) || [];
+
     return {
         activeFilters: {
-            states: activeStates
+            states: activeStates,
+            manufacturers: activeManufacturers,
+            models: activeModels
         },
         adverts
     };
