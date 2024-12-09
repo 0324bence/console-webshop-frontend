@@ -1,15 +1,24 @@
 <script lang="ts">
     import apiPath from "$lib/apiPath";
-    import type { Model } from "$lib/types";
+    import type { LocalAdvert, Model, Picture } from "$lib/types";
     import { onMount } from "svelte";
     import type { PageData } from "./$types";
-
-    export let data: PageData;
-    console.log(data);
+    interface LocalPicture extends Picture {
+        object: HTMLImageElement;
+    }
 
     interface CheckBoxModel extends Model {
         checked: boolean;
     }
+
+    interface ExtendedAdvert extends LocalAdvert {
+        mainPicture: LocalPicture;
+    }
+
+    export let data: PageData;
+    console.log(data);
+
+    let adverts: ExtendedAdvert[] = [];
 
     let models: CheckBoxModel[] = [];
 
@@ -39,6 +48,17 @@
         for (const manufacturerId of data.activeFilters.manufacturers) {
             await getModels(manufacturerId);
         }
+        adverts = data.adverts.map(advert => {
+            const newAdvert = {
+                ...advert,
+                mainPicture: {
+                    ...advert.mainPicture,
+                    object: new window.Image()
+                }
+            };
+            newAdvert.mainPicture.object.src = `data:image/jpeg;base64,${advert.mainPicture.data}`;
+            return newAdvert;
+        });
     });
 </script>
 
@@ -92,11 +112,29 @@
     </form>
     <div id="sorting-container"></div>
     <div id="advert-container">
-        {data?.adverts?.length}
+        <!-- TODO wait for backend picture handling -->
+        <!-- {data?.adverts?.length} -->
+        {#each adverts as advert}
+            <div class="advert">
+                <div class="image">
+                    <img
+                        src={`data:image/jpeg;base64,${advert.mainPicture.data}`}
+                        alt="advert main"
+                        style={`aspect-ratio: ${advert.mainPicture.object.width} / ${advert.mainPicture.object.height}`}
+                    />
+                </div>
+                <div class="data">
+                    <h2>{advert.title}</h2>
+                    <p>{advert.description}</p>
+                    <h3>{advert.priceHuf} HUF</h3>
+                </div>
+            </div>
+        {/each}
     </div>
 </div>
 
 <style lang="scss" scoped>
+    @import "$lib/styles/variables.scss";
     .main-container {
         width: 100%;
         height: 100%;
@@ -110,6 +148,33 @@
             display: flex;
             flex-direction: column;
             gap: 1rem;
+        }
+
+        #advert-container {
+            display: grid;
+            grid-template-columns: repeat(4, 18rem);
+            grid-template-rows: repeat(auto-fill, 20rem);
+            padding: 1rem;
+            gap: 1rem;
+            .advert {
+                display: grid;
+                grid-template-rows: 1fr 1fr;
+                width: 100%;
+                padding: 1rem;
+                border-radius: 0.6rem;
+                height: 100%;
+                border: 1px solid $color-black;
+
+                div {
+                    border: none;
+                    min-height: 0;
+                    min-width: 0;
+                }
+
+                img {
+                    width: 100%;
+                }
+            }
         }
 
         div {

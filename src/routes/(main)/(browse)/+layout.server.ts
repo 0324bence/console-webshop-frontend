@@ -14,11 +14,10 @@ export const load: LayoutServerLoad = async ({ cookies, url }) => {
     for (const advert of adverts) {
         const picturesReq = await fetch(`${apiPath}/adverts/${advert.id}/pictures`);
         if (picturesReq.ok) {
-            const pictures: Picture[] = await picturesReq.json();
+            let pictures: Picture[] = await picturesReq.json();
             advert.pictures = pictures;
             advert.mainPicture = pictures.find(p => p.isPriority === 1) || pictures[0];
         } else {
-            /*Todo convert nincs kép to base64*/
             advert.pictures = [
                 {
                     id: 0,
