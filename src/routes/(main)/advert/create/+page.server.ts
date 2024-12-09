@@ -62,7 +62,7 @@ export const actions = {
             if (index == mainPictureIndex) {
                 const resp = await req.json();
                 console.log("picId", resp.id);
-                const primaryReq = await fetch(`${apiPath}/adverts/${res.id}/primaryPicture`, {
+                const primaryReq = await fetch(`${apiPath}/adverts/${res.id}/primaryPictureId`, {
                     method: "POST",
                     headers: {
                         authorization: "Bearer " + token,
