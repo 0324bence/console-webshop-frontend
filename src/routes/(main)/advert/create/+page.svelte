@@ -64,6 +64,10 @@
         }
     }
 
+    function deleteImage(index: number) {
+        imageFiles = imageFiles.filter((_, i) => i !== index);
+    }
+
     let selectedLocation: Location | undefined = undefined;
     let locationSearch: any;
     let locationError: boolean = false;
@@ -131,7 +135,7 @@
                 <LocationSearch error={locationError} bind:selectedLocation bind:this={locationSearch} />
             </div>
             <div class="input-group" id="price-group">
-                <label for="priceHuf">Ár:</label>
+                <label for="priceHuf">Ár (HUF):</label>
                 <input name="priceHuf" type="number" placeholder="0" id="priceHuf" required />
             </div>
             <div class="input-group" id="state-group">
@@ -203,6 +207,12 @@
                             />
                             <span class="checkmark"></span>
                         </label>
+                        <button
+                            class="delete"
+                            on:click|preventDefault={() => {
+                                deleteImage(index);
+                            }}>&times;</button
+                        >
                         <img
                             src={`data:image/jpeg;base64,${image.base64}`}
                             alt="uploaded"
@@ -316,6 +326,17 @@
 
                 img {
                     width: 100%;
+                }
+
+                .delete {
+                    position: absolute;
+                    top: 0.3rem;
+                    right: 0.5rem;
+                    background: none;
+                    border: none;
+                    cursor: pointer;
+                    color: red;
+                    font-size: 1.5rem;
                 }
 
                 .checkbox-container {
