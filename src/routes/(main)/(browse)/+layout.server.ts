@@ -71,12 +71,20 @@ export const load: LayoutServerLoad = async ({ cookies, url }) => {
     //title
     const title = url.searchParams.get("title") || "";
 
+    //sortBy
+    const sortBy = url.searchParams.get("sortBy") || "";
+
+    //sortOrder
+    const sortOrder = url.searchParams.get("sortOrder") || "";
+
     return {
         activeFilters: {
             states: activeStates,
             manufacturers: activeManufacturers,
             models: activeModels,
-            title
+            title,
+            sortBy,
+            sortOrder
         },
         adverts
     };

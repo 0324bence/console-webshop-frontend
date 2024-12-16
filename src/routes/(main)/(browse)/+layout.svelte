@@ -4,7 +4,7 @@
     import { onMount } from "svelte";
     import type { PageData } from "./$types";
     import { page } from "$app/stores";
-    import { afterNavigate, invalidate, invalidateAll } from "$app/navigation";
+    import { afterNavigate, goto, invalidate, invalidateAll } from "$app/navigation";
     interface LocalPicture extends Picture {
         object: HTMLImageElement;
     }
@@ -75,6 +75,12 @@
         }
     });
 
+    function changeSorting(e: Event) {
+        const sortingValue = (e.target as HTMLSelectElement).value;
+        const sorting = sortingValue.split("-");
+        goto($page.url.pathname + `?sortBy=${sorting[0]}&sortOrder=${sorting[1]}&`);
+    }
+
     afterNavigate(() => {
         invalidateAll();
         if ($page.url.pathname.search("/profile/") !== -1) {
@@ -109,6 +115,8 @@
     <form id="filter-container" method="post" action="/search?/filters">
         <button id="search" type="submit">Keresés</button>
         <input type="text" name="title" id="title" class="hidden" value={data.activeFilters.title} />
+        <input type="text" name="sortBy" id="sortBy" class="hidden" value={data.activeFilters.sortBy} />
+        <input type="text" name="sortOrder" id="sortOrder" class="hidden" value={data.activeFilters.sortOrder} />
         <div id="state" class="checkboxgroup">
             {#each data.filters.states as state}
                 <div>
@@ -153,7 +161,19 @@
             {/each}
         </div>
     </form>
-    <div id="sorting-container"></div>
+    <div id="sorting-container">
+        <select
+            name="sorting"
+            id="sorting"
+            on:change={changeSorting}
+            value={`${data.activeFilters.sortBy}-${data.activeFilters.sortOrder}`}
+        >
+            <option value="priceHuf-ASC">Ár növekvő</option>
+            <option value="priceHuf-DESC">Ár csökkenő</option>
+            <option value="title-ASC">A-Z</option>
+            <option value="title-DESC">Z-A</option>
+        </select>
+    </div>
     <div id="advert-container">
         <!-- TODO wait for backend picture handling -->
         <!-- {data?.adverts?.length} -->
@@ -200,7 +220,7 @@
 
         #advert-container {
             display: grid;
-            grid-template-columns: repeat(4, 18rem);
+            grid-template-columns: repeat(5, 18rem);
             grid-template-rows: repeat(auto-fill, 20rem);
             padding: 1rem;
             gap: 1rem;
