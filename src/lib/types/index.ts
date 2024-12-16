@@ -40,4 +40,13 @@ interface LocalAdvert extends Advert {
     mainPicture: Picture;
 }
 
-export type { User, Model, Advert, Picture, LocalAdvert };
+interface Location {
+    id: number;
+    name: string;
+    county: string;
+    zip: number;
+    latitude: string;
+    longitude: string;
+}
+
+export type { User, Model, Advert, Picture, LocalAdvert, Location };
