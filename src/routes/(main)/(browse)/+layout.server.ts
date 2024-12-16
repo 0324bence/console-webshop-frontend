@@ -14,8 +14,18 @@ export const load: LayoutServerLoad = async ({ cookies, url }) => {
     for (const advert of adverts) {
         const picturesReq = await fetch(`${apiPath}/adverts/${advert.id}/primaryPicture`);
         if (picturesReq.ok) {
-            let pictures: Picture = await picturesReq.json();
-            advert.mainPicture = pictures;
+            try {
+                let pictures: Picture = await picturesReq.json();
+                advert.mainPicture = pictures;
+            } catch (error) {
+                advert.mainPicture = {
+                    id: 0,
+                    data: noImage,
+                    description: "Nincs megadva kép",
+                    advertId: advert.id,
+                    isPriority: 1
+                };
+            }
         } else {
             // advert.pictures = [
             // {
