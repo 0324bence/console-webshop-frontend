@@ -1,5 +1,6 @@
 <script lang="ts">
-    import { onNavigate } from "$app/navigation";
+    import { afterNavigate, goto, onNavigate } from "$app/navigation";
+    import { page } from "$app/stores";
     import Cart from "$lib/svgs/Cart.svelte";
     import Logo from "$lib/svgs/Logo.svelte";
     import Search from "$lib/svgs/Search.svelte";
@@ -14,8 +15,19 @@
         if (userMenu) userMenu = false;
     }
 
-    onNavigate(() => {
-        console.log("navigated");
+    let searchFieldValue = $page.url.searchParams.get("title") || "";
+    let searchFieldFocus = false;
+
+    function searchAdvert() {
+        goto($page.url.pathname + "?title=" + searchFieldValue + "&");
+    }
+
+    function searchUser() {
+        console.log("searching for user ", searchFieldValue);
+    }
+
+    afterNavigate(() => {
+        searchFieldValue = $page.url.searchParams.get("title") || "";
     });
 </script>
 
@@ -27,11 +39,27 @@
             <Logo />
         </a>
         <div id="center-container">
-            <form>
-                <input type="text" placeholder="Keresés..." />
-                <button type="submit">
+            <form on:submit|preventDefault class="searchContainer">
+                <input
+                    type="text"
+                    placeholder="Keresés..."
+                    bind:value={searchFieldValue}
+                    on:focus={() => {
+                        searchFieldFocus = true;
+                    }}
+                    on:blur={() => (searchFieldFocus = false)}
+                />
+                <!-- <button type="submit">
                     <Search />
-                </button>
+                </button> -->
+                {#if searchFieldValue.length > 0 && searchFieldFocus}
+                    <div class="searchOptions">
+                        <button type="submit" on:click={searchAdvert}
+                            >"<b>{searchFieldValue}</b>" című hirdetés keresése</button
+                        >
+                        <button on:click={searchUser}>"<b>{searchFieldValue}</b>" nevű felhasználó keresése</button>
+                    </div>
+                {/if}
             </form>
         </div>
         <div id="right-container">
@@ -114,6 +142,21 @@
                 align-items: center;
                 gap: 0.5rem;
                 padding: 0.5rem;
+                position: relative;
+            }
+
+            .searchOptions {
+                position: absolute;
+                display: flex;
+                flex-direction: column;
+                width: 100%;
+                right: 0;
+                top: 80%;
+
+                button {
+                    border-radius: 0;
+                    width: 100%;
+                }
             }
 
             input {
@@ -135,6 +178,16 @@
                 align-items: center;
                 height: 2.5rem;
                 width: 2.5rem;
+                cursor: pointer;
+                background-color: $color-white;
+
+                &:hover {
+                    background-color: darken($color-white, 10%);
+                }
+
+                &[type="submit"] {
+                    background-color: darken($color-white, 10%);
+                }
             }
         }
 

@@ -108,6 +108,7 @@
 <div class="main-container">
     <form id="filter-container" method="post" action="/search?/filters">
         <button id="search" type="submit">Keresés</button>
+        <input type="text" name="title" id="title" class="hidden" value={data.activeFilters.title} />
         <div id="state" class="checkboxgroup">
             {#each data.filters.states as state}
                 <div>
@@ -185,6 +186,10 @@
         display: grid;
         grid-template-columns: 3fr 17fr;
         grid-template-rows: 1fr 15fr;
+
+        .hidden {
+            display: none;
+        }
 
         #filter-container {
             grid-row: span 2;

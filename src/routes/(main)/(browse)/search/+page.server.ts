@@ -28,6 +28,12 @@ export const actions: Actions = {
             redirectUrl += `modelIds=${modelString}&`;
         }
 
+        //title
+        const title = data.get("title");
+        if (title) {
+            redirectUrl += `title=${title}&`;
+        }
+
         return redirect(303, redirectUrl);
     }
 };

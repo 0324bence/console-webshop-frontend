@@ -68,11 +68,15 @@ export const load: LayoutServerLoad = async ({ cookies, url }) => {
     //models
     const activeModels = url.searchParams.get("modelIds")?.split(",").map(Number) || [];
 
+    //title
+    const title = url.searchParams.get("title") || "";
+
     return {
         activeFilters: {
             states: activeStates,
             manufacturers: activeManufacturers,
-            models: activeModels
+            models: activeModels,
+            title
         },
         adverts
     };
