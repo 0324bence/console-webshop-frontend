@@ -37,6 +37,7 @@ interface Picture {
 
 interface LocalAdvert extends Advert {
     pictures: Picture[];
+    location: Location;
     mainPicture: Picture;
 }
 

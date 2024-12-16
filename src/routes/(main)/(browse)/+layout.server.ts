@@ -34,6 +34,19 @@ export const load: LayoutServerLoad = async ({ cookies, url }) => {
                 isPriority: 1
             };
         }
+        const locationReq = await fetch(`${apiPath}/filters/locations/${advert.locationId}`);
+        if (locationReq.ok) {
+            advert.location = await locationReq.json();
+        } else {
+            advert.location = {
+                id: 0,
+                name: "Ismeretlen",
+                county: "Ismeretlen",
+                zip: 0,
+                latitude: "0",
+                longitude: "0"
+            };
+        }
     }
 
     //states
