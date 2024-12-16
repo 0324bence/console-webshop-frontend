@@ -1,9 +1,14 @@
 <script lang="ts">
     import LocationSearch from "$lib/components/LocationSearch.svelte";
+    import type { Location } from "$lib/types";
+
+    let location: Location | undefined;
+
+    $: console.log(location);
 </script>
 
 <div id="testing">
-    <LocationSearch />
+    <LocationSearch bind:selectedLocation={location} />
 </div>
 
 <style>
