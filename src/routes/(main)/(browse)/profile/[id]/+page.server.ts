@@ -11,7 +11,7 @@ export const load: PageServerLoad = async ({ params, parent }) => {
 
     const { ownUser } = await parent();
 
-    if (Number(params.id) === ownUser.id) {
+    if (ownUser !== null && Number(params.id) === ownUser.id) {
         return {
             isOwn: true,
             user: ownUser

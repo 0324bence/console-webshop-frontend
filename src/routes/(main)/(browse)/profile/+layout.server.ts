@@ -6,7 +6,9 @@ import type { User } from "$lib/types/";
 export const load: LayoutServerLoad = async ({ cookies }) => {
     const token = cookies.get("token");
     if (token === undefined) {
-        return redirect(302, "/auth");
+        return {
+            ownUser: null
+        };
     }
     const route = apiPath + "/user/";
     const res = await fetch(route, {
@@ -17,7 +19,9 @@ export const load: LayoutServerLoad = async ({ cookies }) => {
     if (res.status !== 200) {
         console.log("Failed to get own username");
         cookies.delete("token", { path: "/" });
-        return redirect(302, "/auth");
+        return {
+            ownUser: null
+        };
     }
     const user: User = await res.json();
     return {
