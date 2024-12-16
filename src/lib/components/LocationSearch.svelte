@@ -30,10 +30,12 @@
     export function hideResults() {
         showResults = false;
     }
+
+    export let error = false;
 </script>
 
 <form on:submit|preventDefault={search} class="input-container">
-    <input type="text" placeholder="Település..." bind:value={textBoxValue} />
+    <input class={error ? "error" : ""} type="text" placeholder="Település..." bind:value={textBoxValue} />
     <button type="submit" disabled={loading}>
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"
             ><!--!Font Awesome Free 6.7.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path
@@ -74,6 +76,7 @@
     @import "$lib/styles/variables";
 
     .input-container {
+        width: 100%;
         position: relative;
         display: flex;
         justify-content: space-between;
@@ -94,8 +97,8 @@
             }
 
             svg {
-                height: 2.5rem;
-                width: 2.5rem;
+                height: 100%;
+                width: 2rem;
                 fill: $color-black;
             }
         }
@@ -103,8 +106,12 @@
         input {
             flex: 1;
             min-width: 0;
-            font-size: 200%;
+            font-size: 100%;
             padding: 0.2rem;
+        }
+
+        .error {
+            border: 1px solid red;
         }
 
         .results {

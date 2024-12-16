@@ -4,8 +4,9 @@
     import { onMount } from "svelte";
     import type { ActionData, PageData } from "./$types";
     import apiPath from "$lib/apiPath";
-    import type { Model } from "$lib/types/";
+    import type { Location, Model } from "$lib/types/";
     import { base } from "$app/paths";
+    import LocationSearch from "$lib/components/LocationSearch.svelte";
 
     export let data: PageData;
 
@@ -62,9 +63,20 @@
             mainPicture = index;
         }
     }
+
+    let selectedLocation: Location | undefined = undefined;
+    let locationSearch: any;
+    let locationError: boolean = false;
 </script>
 
-<div id="main-content">
+<!-- svelte-ignore a11y-click-events-have-key-events -->
+<!-- svelte-ignore a11y-no-static-element-interactions -->
+<div
+    id="main-content"
+    on:click|stopPropagation={() => {
+        locationSearch.hideResults();
+    }}
+>
     {#if formLoading}
         <div id="loadingcover"></div>
     {/if}
@@ -78,6 +90,12 @@
                 formData.append("filelist", imageFiles[key].base64);
             }
             formData.append("mainPictureIndex", mainPicture.toString());
+            if (!selectedLocation) {
+                formLoading = false;
+                locationError = true;
+                cancel();
+            }
+            if (selectedLocation) formData.append("locationId", selectedLocation.id.toString());
             return async ({ update }) => {
                 formLoading = false;
                 update();
@@ -106,10 +124,11 @@
                 ></textarea>
             </div>
             <div class="input-group" id="location-group">
-                <label for="locationId">Település:</label>
+                <!-- <label for="locationId">Település:</label>
                 <select name="locationId" id="locationId" required>
                     <option value="1614">Kiskunfélegyháza</option>
-                </select>
+                </select> -->
+                <LocationSearch error={locationError} bind:selectedLocation bind:this={locationSearch} />
             </div>
             <div class="input-group" id="price-group">
                 <label for="priceHuf">Ár:</label>

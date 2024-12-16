@@ -169,6 +169,7 @@
                     <h2>{advert.title}</h2>
                     <p>{advert.description}</p>
                     <h3>{advert.priceHuf} HUF</h3>
+                    <h3>{advert.locationId}</h3>
                 </div>
             </div>
         {/each}
