@@ -162,7 +162,7 @@
                     <img
                         src={`data:image/jpeg;base64,${advert.mainPicture.data}`}
                         alt="advert main"
-                        style={`aspect-ratio: ${advert.mainPicture.object.width} / ${advert.mainPicture.object.height}`}
+                        style={`aspect-ratio: ${advert.mainPicture.object.width} / ${advert.mainPicture.object.height}; ${advert.mainPicture.object.width > advert.mainPicture.object.height ? "width: 100%;" : "height: 100%;"}`}
                     />
                 </div>
                 <div class="data">
@@ -214,8 +214,17 @@
                     min-width: 0;
                 }
 
-                img {
+                .image {
                     width: 100%;
+                    aspect-ratio: 16 / 9;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    background-color: darken($color-white, 10%);
+                }
+
+                img {
+                    // width: 100%;
                 }
             }
         }
