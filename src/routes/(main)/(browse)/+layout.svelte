@@ -3,6 +3,8 @@
     import type { LocalAdvert, Model, Picture } from "$lib/types";
     import { onMount } from "svelte";
     import type { PageData } from "./$types";
+    import { page } from "$app/stores";
+    import { afterNavigate, invalidate, invalidateAll } from "$app/navigation";
     interface LocalPicture extends Picture {
         object: HTMLImageElement;
     }
@@ -18,7 +20,14 @@
     export let data: PageData;
     console.log(data);
 
+    let userId: number | undefined = undefined;
+
+    if ($page.url.pathname.search("/profile/") !== -1) {
+        userId = $page.data.user.id;
+    }
+
     let adverts: ExtendedAdvert[] = [];
+    let cutAdverts: ExtendedAdvert[] = [];
 
     let models: CheckBoxModel[] = [];
 
@@ -45,6 +54,7 @@
     }
 
     onMount(async () => {
+        console.log(userId);
         for (const manufacturerId of data.activeFilters.manufacturers) {
             await getModels(manufacturerId);
         }
@@ -59,6 +69,38 @@
             newAdvert.mainPicture.object.src = `data:image/jpeg;base64,${advert.mainPicture.data}`;
             return newAdvert;
         });
+        cutAdverts = adverts;
+        if (userId !== undefined) {
+            cutAdverts = cutAdverts.filter(e => e.ownerId === userId);
+        }
+    });
+
+    afterNavigate(() => {
+        invalidateAll();
+        if ($page.url.pathname.search("/profile/") !== -1) {
+            userId = $page.data.user.id;
+        } else {
+            userId = undefined;
+        }
+        if (userId !== undefined) {
+            cutAdverts = adverts.filter(e => e.ownerId === userId);
+        }
+        console.log(userId);
+        adverts = data.adverts.map(advert => {
+            const newAdvert = {
+                ...advert,
+                mainPicture: {
+                    ...advert.mainPicture,
+                    object: new window.Image()
+                }
+            };
+            newAdvert.mainPicture.object.src = `data:image/jpeg;base64,${advert.mainPicture.data}`;
+            return newAdvert;
+        });
+        cutAdverts = adverts;
+        if (userId !== undefined) {
+            cutAdverts = cutAdverts.filter(e => e.ownerId === userId);
+        }
     });
 </script>
 
@@ -114,7 +156,7 @@
     <div id="advert-container">
         <!-- TODO wait for backend picture handling -->
         <!-- {data?.adverts?.length} -->
-        {#each adverts as advert}
+        {#each cutAdverts as advert}
             <div class="advert">
                 <div class="image">
                     <img
