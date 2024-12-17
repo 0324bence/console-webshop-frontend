@@ -10,6 +10,9 @@
     let locations: Location[] = [];
 
     async function search() {
+        if (textBoxValue.length === 0) {
+            return;
+        }
         showResults = true;
         loading = true;
 
