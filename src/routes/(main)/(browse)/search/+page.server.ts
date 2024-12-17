@@ -11,27 +11,27 @@ export const actions: Actions = {
         const states = data.getAll("state");
         const stateString = states.join(",");
         if (stateString.length > 0) {
-            redirectUrl += `stateIds=${stateString}&`;
+            redirectUrl += `stateIds=${encodeURIComponent(stateString)}&`;
         }
 
         //manufacturers
         const manufacturers = data.getAll("manufacturer");
         const manufacturerString = manufacturers.join(",");
         if (manufacturerString.length > 0) {
-            redirectUrl += `manufacturerIds=${manufacturerString}&`;
+            redirectUrl += `manufacturerIds=${encodeURIComponent(manufacturerString)}&`;
         }
 
         //models
         const models = data.getAll("model");
         const modelString = models.join(",");
         if (modelString.length > 0) {
-            redirectUrl += `modelIds=${modelString}&`;
+            redirectUrl += `modelIds=${encodeURIComponent(modelString)}&`;
         }
 
         //title
         const title = data.get("title");
         if (title) {
-            redirectUrl += `title=${title}&`;
+            redirectUrl += `title=${encodeURIComponent(title.toString())}&`;
         }
 
         return redirect(303, redirectUrl);

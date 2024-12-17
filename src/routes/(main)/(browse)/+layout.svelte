@@ -33,14 +33,14 @@
 
     async function getModels(manufacturerId: number) {
         const resp = await fetch(`${apiPath}/filters/modelsForManufacturer?manufacturerId=${manufacturerId}`);
-        let data = await resp.json();
-        data = data.map((model: Model) => {
+        let ldata = await resp.json();
+        ldata = ldata.map((model: Model) => {
             return {
                 ...model,
                 checked: true
             };
         });
-        models = [...models, ...data];
+        models = [...models, ...ldata];
     }
 
     async function onManufacturerSelect(event: Event) {
@@ -76,9 +76,22 @@
     });
 
     function changeSorting(e: Event) {
+        console.log($page.url);
         const sortingValue = (e.target as HTMLSelectElement).value;
         const sorting = sortingValue.split("-");
-        goto($page.url.pathname + `?sortBy=${sorting[0]}&sortOrder=${sorting[1]}&`);
+        const localUrl = new URL($page.url.href);
+        if (sorting[0].length === 0) {
+            localUrl.searchParams.delete("sortBy");
+            localUrl.searchParams.delete("sortOrder");
+        } else {
+            localUrl.searchParams.set("sortBy", sorting[0]);
+            localUrl.searchParams.set("sortOrder", sorting[1]);
+        }
+        goto(
+            localUrl.pathname +
+                localUrl.search +
+                (localUrl.search.length > 0 && localUrl.search[localUrl.search.length - 1] !== "&" ? "&" : "")
+        );
     }
 
     afterNavigate(() => {
@@ -155,7 +168,9 @@
                         name="model"
                         id={"models" + model.id}
                         value={model.id}
-                        checked={data.activeFilters.models.includes(model.id) || model.checked}
+                        checked={data.activeFilters.models.length > 0
+                            ? data.activeFilters.models.includes(model.id)
+                            : model.checked}
                     />
                 </div>
             {/each}
@@ -168,6 +183,7 @@
             on:change={changeSorting}
             value={`${data.activeFilters.sortBy}-${data.activeFilters.sortOrder}`}
         >
+            <option value="-">Alap</option>
             <option value="priceHuf-ASC">Ár növekvő</option>
             <option value="priceHuf-DESC">Ár csökkenő</option>
             <option value="title-ASC">A-Z</option>
