@@ -40,7 +40,7 @@
 
             <div class="group">
                 <label for="password">Jelszó</label>
-                <input type="password" name="password" id="password" />
+                <input type="password" name="password" id="password" required />
             </div>
 
             <span id="error">{form?.message || ""}</span>
