@@ -1,11 +1,33 @@
 <script lang="ts">
     import placeholder from '$lib/images/placeholder.png';
+    import { onMount } from "svelte";
 
     export let url = "";
     $: img = (url) ? "data:image/jpeg;base64," +  url : placeholder;
+
+
+    let container: HTMLDivElement;
+
+
+    onMount(() => {
+        const resize = () => {
+            const containerWidth = container.clientWidth;
+            const containerHeight = container.clientHeight;
+
+            container.style.width = containerWidth + "px";
+            container.style.height = containerHeight + "px";
+        };
+
+        resize();
+        window.addEventListener("resize", resize);
+
+        return () => {
+            window.removeEventListener("resize", resize);
+        };
+    });
 </script>
 
-<div id="container">
+<div id="container" bind:this={container}>
     <!-- <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M50 100C77.6142 100 100 77.6142 100 50C100 22.3858 77.6142 0 50 0C22.3858 0 0 22.3858 0 50C0 77.6142 22.3858 100 50 100Z" class="dark-blue"/>
         <g opacity="0.2">
