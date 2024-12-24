@@ -136,7 +136,7 @@
             </div>
             <div class="input-group" id="price-group">
                 <label for="priceHuf">Ár (HUF):</label>
-                <input name="priceHuf" type="number" placeholder="0" id="priceHuf" required />
+                <input name="priceHuf" type="number" placeholder="0" min="0" id="priceHuf" required />
             </div>
             <div class="input-group" id="state-group">
                 <label for="stateId">Állapot:</label>
