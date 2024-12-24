@@ -2,6 +2,7 @@
     import type { ActionData, PageData } from "../../../../.svelte-kit/types/src/routes/auth/[action]/$types";
     import Controller from "$lib/svgs/Controller.svelte";
     import Logo from "$lib/svgs/Logo.svelte";
+    import { goto } from "$app/navigation";
 
     export let data: PageData;
     export let form: ActionData;
@@ -15,7 +16,7 @@
     <div id="left-container">
         <button
             on:click={() => {
-                history.back();
+                goto("/");
             }}
             class="logo"
             title="logo"
