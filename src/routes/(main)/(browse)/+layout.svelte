@@ -242,7 +242,7 @@
         padding-top: 0.5rem;
         padding-right: 0.5rem;
         padding-left: 0.5rem;
-        grid-template-rows: 1fr 15fr;
+        grid-template-rows: 2rem 15fr;
 
         .hidden {
             display: none;
