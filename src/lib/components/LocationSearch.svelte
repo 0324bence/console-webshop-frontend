@@ -37,46 +37,63 @@
     export let error = false;
 </script>
 
-<form on:submit|preventDefault={search} class="input-container">
-    <input class={error ? "error" : ""} type="text" placeholder="Település..." bind:value={textBoxValue} />
-    <button type="submit" disabled={loading}>
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"
-            ><!--!Font Awesome Free 6.7.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path
-                d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z"
-            /></svg
-        >
-    </button>
-    {#if showResults}
-        <div class="results">
-            {#if loading}
-                <div class="loading">
-                    <span>Betöltés...</span>
-                </div>
-            {:else}
-                {#if locations.length === 0}
+<div class="container-box">
+    <label for="locationTextBox"
+        >Település{selectedLocation !== undefined ? ` (${selectedLocation.name})` : ""}:
+    </label>
+    <form on:submit|preventDefault={search} class="input-container">
+        <input
+            class={error ? "error" : ""}
+            type="text"
+            placeholder={selectedLocation !== undefined ? `${selectedLocation.name}...` : "Település..."}
+            bind:value={textBoxValue}
+            id="locationTextBox"
+        />
+        <button type="submit" disabled={loading}>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"
+                ><!--!Font Awesome Free 6.7.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path
+                    d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z"
+                /></svg
+            >
+        </button>
+        {#if showResults}
+            <div class="results">
+                {#if loading}
                     <div class="loading">
-                        <span>Nincs találat</span>
+                        <span>Betöltés...</span>
                     </div>
+                {:else}
+                    {#if locations.length === 0}
+                        <div class="loading">
+                            <span>Nincs találat</span>
+                        </div>
+                    {/if}
+                    {#each locations as location}
+                        <button
+                            class="result"
+                            on:click|stopPropagation={() => {
+                                hideResults();
+                                selectLocation(location);
+                            }}
+                        >
+                            <h1>{location.name} ({location.zip})</h1>
+                            <p>{location.county}</p>
+                        </button>
+                    {/each}
                 {/if}
-                {#each locations as location}
-                    <button
-                        class="result"
-                        on:click|stopPropagation={() => {
-                            hideResults();
-                            selectLocation(location);
-                        }}
-                    >
-                        <h1>{location.name} ({location.zip})</h1>
-                        <p>{location.county}</p>
-                    </button>
-                {/each}
-            {/if}
-        </div>
-    {/if}
-</form>
+            </div>
+        {/if}
+    </form>
+</div>
 
 <style lang="scss">
     @import "$lib/styles/variables";
+
+    .container-box {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+    }
 
     .input-container {
         width: 100%;
@@ -84,6 +101,12 @@
         display: flex;
         justify-content: space-between;
         gap: 1%;
+
+        .input-box {
+            display: flex;
+            flex-direction: column;
+            gap: 0.2rem;
+        }
 
         button[type="submit"] {
             color: $color-black;
