@@ -111,8 +111,9 @@
     #window-container {
         display: flex;
         flex-direction: column;
-        height: 100vh;
+        min-height: 100vh;
         width: 100%;
+        background-color: darken($color-white, 10%);
     }
 
     #header {

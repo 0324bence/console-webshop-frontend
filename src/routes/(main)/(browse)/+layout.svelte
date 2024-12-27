@@ -94,6 +94,16 @@
         );
     }
 
+    let searchForm: HTMLFormElement;
+    let timeout: number;
+
+    function changeSearch() {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => {
+            searchForm.submit();
+        }, 500);
+    }
+
     afterNavigate(() => {
         invalidateAll();
         if ($page.url.pathname.search("/profile/") !== -1) {
@@ -125,29 +135,33 @@
 
 <slot></slot>
 <div class="main-container">
-    <form id="filter-container" method="post" action="/search?/filters">
-        <button id="search" type="submit">Keresés</button>
+    <form id="filter-container" method="post" action="/search?/filters" bind:this={searchForm}>
+        <!-- <div class="filter-group"><button id="search" type="submit">Keresés</button></div> -->
         <input type="text" name="title" id="title" class="hidden" value={data.activeFilters.title} />
         <input type="text" name="sortBy" id="sortBy" class="hidden" value={data.activeFilters.sortBy} />
         <input type="text" name="sortOrder" id="sortOrder" class="hidden" value={data.activeFilters.sortOrder} />
-        <div id="state" class="checkboxgroup">
+        <div id="state" class="filter-group">
+            <h2>Állapot</h2>
+            <hr />
             {#each data.filters.states as state}
-                <div>
-                    <label for={"states" + state.id}>{state.name}</label>
+                <div class="checkboxgroup">
                     <input
                         type="checkbox"
                         name="state"
                         id={"states" + state.id}
                         value={state.id}
                         checked={data.activeFilters.states.includes(state.id)}
+                        on:change={changeSearch}
                     />
+                    <label for={"states" + state.id}>{state.name}</label>
                 </div>
             {/each}
         </div>
-        <div id="manufacturer" class="checkboxgroup">
+        <div id="manufacturer" class="filter-group">
+            <h2>Gyártó</h2>
+            <hr />
             {#each data.filters.manufacturers as manufacturer}
-                <div>
-                    <label for={"manufacturers" + manufacturer.id}>{manufacturer.name}</label>
+                <div class="checkboxgroup">
                     <input
                         type="checkbox"
                         name="manufacturer"
@@ -155,13 +169,17 @@
                         value={manufacturer.id}
                         checked={data.activeFilters.manufacturers.includes(manufacturer.id)}
                         on:change={onManufacturerSelect}
+                        on:change={changeSearch}
                     />
+                    <label for={"manufacturers" + manufacturer.id}>{manufacturer.name}</label>
                 </div>
             {/each}
         </div>
-        <div id="model" class="checkboxgroup">
+        <div id="model" class="filter-group">
+            <h2>Modell</h2>
+            <hr />
             {#each models as model}
-                <div>
+                <div class="checkboxgroup">
                     <label for={"models" + model.id}>{model.name}</label>
                     <input
                         type="checkbox"
@@ -171,28 +189,29 @@
                         checked={data.activeFilters.models.length > 0
                             ? data.activeFilters.models.includes(model.id)
                             : model.checked}
+                        on:change={changeSearch}
                     />
                 </div>
             {/each}
         </div>
     </form>
     <div id="sorting-container">
-        <select
-            name="sorting"
-            id="sorting"
-            on:change={changeSorting}
-            value={`${data.activeFilters.sortBy}-${data.activeFilters.sortOrder}`}
-        >
-            <option value="-">Alap</option>
-            <option value="priceHuf-ASC">Ár növekvő</option>
-            <option value="priceHuf-DESC">Ár csökkenő</option>
-            <option value="title-ASC">A-Z</option>
-            <option value="title-DESC">Z-A</option>
-        </select>
+        <div class="sorting-group">
+            <select
+                name="sorting"
+                id="sorting"
+                on:change={changeSorting}
+                value={`${data.activeFilters.sortBy}-${data.activeFilters.sortOrder}`}
+            >
+                <option value="-">Alap</option>
+                <option value="priceHuf-ASC">Ár növekvő</option>
+                <option value="priceHuf-DESC">Ár csökkenő</option>
+                <option value="title-ASC">A-Z</option>
+                <option value="title-DESC">Z-A</option>
+            </select>
+        </div>
     </div>
     <div id="advert-container">
-        <!-- TODO wait for backend picture handling -->
-        <!-- {data?.adverts?.length} -->
         {#each cutAdverts as advert}
             <div class="advert">
                 <div class="image">
@@ -218,13 +237,33 @@
     .main-container {
         width: 100%;
         height: 100%;
-        display: flex;
         display: grid;
         grid-template-columns: 3fr 17fr;
+        padding-top: 0.5rem;
+        padding-right: 0.5rem;
+        padding-left: 0.5rem;
         grid-template-rows: 1fr 15fr;
 
         .hidden {
             display: none;
+        }
+
+        #sorting-container {
+            display: flex;
+            justify-content: end;
+            align-items: center;
+
+            .sorting-group {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                gap: 0.2rem;
+                background-color: $color-white;
+                border-radius: 0.3rem;
+                box-shadow: 1px 1px 5px 0px $color-black;
+                padding: 0.5rem;
+            }
         }
 
         #filter-container {
@@ -232,6 +271,22 @@
             display: flex;
             flex-direction: column;
             gap: 1rem;
+
+            .filter-group {
+                display: flex;
+                flex-direction: column;
+                gap: 0.2rem;
+                background-color: $color-white;
+                border-radius: 0.3rem;
+                box-shadow: 1px 1px 5px 0px $color-black;
+                padding: 0.5rem;
+            }
+
+            .checkboxgroup {
+                display: flex;
+                flex-direction: row;
+                gap: 0.5rem;
+            }
         }
 
         #advert-container {
@@ -245,9 +300,11 @@
                 grid-template-rows: 1fr 1fr;
                 width: 100%;
                 padding: 1rem;
-                border-radius: 0.6rem;
+                border-radius: 0.3rem;
                 height: 100%;
-                border: 1px solid $color-black;
+                // border: 1px solid $color-black;
+                background-color: $color-white;
+                box-shadow: 1px 1px 5px 0px $color-black;
 
                 div {
                     border: none;
@@ -268,10 +325,6 @@
                     // width: 100%;
                 }
             }
-        }
-
-        div {
-            border: 1px solid black;
         }
 
         .checkboxgroup {
