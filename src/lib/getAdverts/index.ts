@@ -3,7 +3,20 @@ import noImage from "$lib/images/noImage";
 import type { LocalAdvert, Picture, User } from "$lib/types";
 import { error } from "@sveltejs/kit";
 
-async function getAdverts(url: URL, userId: number | undefined) {
+async function getAdverts(url: URL | undefined, userId: number | undefined) {
+    if (url === undefined) {
+        return {
+            activeFilters: {
+                states: [],
+                manufacturers: [],
+                models: [],
+                title: "",
+                sortBy: "",
+                sortOrder: ""
+            },
+            adverts: []
+        };
+    }
     let advertsReq;
     if (userId !== undefined) {
         advertsReq = await fetch(

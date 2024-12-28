@@ -10,7 +10,7 @@ export const load: LayoutServerLoad = async ({ cookies, url }) => {
     urlPath.shift();
     if (urlPath[0] === "profile") {
         if (urlPath[1] === undefined) {
-            return;
+            return getAdverts(undefined, undefined);
         }
         return await getAdverts(url, parseInt(urlPath[1]));
     }

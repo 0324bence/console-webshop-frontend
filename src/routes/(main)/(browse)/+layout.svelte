@@ -5,6 +5,7 @@
     import type { PageData } from "./$types";
     import { page } from "$app/stores";
     import { afterNavigate, goto, invalidate, invalidateAll } from "$app/navigation";
+    import { error } from "@sveltejs/kit";
     interface LocalPicture extends Picture {
         object: HTMLImageElement;
     }
