@@ -30,6 +30,7 @@ async function getAdverts(url: URL | undefined, userId: number | undefined) {
     }
     const advertsRes = await advertsReq.json();
     const adverts: LocalAdvert[] = advertsRes.items;
+    const advertCount = parseInt(advertsRes.resultCount);
     for (const advert of adverts) {
         const picturesReq = await fetch(`${apiPath}/adverts/${advert.id}/primaryPicture`);
         if (picturesReq.ok) {
@@ -105,7 +106,8 @@ async function getAdverts(url: URL | undefined, userId: number | undefined) {
             sortBy,
             sortOrder
         },
-        adverts
+        adverts,
+        advertCount
     };
 }
 

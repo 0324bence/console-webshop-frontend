@@ -61,7 +61,7 @@
         </div>
         <div class="row">
             <span>Hirdetések:</span>
-            <span>????</span>
+            <span>{data.advertCount} db</span>
         </div>
         <div class="row">
             <span>Értékelés:</span>
