@@ -102,7 +102,7 @@
             if (selectedLocation) formData.append("locationId", selectedLocation.id.toString());
             return async ({ update }) => {
                 formLoading = false;
-                update();
+                await update();
                 imageFiles = [];
                 /*TODO redirect to advert*/
             };

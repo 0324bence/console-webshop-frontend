@@ -3,9 +3,17 @@ import type { Actions } from "./$types";
 
 export const actions: Actions = {
     filters: async ({ request }) => {
-        let redirectUrl = "/?";
-
         const data = await request.formData();
+
+        //user
+        const userId = data.get("userId");
+        console.log(userId);
+        let redirectUrl;
+        if (userId !== null && userId !== "") {
+            redirectUrl = `/profile/${userId}?`;
+        } else {
+            redirectUrl = "/?";
+        }
 
         //states
         const states = data.getAll("state");

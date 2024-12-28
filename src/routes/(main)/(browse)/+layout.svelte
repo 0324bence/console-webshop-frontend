@@ -5,7 +5,7 @@
     import type { PageData } from "./$types";
     import { page } from "$app/stores";
     import { afterNavigate, goto, invalidate, invalidateAll } from "$app/navigation";
-    import { error } from "@sveltejs/kit";
+    import { enhance } from "$app/forms";
     interface LocalPicture extends Picture {
         object: HTMLImageElement;
     }
@@ -19,7 +19,12 @@
     }
 
     export let data: PageData;
-    // console.log(data);
+
+    let userId: number | undefined = undefined;
+
+    if ($page.url.pathname.search("/profile/") !== -1) {
+        userId = $page.data.user.id;
+    }
 
     let adverts: ExtendedAdvert[] = [];
 
@@ -48,6 +53,7 @@
     }
 
     onMount(async () => {
+        console.log(userId);
         for (const manufacturerId of data.activeFilters.manufacturers) {
             await getModels(manufacturerId);
         }
@@ -89,12 +95,19 @@
     function changeSearch() {
         clearTimeout(timeout);
         timeout = setTimeout(() => {
+            console.log("submit", userId);
             searchForm.submit();
         }, 500);
     }
 
     afterNavigate(() => {
         invalidateAll();
+        if ($page.url.pathname.search("/profile/") !== -1) {
+            userId = $page.data.user.id;
+        } else {
+            userId = undefined;
+        }
+        console.log(userId);
         adverts = data.adverts.map(advert => {
             const newAdvert = {
                 ...advert,
@@ -116,6 +129,7 @@
         <input type="text" name="title" id="title" class="hidden" value={data.activeFilters.title} />
         <input type="text" name="sortBy" id="sortBy" class="hidden" value={data.activeFilters.sortBy} />
         <input type="text" name="sortOrder" id="sortOrder" class="hidden" value={data.activeFilters.sortOrder} />
+        <input type="text" name="userId" id="userId" class="hidden" bind:value={userId} />
         <div id="state" class="filter-group">
             <h2>Állapot</h2>
             <hr />
