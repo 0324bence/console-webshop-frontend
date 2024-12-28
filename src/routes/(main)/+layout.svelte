@@ -39,6 +39,7 @@
             <Logo />
         </a>
         <div id="center-container">
+            <!-- TODO Fix search modal (click) -->
             <form on:submit|preventDefault class="searchContainer">
                 <input
                     type="text"
