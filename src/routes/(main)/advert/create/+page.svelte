@@ -240,6 +240,7 @@
         align-items: center;
         justify-content: center;
         gap: 15px;
+        min-height: 0;
     }
 
     #loadingcover {
@@ -301,7 +302,7 @@
                 padding: 0.5rem;
                 gap: 0.5rem;
                 flex-grow: 1;
-                overflow-y: auto;
+                overflow-y: scroll;
                 max-height: 100%;
                 width: 100%;
             }
