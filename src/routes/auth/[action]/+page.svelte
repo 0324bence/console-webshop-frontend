@@ -142,20 +142,25 @@
         }
 
         input[type="submit"] {
-            background-color: $color-light-blue;
-            color: $color-dark-blue;
-            border: $color-dark-blue 1px solid;
-            border: none;
+            background-color: $color-blue;
+            color: $color-white;
+            border: $color-white 1px solid;
+            // border: none;
+            box-shadow: 2px 2px 5px $color-dark-blue;
             border-radius: 0.25rem;
             padding: 0.5rem;
             width: 50%;
             margin-left: auto;
             margin-right: auto;
             cursor: pointer;
-        }
 
-        input[type="submit"]:hover {
-            background-color: darken($color-light-blue, 10%);
+            &:hover {
+                background-color: darken($color-blue, 5%);
+            }
+
+            &:active {
+                box-shadow: 1px 1px 5px $color-dark-blue;
+            }
         }
 
         #error {
