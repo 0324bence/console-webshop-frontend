@@ -178,6 +178,7 @@
             src="https://images.pexels.com/photos/924824/pexels-photo-924824.jpeg?auto=compress&cs=tinysrgb&w=600"
             alt="a"
             /> -->
+            <h3>Képek</h3>
             <div class="file-input">
                 <div id="button">
                     <span>+</span>
