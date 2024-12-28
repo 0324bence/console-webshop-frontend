@@ -191,7 +191,6 @@
                 </div>
             </div>
             <div class="images">
-                <!-- TODO height bug -->
                 {#each imageFiles as image, index}
                     <div class="image">
                         <label class="checkbox-container" for={`image${index}primary`} title="Fő kép">
