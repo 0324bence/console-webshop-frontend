@@ -1,10 +1,12 @@
 import apiPath from "$lib/apiPath";
-import type { User } from "$lib/types";
+import type { LocalAdvert, Picture, User } from "$lib/types";
 import { error } from "@sveltejs/kit";
 import type { PageServerLoad } from "./$types";
 import type { Actions } from "./$types";
+import noImage from "$lib/images/noImage";
+import getAdverts from "$lib/getAdverts";
 
-export const load: PageServerLoad = async ({ params, parent }) => {
+export const load: PageServerLoad = async ({ params, parent, url }) => {
     if (params.id === undefined || isNaN(Number(params.id))) {
         return error(400, "Invalid user id");
     }
@@ -15,6 +17,7 @@ export const load: PageServerLoad = async ({ params, parent }) => {
         return {
             isOwn: true,
             user: ownUser
+            // ...(await getAdverts(url, ownUser))
         };
     }
 
@@ -36,6 +39,7 @@ export const load: PageServerLoad = async ({ params, parent }) => {
         return {
             isOwn: false,
             user
+            // ...(await getAdverts(url, user))
         };
     } catch {
         return error(404, "User not found");

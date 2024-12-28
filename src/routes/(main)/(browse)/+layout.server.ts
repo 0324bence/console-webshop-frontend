@@ -3,89 +3,16 @@ import type { LayoutServerLoad } from "./$types";
 import apiPath from "$lib/apiPath";
 import type { LocalAdvert, Picture } from "$lib/types";
 import noImage from "$lib/images/noImage";
+import getAdverts from "$lib/getAdverts";
 
 export const load: LayoutServerLoad = async ({ cookies, url }) => {
-    const advertsReq = await fetch(`${apiPath}/adverts${url.search}`);
-    if (!advertsReq.ok) {
-        return error(advertsReq.status, advertsReq.statusText);
-    }
-    const advertsRes = await advertsReq.json();
-    const adverts: LocalAdvert[] = advertsRes.items;
-    for (const advert of adverts) {
-        const picturesReq = await fetch(`${apiPath}/adverts/${advert.id}/primaryPicture`);
-        if (picturesReq.ok) {
-            try {
-                let pictures: Picture = await picturesReq.json();
-                advert.mainPicture = pictures;
-            } catch (error) {
-                advert.mainPicture = {
-                    id: 0,
-                    data: noImage,
-                    description: "Nincs megadva kép",
-                    advertId: advert.id,
-                    isPriority: 1
-                };
-            }
-        } else {
-            // advert.pictures = [
-            // {
-            //     id: 0,
-            //     data: noImage,
-            //     description: "Nincs megadva kép",
-            //     advertId: advert.id,
-            //     isPriority: 1
-            // }
-            // ];
-            advert.mainPicture = {
-                id: 0,
-                data: noImage,
-                description: "Nincs megadva kép",
-                advertId: advert.id,
-                isPriority: 1
-            };
+    const urlPath = url.pathname.split("/");
+    urlPath.shift();
+    if (urlPath[0] === "profile") {
+        if (urlPath[1] === undefined) {
+            return;
         }
-        const locationReq = await fetch(`${apiPath}/filters/locations/${advert.locationId}`);
-        if (locationReq.ok) {
-            advert.location = await locationReq.json();
-        } else {
-            advert.location = {
-                id: 0,
-                name: "Ismeretlen",
-                county: "Ismeretlen",
-                zip: 0,
-                latitude: "0",
-                longitude: "0"
-            };
-        }
+        return await getAdverts(url, parseInt(urlPath[1]));
     }
-
-    //states
-    const activeStates = url.searchParams.get("stateIds")?.split(",").map(Number) || [];
-
-    //manufacturers
-    const activeManufacturers = url.searchParams.get("manufacturerIds")?.split(",").map(Number) || [];
-
-    //models
-    const activeModels = url.searchParams.get("modelIds")?.split(",").map(Number) || [];
-
-    //title
-    const title = url.searchParams.get("title") || "";
-
-    //sortBy
-    const sortBy = url.searchParams.get("sortBy") || "";
-
-    //sortOrder
-    const sortOrder = url.searchParams.get("sortOrder") || "";
-
-    return {
-        activeFilters: {
-            states: activeStates,
-            manufacturers: activeManufacturers,
-            models: activeModels,
-            title,
-            sortBy,
-            sortOrder
-        },
-        adverts
-    };
+    return await getAdverts(url, undefined);
 };

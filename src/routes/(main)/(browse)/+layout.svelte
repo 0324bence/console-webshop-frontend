@@ -18,16 +18,9 @@
     }
 
     export let data: PageData;
-    console.log(data);
-
-    let userId: number | undefined = undefined;
-
-    if ($page.url.pathname.search("/profile/") !== -1) {
-        userId = $page.data.user.id;
-    }
+    // console.log(data);
 
     let adverts: ExtendedAdvert[] = [];
-    let cutAdverts: ExtendedAdvert[] = [];
 
     let models: CheckBoxModel[] = [];
 
@@ -54,7 +47,6 @@
     }
 
     onMount(async () => {
-        console.log(userId);
         for (const manufacturerId of data.activeFilters.manufacturers) {
             await getModels(manufacturerId);
         }
@@ -69,10 +61,6 @@
             newAdvert.mainPicture.object.src = `data:image/jpeg;base64,${advert.mainPicture.data}`;
             return newAdvert;
         });
-        cutAdverts = adverts;
-        if (userId !== undefined) {
-            cutAdverts = cutAdverts.filter(e => e.ownerId === userId);
-        }
     });
 
     function changeSorting(e: Event) {
@@ -106,15 +94,6 @@
 
     afterNavigate(() => {
         invalidateAll();
-        if ($page.url.pathname.search("/profile/") !== -1) {
-            userId = $page.data.user.id;
-        } else {
-            userId = undefined;
-        }
-        if (userId !== undefined) {
-            cutAdverts = adverts.filter(e => e.ownerId === userId);
-        }
-        console.log(userId);
         adverts = data.adverts.map(advert => {
             const newAdvert = {
                 ...advert,
@@ -126,10 +105,6 @@
             newAdvert.mainPicture.object.src = `data:image/jpeg;base64,${advert.mainPicture.data}`;
             return newAdvert;
         });
-        cutAdverts = adverts;
-        if (userId !== undefined) {
-            cutAdverts = cutAdverts.filter(e => e.ownerId === userId);
-        }
     });
 </script>
 
@@ -212,7 +187,7 @@
         </div>
     </div>
     <div id="advert-container">
-        {#each cutAdverts as advert}
+        {#each adverts as advert}
             <div class="advert">
                 <div class="image">
                     <img
