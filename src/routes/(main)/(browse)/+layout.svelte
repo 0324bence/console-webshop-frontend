@@ -36,7 +36,7 @@
         ldata = ldata.map((model: Model) => {
             return {
                 ...model,
-                checked: true
+                checked: false
             };
         });
         models = [...models, ...ldata];
@@ -176,9 +176,7 @@
                         name="model"
                         id={"models" + model.id}
                         value={model.id}
-                        checked={data.activeFilters.models.length > 0
-                            ? data.activeFilters.models.includes(model.id)
-                            : model.checked}
+                        checked={data.activeFilters.models.includes(model.id)}
                         on:change={changeSearch}
                     />
                 </div>
