@@ -20,6 +20,12 @@
 
     export let data: PageData;
 
+    function getManufacturerName(manufacturerId: string) {
+        return data.filters.manufacturers.find(
+            (manufacturer: { id: number }) => manufacturer.id === parseInt(manufacturerId)
+        ).name;
+    }
+
     let userId: number | undefined = undefined;
 
     if ($page.url.pathname.search("/profile/") !== -1) {
@@ -28,27 +34,28 @@
 
     let adverts: ExtendedAdvert[] = [];
 
-    let models: CheckBoxModel[] = [];
+    let modelGroups: { [key: string]: CheckBoxModel[] } = {};
 
     async function getModels(manufacturerId: number) {
         const resp = await fetch(`${apiPath}/filters/modelsForManufacturer?manufacturerId=${manufacturerId}`);
-        let ldata = await resp.json();
+        let ldata: CheckBoxModel[] = await resp.json();
         ldata = ldata.map((model: Model) => {
             return {
                 ...model,
                 checked: false
             };
         });
-        models = [...models, ...ldata];
+        modelGroups[manufacturerId.toString()] = ldata;
     }
 
     async function onManufacturerSelect(event: Event) {
         const target = event.target as HTMLInputElement;
         const value = parseInt(target.value);
+        const manufacturerId = target.getAttribute("data-manufacturerId")!;
         if (target.checked) {
             await getModels(value);
         } else {
-            models = models.filter(model => model.manufacturerId !== value);
+            delete modelGroups[manufacturerId];
         }
     }
 
@@ -165,21 +172,30 @@
                 </div>
             {/each}
         </div>
-        <div id="model" class="filter-group">
+        <div id="model" class="filter-group models-group">
             <h2>Modell</h2>
             <hr />
-            {#each models as model}
-                <div class="checkboxgroup">
-                    <label for={"models" + model.id}>{model.name}</label>
-                    <input
-                        type="checkbox"
-                        name="model"
-                        id={"models" + model.id}
-                        value={model.id}
-                        checked={data.activeFilters.models.includes(model.id)}
-                        on:change={changeSearch}
-                    />
+            {#each Object.entries(modelGroups) as [key, models]}
+                <div class="manufacturer-title">
+                    <p>
+                        {getManufacturerName(key)}
+                    </p>
+                    <hr />
                 </div>
+                {#each models as model}
+                    <div class="checkboxgroup">
+                        <input
+                            type="checkbox"
+                            name="model"
+                            id={"models" + model.id}
+                            value={model.id}
+                            data-manufacturerId={model.manufacturerId}
+                            checked={data.activeFilters.models.includes(model.id)}
+                            on:change={changeSearch}
+                        />
+                        <label for={"models" + model.id}>{model.name}</label>
+                    </div>
+                {/each}
             {/each}
         </div>
     </form>
@@ -268,6 +284,24 @@
                 border-radius: 0.3rem;
                 box-shadow: 1px 1px 5px 0px $color-black;
                 padding: 0.5rem;
+
+                &.models-group .checkboxgroup {
+                    padding-left: 1rem;
+                }
+
+                .manufacturer-title {
+                    display: flex;
+                    flex-direction: row;
+                    justify-content: start;
+                    align-items: center;
+                    gap: 0.5rem;
+                    p {
+                        font-weight: bold;
+                    }
+                    hr {
+                        flex: 1;
+                    }
+                }
             }
 
             .checkboxgroup {
