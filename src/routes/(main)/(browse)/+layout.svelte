@@ -6,6 +6,8 @@
     import { page } from "$app/stores";
     import { afterNavigate, goto, invalidate, invalidateAll } from "$app/navigation";
     import { enhance } from "$app/forms";
+    import IntersectionObserver from "$lib/components/IntersectionObserver.svelte";
+    import noImage from "$lib/images/noImage";
     interface LocalPicture extends Picture {
         object: HTMLImageElement;
     }
@@ -105,6 +107,73 @@
             console.log("submit", userId);
             searchForm.submit();
         }, 500);
+    }
+
+    let loadingAdverts = false;
+
+    async function loadMoreAdverts() {
+        if (data.advertCount == undefined || adverts.length >= data.advertCount) {
+            return;
+        }
+        console.log("loading more adverts", adverts.length);
+        loadingAdverts = true;
+        const advertsReq = await fetch(
+            `${apiPath}/adverts?${$page.url.search}${$page.url.search.length > 0 ? "&" : ""}skip=${adverts.length}`
+        );
+        const advertsRes = await advertsReq.json();
+        const newAdverts: ExtendedAdvert[] = advertsRes.items;
+        for (const advert of newAdverts) {
+            const picturesReq = await fetch(`${apiPath}/adverts/${advert.id}/primaryPicture`);
+            if (picturesReq.ok) {
+                try {
+                    let pictures: Picture = await picturesReq.json();
+                    advert.mainPicture = { ...pictures, object: new window.Image() };
+                } catch (error) {
+                    advert.mainPicture = {
+                        id: 0,
+                        data: noImage,
+                        description: "Nincs megadva kép",
+                        advertId: advert.id,
+                        isPriority: 1,
+                        object: new window.Image()
+                    };
+                }
+            } else {
+                // advert.pictures = [
+                // {
+                //     id: 0,
+                //     data: noImage,
+                //     description: "Nincs megadva kép",
+                //     advertId: advert.id,
+                //     isPriority: 1
+                // }
+                // ];
+                advert.mainPicture = {
+                    id: 0,
+                    data: noImage,
+                    description: "Nincs megadva kép",
+                    advertId: advert.id,
+                    isPriority: 1,
+                    object: new window.Image()
+                };
+            }
+            advert.mainPicture.object.src = `data:image/jpeg;base64,${advert.mainPicture.data}`;
+            const locationReq = await fetch(`${apiPath}/filters/locations/${advert.locationId}`);
+            if (locationReq.ok) {
+                advert.location = await locationReq.json();
+            } else {
+                advert.location = {
+                    id: 0,
+                    name: "Ismeretlen",
+                    county: "Ismeretlen",
+                    zip: 0,
+                    latitude: "0",
+                    longitude: "0"
+                };
+            }
+        }
+        adverts = [...adverts, ...newAdverts];
+        loadingAdverts = false;
     }
 
     afterNavigate(() => {
@@ -216,8 +285,11 @@
         </div>
     </div>
     <div id="advert-container">
-        {#each adverts as advert}
+        {#each adverts as advert, index}
             <div class="advert">
+                {#if index == adverts.length - 6}
+                    <IntersectionObserver on:intersect={loadMoreAdverts} />
+                {/if}
                 <div class="image">
                     <img
                         src={`data:image/jpeg;base64,${advert.mainPicture.data}`}
@@ -233,6 +305,11 @@
                 </div>
             </div>
         {/each}
+        {#if loadingAdverts}
+            <div id="loading-container">
+                <h2>Betöltés...</h2>
+            </div>
+        {/if}
     </div>
 </div>
 
@@ -313,10 +390,18 @@
 
         #advert-container {
             display: grid;
-            grid-template-columns: repeat(5, 18rem);
+            grid-template-columns: repeat(5, 19%);
             grid-template-rows: repeat(auto-fill, 20rem);
             padding: 1rem;
             gap: 1rem;
+
+            #loading-container {
+                grid-column: span 5;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+
             .advert {
                 display: grid;
                 grid-template-rows: 1fr 1fr;
@@ -341,10 +426,6 @@
                     justify-content: center;
                     align-items: center;
                     background-color: darken($color-white, 10%);
-                }
-
-                img {
-                    // width: 100%;
                 }
             }
         }
