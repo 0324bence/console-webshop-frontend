@@ -261,7 +261,8 @@
         display: grid;
         grid-template-rows: 1fr 10%;
         grid-template-columns: 1fr 1fr;
-        height: 85%;
+        height: 45rem;
+        min-height: 0;
         gap: 1rem;
         width: 50%;
         background-color: $backround;
