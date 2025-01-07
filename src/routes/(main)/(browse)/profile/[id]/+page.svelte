@@ -171,6 +171,20 @@
             height: 8rem;
             max-width: 100%;
 
+            p {
+                white-space: pre-wrap;
+                word-wrap: break-word;
+                word-break: break-all;
+                width: 70%;
+                height: 100%;
+                // border: 1px solid black;
+                overflow-y: auto;
+
+                // only display scrollbar thumb
+                scrollbar-color: $color-dark-blue transparent;
+                scrollbar-width: thin;
+            }
+
             .counter {
                 margin-left: 1rem;
             }
