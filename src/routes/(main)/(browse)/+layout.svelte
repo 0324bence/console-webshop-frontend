@@ -284,6 +284,7 @@
             </select>
         </div>
     </div>
+    <!-- TODO growing space under adverts on scroll -->
     <div id="advert-container">
         {#if adverts.length == 0}
             <div class="no-adverts">Nincs találat</div>
