@@ -182,6 +182,7 @@
                 max-height: 200%;
                 min-height: 70%;
                 height: 150%;
+                padding: 5px;
             }
 
             button {

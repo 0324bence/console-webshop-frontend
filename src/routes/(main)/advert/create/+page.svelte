@@ -523,6 +523,7 @@
                     max-height: 3.5rem;
                     min-height: 3.5rem;
                     resize: none;
+                    padding: 5px;
                 }
             }
         }
