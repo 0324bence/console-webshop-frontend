@@ -33,13 +33,13 @@
 
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <!-- svelte-ignore a11y-click-events-have-key-events -->
+<!-- TODO search arrow functions -->
 <div id="window-container" on:click={closeMenu}>
     <div id="header">
         <a href="/" id="logo-container">
             <Logo />
         </a>
         <div id="center-container">
-            <!-- TODO Fix search modal (click) -->
             <form on:submit|preventDefault class="searchContainer">
                 <input
                     type="text"
@@ -55,7 +55,7 @@
                 </button> -->
                 {#if searchFieldValue.length > 0 && searchFieldFocus}
                     <div class="searchOptions">
-                        <button type="submit" on:click={searchAdvert}
+                        <button type="submit" on:mousedown={searchAdvert}
                             >"<b>{searchFieldValue}</b>" című hirdetés keresése</button
                         >
                         <button on:click={searchUser}>"<b>{searchFieldValue}</b>" nevű felhasználó keresése</button>
