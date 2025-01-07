@@ -285,6 +285,9 @@
         </div>
     </div>
     <div id="advert-container">
+        {#if adverts.length == 0}
+            <div class="no-adverts">Nincs találat</div>
+        {/if}
         {#each adverts as advert, index}
             <div class="advert">
                 {#if index == adverts.length - 6}
@@ -394,6 +397,15 @@
             grid-template-rows: repeat(auto-fill, 20rem);
             padding: 1rem;
             gap: 1rem;
+
+            .no-adverts {
+                grid-column: span 5;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                font-size: 2rem;
+                font-weight: bold;
+            }
 
             #loading-container {
                 grid-column: span 5;
