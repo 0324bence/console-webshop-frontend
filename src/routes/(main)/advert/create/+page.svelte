@@ -76,6 +76,7 @@
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <!-- TODO Add reset button -->
+<!-- TODO fix height issues -->
 <div
     id="main-content"
     on:click|stopPropagation={() => {
