@@ -8,7 +8,7 @@ import getAdverts from "$lib/getAdverts";
 
 export const load: PageServerLoad = async ({ params, parent, url }) => {
     if (params.id === undefined || isNaN(Number(params.id))) {
-        return error(400, "Invalid user id");
+        return error(400, "Nem megfelelő paraméterek");
     }
 
     const { ownUser } = await parent();

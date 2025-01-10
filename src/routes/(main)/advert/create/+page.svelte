@@ -7,6 +7,7 @@
     import type { Location, Model } from "$lib/types/";
     import { base } from "$app/paths";
     import LocationSearch from "$lib/components/LocationSearch.svelte";
+    import { goto } from "$app/navigation";
 
     export let data: PageData;
 
@@ -71,6 +72,8 @@
     let selectedLocation: Location | undefined = undefined;
     let locationSearch: any;
     let locationError: boolean = false;
+
+    let priceValue = 0;
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
@@ -106,7 +109,6 @@
                 formLoading = false;
                 await update();
                 imageFiles = [];
-                /*TODO redirect to advert*/
             };
         }}
         enctype="multipart/form-data"
@@ -138,7 +140,20 @@
             </div>
             <div class="input-group" id="price-group">
                 <label for="priceHuf">Ár (HUF):</label>
-                <input name="priceHuf" type="number" placeholder="0" min="0" id="priceHuf" required />
+                <input
+                    name="priceHuf"
+                    type="number"
+                    placeholder="0"
+                    min="0"
+                    max="10000000"
+                    id="priceHuf"
+                    required
+                    bind:value={priceValue}
+                    on:change={() => {
+                        if (priceValue < 0) priceValue = 0;
+                        if (priceValue > 10000000) priceValue = 10000000;
+                    }}
+                />
             </div>
             <div class="input-group" id="state-group">
                 <label for="stateId">Állapot:</label>

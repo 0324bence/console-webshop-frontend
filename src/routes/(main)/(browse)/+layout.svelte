@@ -25,7 +25,7 @@
     function getManufacturerName(manufacturerId: string) {
         return data.filters.manufacturers.find(
             (manufacturer: { id: number }) => manufacturer.id === parseInt(manufacturerId)
-        ).name;
+        )?.name;
     }
 
     let userId: number | undefined = undefined;
@@ -99,7 +99,7 @@
     }
 
     let searchForm: HTMLFormElement;
-    let timeout: number;
+    let timeout: NodeJS.Timeout;
 
     function changeSearch() {
         clearTimeout(timeout);
@@ -290,7 +290,7 @@
             <div class="no-adverts">Nincs találat</div>
         {/if}
         {#each adverts as advert, index}
-            <div class="advert">
+            <a href={`advert/${advert.id}`} class="advert">
                 {#if index == adverts.length - 6}
                     <IntersectionObserver on:intersect={loadMoreAdverts} />
                 {/if}
@@ -308,7 +308,7 @@
                     <h3>{advert.priceHuf} HUF</h3>
                     <h3>{advert.location.name}</h3>
                 </div>
-            </div>
+            </a>
         {/each}
         {#if loadingAdverts}
             <div id="loading-container">
@@ -418,6 +418,8 @@
 
             .advert {
                 display: grid;
+                color: $color-black;
+                text-decoration: none;
                 grid-template-rows: 1fr 1fr;
                 width: 100%;
                 padding: 1rem;
