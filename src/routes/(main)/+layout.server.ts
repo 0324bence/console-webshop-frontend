@@ -1,7 +1,7 @@
 import { redirect } from "@sveltejs/kit";
 import type { LayoutServerLoad } from "./$types";
 import apiPath from "$lib/apiPath";
-import type { User } from "$lib/types/";
+import type { BasicFilters, User } from "$lib/types/";
 import { error } from "@sveltejs/kit";
 
 export const load: LayoutServerLoad = async ({ cookies }) => {
@@ -23,7 +23,7 @@ export const load: LayoutServerLoad = async ({ cookies }) => {
     }
 
     const basic = await fetch(apiPath + "/filters/basic");
-    const basicData = await basic.json();
+    const basicData = (await basic.json()) as BasicFilters;
 
     if (basic.status !== 200) {
         console.log("Failed to get filters");

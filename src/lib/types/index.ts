@@ -50,4 +50,19 @@ interface Location {
     longitude: string;
 }
 
-export type { User, Model, Advert, Picture, LocalAdvert, Location };
+interface Manufacturer {
+    id: number;
+    name: string;
+}
+
+interface State {
+    id: number;
+    name: string;
+}
+
+interface BasicFilters {
+    manufacturers: Manufacturer[];
+    states: State[];
+}
+
+export type { User, Model, Advert, Picture, LocalAdvert, Location, Manufacturer, State, BasicFilters };
