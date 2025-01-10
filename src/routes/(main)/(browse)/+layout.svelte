@@ -303,7 +303,8 @@
                 </div>
                 <div class="data">
                     <h2>{advert.title}</h2>
-                    <p>{advert.description}</p>
+                    <p>{data.filters.states.find(i => i.id == advert.stateId)?.name}</p>
+                    <div class="flex-spacer"></div>
                     <h3>{advert.priceHuf} HUF</h3>
                     <h3>{advert.location.name}</h3>
                 </div>
@@ -425,6 +426,17 @@
                 // border: 1px solid $color-black;
                 background-color: $color-white;
                 box-shadow: 1px 1px 5px 0px $color-black;
+
+                .data {
+                    padding: 5px;
+                    display: flex;
+                    flex-direction: column;
+                }
+
+                .flex-spacer {
+                    width: 100%;
+                    flex: 1;
+                }
 
                 div {
                     border: none;
