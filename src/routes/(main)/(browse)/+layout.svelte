@@ -99,7 +99,7 @@
     }
 
     let searchForm: HTMLFormElement;
-    let timeout: NodeJS.Timeout;
+    let timeout: any;
 
     function changeSearch() {
         clearTimeout(timeout);
