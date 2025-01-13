@@ -39,6 +39,11 @@
             alert("A kép mérete nem lehet nagyobb, mint 50MB");
             cancel();
         }
+
+        return async ({ update }) => {
+            invalidateAll();
+            await update();
+        };
     };
 </script>
 
