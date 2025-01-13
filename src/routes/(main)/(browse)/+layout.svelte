@@ -291,9 +291,6 @@
         {/if}
         {#each adverts as advert, index}
             <a href={`advert/${advert.id}`} class="advert">
-                {#if index == adverts.length - 6}
-                    <IntersectionObserver on:intersect={loadMoreAdverts} />
-                {/if}
                 <div class="image">
                     <img
                         src={`data:image/jpeg;base64,${advert.mainPicture.data}`}
@@ -308,6 +305,9 @@
                     <h3>{advert.priceHuf} HUF</h3>
                     <h3>{advert.location.name}</h3>
                 </div>
+                {#if index == adverts.length - 6}
+                    <IntersectionObserver on:intersect={loadMoreAdverts} />
+                {/if}
             </a>
         {/each}
         {#if loadingAdverts}
