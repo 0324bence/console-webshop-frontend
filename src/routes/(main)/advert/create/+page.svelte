@@ -69,17 +69,32 @@
         imageFiles = imageFiles.filter((_, i) => i !== index);
     }
 
+    function resetForm() {
+        imageFiles = [];
+        mainPicture = 0;
+        descValue = "";
+        selectedLocation = undefined;
+        locationSearch.clear();
+        priceValue = 0;
+        brandId = 0;
+        selectedModel = 0;
+        selectedState = 0;
+        advertTitle = "";
+        locationError = false;
+    }
+
     let selectedLocation: Location | undefined = undefined;
     let locationSearch: any;
     let locationError: boolean = false;
+    let selectedModel: number = 0;
+    let selectedState: number = 0;
+    let advertTitle: string = "";
 
     let priceValue = 0;
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <!-- svelte-ignore a11y-no-static-element-interactions -->
-<!-- TODO Add reset button -->
-<!-- TODO fix height issues -->
 <div
     id="main-content"
     on:click|stopPropagation={() => {
@@ -117,7 +132,15 @@
         <div class="left-side">
             <div class="input-group" id="title-group">
                 <label for="title">Cím:</label>
-                <input type="text" aria-multiline="true" name="title" id="title" placeholder="Cím" required />
+                <input
+                    type="text"
+                    aria-multiline="true"
+                    name="title"
+                    id="title"
+                    placeholder="Cím"
+                    required
+                    bind:value={advertTitle}
+                />
             </div>
             <div class="input-group" id="description-group">
                 <div class="label">
@@ -157,7 +180,7 @@
             </div>
             <div class="input-group" id="state-group">
                 <label for="stateId">Állapot:</label>
-                <select name="stateId" id="stateId" required>
+                <select name="stateId" id="stateId" required bind:value={selectedState}>
                     {#each data.filters.states as state}
                         <option value={state.id}>{state.name}</option>
                     {/each}
@@ -173,7 +196,7 @@
             </div>
             <div class="input-group" id="model-group">
                 <label for="modelId">Modell:</label>
-                <select required name="modelId" id="modelId">
+                <select required name="modelId" id="modelId" bind:value={selectedModel}>
                     {#each models || [] as model}
                         <option value={model.id}>{model.name}</option>
                     {/each}
@@ -241,7 +264,16 @@
                 {/each}
             </div>
         </div>
-        <div class="submit-row"><button type="submit">Létrehozás</button></div>
+        <div class="submit-row">
+            <button on:click|preventDefault={resetForm} class="reset-button">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" style="aspect-ratio: 448 / 512;"
+                    ><!--!Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2025 Fonticons, Inc.--><path
+                        d="M135.2 17.7C140.6 6.8 151.7 0 163.8 0L284.2 0c12.1 0 23.2 6.8 28.6 17.7L320 32l96 0c17.7 0 32 14.3 32 32s-14.3 32-32 32L32 96C14.3 96 0 81.7 0 64S14.3 32 32 32l96 0 7.2-14.3zM32 128l384 0 0 320c0 35.3-28.7 64-64 64L96 512c-35.3 0-64-28.7-64-64l0-320zm96 64c-8.8 0-16 7.2-16 16l0 224c0 8.8 7.2 16 16 16s16-7.2 16-16l0-224c0-8.8-7.2-16-16-16zm96 0c-8.8 0-16 7.2-16 16l0 224c0 8.8 7.2 16 16 16s16-7.2 16-16l0-224c0-8.8-7.2-16-16-16zm96 0c-8.8 0-16 7.2-16 16l0 224c0 8.8 7.2 16 16 16s16-7.2 16-16l0-224c0-8.8-7.2-16-16-16z"
+                    /></svg
+                >
+            </button>
+            <button type="submit">Létrehozás</button>
+        </div>
     </form>
 </div>
 
@@ -291,8 +323,29 @@
             border-radius: 0 0 1rem 1rem;
             display: flex;
             align-items: center;
-            justify-content: end;
+            justify-content: space-between;
             padding-right: 1rem;
+            padding-left: 1rem;
+
+            .reset-button {
+                display: grid;
+                place-items: center;
+                fill: red;
+                padding: 6px;
+                background: none;
+
+                aspect-ratio: 1 / 1;
+                height: 50%;
+
+                &:hover {
+                    background-color: rgba(255, 0, 0, 0.1);
+                }
+
+                svg {
+                    height: 100%;
+                    width: 100%;
+                }
+            }
 
             button {
                 padding: 0.5rem 1rem;
@@ -302,6 +355,10 @@
                 color: $color-white;
                 font-size: 1.1rem;
                 cursor: pointer;
+
+                &:hover {
+                    background-color: darken($color-blue, 10%);
+                }
             }
         }
 
