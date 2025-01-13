@@ -290,7 +290,7 @@
             <div class="no-adverts">Nincs találat</div>
         {/if}
         {#each adverts as advert, index}
-            <a href={`advert/${advert.id}`} class="advert">
+            <a href={`/advert/${advert.id}`} class="advert">
                 <div class="image">
                     <img
                         src={`data:image/jpeg;base64,${advert.mainPicture.data}`}
