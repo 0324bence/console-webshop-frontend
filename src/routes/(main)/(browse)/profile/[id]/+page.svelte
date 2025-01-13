@@ -1,8 +1,9 @@
 <script lang="ts">
     import UserPlaceholder from "$lib/svgs/UserPlaceholder.svelte";
-    import { error } from "@sveltejs/kit";
+    import { error, type SubmitFunction } from "@sveltejs/kit";
     import type { PageData } from "./$types";
     import { invalidateAll, onNavigate } from "$app/navigation";
+    import { enhance } from "$app/forms";
 
     export let data: PageData;
 
@@ -30,11 +31,27 @@
     function autofocus(node: HTMLElement) {
         node.focus();
     }
+
+    const pictureEnhance: SubmitFunction = ({ formData, cancel }) => {
+        const file = formData.get("file") as File;
+
+        if (file.size > 50 * 1024 * 1024) {
+            alert("A kép mérete nem lehet nagyobb, mint 50MB");
+            cancel();
+        }
+    };
 </script>
 
 <div id="profile-container">
     <!-- <div id="profile"> -->
-    <form method="post" action="?/picture" class="pic" enctype="multipart/form-data" bind:this={pictureForm}>
+    <form
+        method="post"
+        action="?/picture"
+        class="pic"
+        enctype="multipart/form-data"
+        bind:this={pictureForm}
+        use:enhance={pictureEnhance}
+    >
         <UserPlaceholder url={data.user.picture} />
         {#if data.isOwn}
             <input
@@ -44,7 +61,7 @@
                 accept=".jpg,.png,.webp,.gif,.avif"
                 multiple={false}
                 on:change={() => {
-                    pictureForm.submit();
+                    pictureForm.requestSubmit();
                 }}
             />
         {/if}
