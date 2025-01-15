@@ -5,8 +5,6 @@
     let showResults = false;
     let loading = false;
 
-    let textBoxValue = "";
-
     let locations: Location[] = [];
 
     async function search() {
@@ -33,6 +31,12 @@
     export function hideResults() {
         showResults = false;
     }
+
+    export function clear() {
+        textBoxValue = "";
+    }
+
+    let textBoxValue = "";
 
     export let error = false;
 </script>
