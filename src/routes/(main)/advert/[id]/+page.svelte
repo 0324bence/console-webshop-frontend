@@ -31,20 +31,20 @@
             <div id="title-row">
                 <div id="view-count" title="Megtekintések száma">
                     <span>&#128065;</span>
-                    <span>300</span>
+                    <span>{data.advert.viewCount}</span>
                 </div>
                 <div id="title">
-                    <h1>Eladó ház</h1>
-                    <h3><a href=".">Eladó neve</a></h3>
+                    <h1>{data.advert.title}</h1>
+                    <h3><a href=".">{data.advert.ownerId}</a></h3>
                 </div>
             </div>
             <div id="data">
-                <h3>Újszerű</h3>
-                <h3>Település neve</h3>
-                <h2 class="price">5000 HUF</h2>
+                <h3>{data.filters.states.find(i => i.id == data.advert.stateId)?.name}</h3>
+                <h3>{data.advert.location.name}</h3>
+                <h2 class="price">{data.advert.priceHuf} HUF</h2>
             </div>
             <div id="button-row">
-                <span>Létrehozva: 0000-00-00</span>
+                <span>Létrehozva: TODO</span>
                 <div id="buttons">
                     <button>&hearts;</button>
                     <button>Kosárba</button>
