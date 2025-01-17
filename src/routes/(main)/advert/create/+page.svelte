@@ -39,6 +39,13 @@
 
         if (!eventFiles) return;
 
+        for (const file of eventFiles) {
+            if (file.size > 50000000) {
+                alert("Valamely fájlok mérete túl nagy!");
+                return;
+            }
+        }
+
         for (let i = 0; i < eventFiles.length; i++) {
             const file = eventFiles[i] as File;
             const base64 = await file.arrayBuffer().then(buffer => Buffer.from(buffer).toString("base64"));
@@ -95,7 +102,6 @@
     let priceValue = 0;
 </script>
 
-<!-- TODO restrict image size -->
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <div
