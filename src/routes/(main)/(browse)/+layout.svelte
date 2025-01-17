@@ -291,12 +291,15 @@
         {/if}
         {#each adverts as advert, index}
             <a href={`/advert/${advert.id}`} class="advert">
-                <div class="image">
-                    <img
+                <div
+                    class="image"
+                    style={`background-image: url('data:image/jpeg;base64,${advert.mainPicture.data}');`}
+                >
+                    <!-- <img
                         src={`data:image/jpeg;base64,${advert.mainPicture.data}`}
                         alt="advert main"
                         style={`aspect-ratio: ${advert.mainPicture.object.width} / ${advert.mainPicture.object.height}; ${advert.mainPicture.object.width > advert.mainPicture.object.height ? "width: 100%;" : "height: 100%;"}`}
-                    />
+                    /> -->
                 </div>
                 <div class="data">
                     <h2>{advert.title}</h2>
@@ -452,6 +455,9 @@
                     display: flex;
                     justify-content: center;
                     align-items: center;
+                    background-position: center;
+                    background-size: contain;
+                    background-repeat: no-repeat;
                     background-color: darken($color-white, 10%);
                 }
             }
