@@ -1,30 +1,28 @@
 <script lang="ts">
     export let data;
-    console.log(data);
+
+    // console.log(data);
+
+    let selectedImage = data.advert.mainPicture;
 </script>
 
 <div id="advert-content">
     <div id="main-data-container">
         <div id="pictures-container">
             <div id="preview-container">
-                <div class="image" style="background-image: url('https://placehold.co/160x90/PNG');">
-                    <!-- <img src="https://placehold.co/160x90/PNG" alt="Kép 1" /> -->
-                </div>
-                <div class="image" style="background-image: url('https://placehold.co/900x1600/PNG');">
-                    <!-- <img src="https://placehold.co/900x1600/PNG" style="height: 100%; width: auto;" alt="Kép 1" /> -->
-                </div>
-                <div class="image" style="background-image: url('https://placehold.co/90x160/PNG');">
-                    <!-- <img src="https://placehold.co/90x160/PNG" alt="Kép 1" /> -->
-                </div>
-                <div class="image" style="background-image: url('https://placehold.co/90x160/PNG');">
-                    <!-- <img src="https://placehold.co/90x160/PNG" alt="Kép 1" /> -->
-                </div>
-                <!-- <div class="image">
-                    <img src="https://placehold.co/100x100" alt="Kép 1" />
-                </div> -->
+                {#each data.advert.pictures as picture}
+                    <button
+                        class={`image ${picture.id == selectedImage.id ? "selected" : ""}`}
+                        style={`background-image: url('data:image/jpeg;base64,${picture.data}');`}
+                        on:click={() => (selectedImage = picture)}
+                    ></button>
+                {/each}
             </div>
             <div id="main-container">
-                <div class="image" style="background-image: url('https://placehold.co/1000x1080/PNG');"></div>
+                <div
+                    class="image"
+                    style={`background-image: url('data:image/jpeg;base64,${selectedImage.data}');`}
+                ></div>
             </div>
         </div>
         <div id="data-container">
@@ -35,7 +33,7 @@
                 </div>
                 <div id="title">
                     <h1>{data.advert.title}</h1>
-                    <h3><a href=".">{data.advert.ownerId}</a></h3>
+                    <h3><a href=".">{data.advert.owner.name}</a></h3>
                 </div>
             </div>
             <div id="data">
@@ -44,7 +42,7 @@
                 <h2 class="price">{data.advert.priceHuf} HUF</h2>
             </div>
             <div id="button-row">
-                <span>Létrehozva: TODO</span>
+                <span>Létrehozva: {new Date(data.advert.createdTime).toISOString().split("T")[0]}</span>
                 <div id="buttons">
                     <button>&hearts;</button>
                     <button>Kosárba</button>
@@ -139,6 +137,16 @@
                         align-items: center;
                         border: 1px solid $color-black;
                         border-radius: 5px;
+                        background-color: $color-white;
+                        cursor: pointer;
+
+                        &:hover {
+                            outline: 1px solid black;
+                        }
+
+                        &.selected {
+                            outline: 1px solid black;
+                        }
                     }
                 }
 

@@ -25,6 +25,7 @@ interface Advert {
     revision: string;
     viewCount: number;
     isSold: number;
+    createdTime: string;
 }
 
 interface Picture {

@@ -1,8 +1,12 @@
 import { error } from "@sveltejs/kit";
 import type { PageServerLoad } from "./$types";
 import apiPath from "$lib/apiPath";
-import type { LocalAdvert, Picture } from "$lib/types";
+import type { LocalAdvert, Picture, User } from "$lib/types";
 import noImage from "$lib/images/noImage";
+
+interface ExtendedLocalAdvert extends LocalAdvert {
+    owner: User;
+}
 
 export const load: PageServerLoad = async ({ params, parent, url }) => {
     if (params.id === undefined || isNaN(Number(params.id))) {
@@ -15,7 +19,7 @@ export const load: PageServerLoad = async ({ params, parent, url }) => {
     }
 
     const advertRes = await advertReq.json();
-    const advert: LocalAdvert = advertRes;
+    const advert: ExtendedLocalAdvert = advertRes;
     const picturesReq = await fetch(`${apiPath}/adverts/${advert.id}/pictures`);
     if (picturesReq.ok) {
         try {
@@ -34,8 +38,9 @@ export const load: PageServerLoad = async ({ params, parent, url }) => {
             } else {
                 advert.pictures = pictures;
                 let mainPicture = pictures.find(picture => picture.isPriority === 1);
-                if (mainPicture === undefined) {
-                    mainPicture = pictures[0];
+                console.log(mainPicture);
+                if (mainPicture == undefined) {
+                    advert.mainPicture = pictures[0];
                 } else {
                     advert.mainPicture = mainPicture;
                 }
@@ -65,6 +70,20 @@ export const load: PageServerLoad = async ({ params, parent, url }) => {
     if (advert.pictures.length === 1) {
         advert.mainPicture = advert.pictures[0];
     }
+    const ownerReq = await fetch(`${apiPath}/user/${advert.ownerId}`);
+    if (ownerReq.ok) {
+        advert.owner = await ownerReq.json();
+    } else {
+        advert.owner = {
+            id: 0,
+            name: "Ismeretlen",
+            email: "Ismeretlen",
+            bio: "Ismeretlen",
+            picture: "",
+            regDate: new Date()
+        };
+    }
+
     const locationReq = await fetch(`${apiPath}/filters/locations/${advert.locationId}`);
     if (locationReq.ok) {
         advert.location = await locationReq.json();
