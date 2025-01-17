@@ -33,7 +33,7 @@
                 </div>
                 <div id="title">
                     <h1>{data.advert.title}</h1>
-                    <h3><a href=".">{data.advert.owner.name}</a></h3>
+                    <h3><a href={`/profile/${data.advert.ownerId}`}>{data.advert.owner.name}</a></h3>
                 </div>
             </div>
             <div id="data">
