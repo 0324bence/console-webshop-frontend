@@ -89,6 +89,7 @@
     let selectedModel: number = 0;
     let selectedState: number = 0;
     let advertTitle: string = "";
+    let priceError: boolean = false;
 
     let priceValue = 0;
 </script>
@@ -118,6 +119,12 @@
         action="?/submit"
         method="post"
         use:enhance={({ formData, cancel }) => {
+            console.log(priceValue);
+            if (priceValue <= 0) {
+                priceError = true;
+                return cancel();
+            }
+            priceError = false;
             formLoading = true;
             for (const key in imageFiles) {
                 formData.append("filelist", imageFiles[key].base64);
@@ -173,6 +180,7 @@
             <div class="input-group" id="price-group">
                 <label for="priceHuf">Ár (HUF):</label>
                 <input
+                    class={priceError ? "error" : ""}
                     name="priceHuf"
                     type="number"
                     placeholder="0"
@@ -646,6 +654,10 @@
                     padding: 0.2rem;
                     border: 1px solid $color-dark-blue;
                     border-radius: 0.3rem;
+
+                    &.error {
+                        border-color: red;
+                    }
                 }
 
                 select {
