@@ -5,6 +5,7 @@
     import Logo from "$lib/svgs/Logo.svelte";
     import Search from "$lib/svgs/Search.svelte";
     import UserPlaceholder from "$lib/svgs/UserPlaceholder.svelte";
+    import { onMount } from "svelte";
     import type { LayoutData } from "./$types";
 
     export let data: LayoutData;
@@ -17,14 +18,41 @@
 
     let searchFieldValue = $page.url.searchParams.get("title") || "";
     let searchFieldFocus = false;
+    let selectedSearchOption = 0;
 
     function searchAdvert() {
+        // console.log("searching for advert ", searchFieldValue);
         goto($page.url.pathname + "?title=" + searchFieldValue + "&");
     }
 
     function searchUser() {
         console.log("searching for user ", searchFieldValue);
     }
+
+    function formSubmit() {
+        if (selectedSearchOption == 0) {
+            searchAdvert();
+        } else {
+            searchUser();
+        }
+    }
+
+    const keyupListener = (e: KeyboardEvent) => {
+        if (searchFieldFocus && searchFieldValue.length > 0) {
+            if (e.key == "ArrowDown" || e.key == "ArrowUp") {
+                e.preventDefault();
+                selectedSearchOption = selectedSearchOption == 1 ? 0 : 1;
+            }
+        }
+    };
+
+    onMount(() => {
+        document.addEventListener("keydown", keyupListener);
+
+        return () => {
+            document.removeEventListener("keydown", keyupListener);
+        };
+    });
 
     afterNavigate(() => {
         searchFieldValue = $page.url.searchParams.get("title") || "";
@@ -33,14 +61,13 @@
 
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <!-- svelte-ignore a11y-click-events-have-key-events -->
-<!-- TODO search arrow functions -->
 <div id="window-container" on:click={closeMenu}>
     <div id="header">
         <a href="/" id="logo-container">
             <Logo />
         </a>
         <div id="center-container">
-            <form on:submit|preventDefault class="searchContainer">
+            <form on:submit|preventDefault={formSubmit} class="searchContainer">
                 <input
                     type="text"
                     placeholder="Keresés..."
@@ -55,10 +82,20 @@
                 </button> -->
                 {#if searchFieldValue.length > 0 && searchFieldFocus}
                     <div class="searchOptions">
-                        <button type="submit" on:mousedown={searchAdvert}
-                            >"<b>{searchFieldValue}</b>" című hirdetés keresése</button
+                        <button
+                            type={selectedSearchOption == 0 ? "submit" : "button"}
+                            on:mousedown={searchAdvert}
+                            class={selectedSearchOption == 0 ? "selected" : ""}
                         >
-                        <button on:click={searchUser}>"<b>{searchFieldValue}</b>" nevű felhasználó keresése</button>
+                            "<b>{searchFieldValue}</b>" című hirdetés keresése
+                        </button>
+                        <button
+                            on:mousedown={searchUser}
+                            type={selectedSearchOption == 1 ? "submit" : "button"}
+                            class={selectedSearchOption == 1 ? "selected" : ""}
+                        >
+                            "<b>{searchFieldValue}</b>" nevű felhasználó keresése
+                        </button>
                     </div>
                 {/if}
             </form>
