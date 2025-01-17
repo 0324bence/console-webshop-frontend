@@ -59,7 +59,7 @@ export const actions = {
                 })
             });
 
-            if (index == mainPictureIndex) {
+            if (index == mainPictureIndex && req.ok) {
                 const resp = await req.json();
                 console.log("picId", resp.id);
                 const primaryReq = await fetch(`${apiPath}/adverts/${res.id}/primaryPictureId`, {

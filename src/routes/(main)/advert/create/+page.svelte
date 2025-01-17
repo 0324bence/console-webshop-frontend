@@ -8,6 +8,7 @@
     import { base } from "$app/paths";
     import LocationSearch from "$lib/components/LocationSearch.svelte";
     import { goto } from "$app/navigation";
+    import { Buffer } from "buffer";
 
     export let data: PageData;
 
@@ -40,7 +41,7 @@
 
         for (let i = 0; i < eventFiles.length; i++) {
             const file = eventFiles[i] as File;
-            const base64 = await file.arrayBuffer().then(buffer => arrayBufferToBase64(buffer));
+            const base64 = await file.arrayBuffer().then(buffer => Buffer.from(buffer).toString("base64"));
             const image = new Image();
             image.src = "data:image/jpeg;base64," + base64;
             image.onload = () => {
@@ -94,6 +95,7 @@
     let priceValue = 0;
 </script>
 
+<!-- TODO restrict image size -->
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <!-- svelte-ignore a11y-no-static-element-interactions -->
 <div
