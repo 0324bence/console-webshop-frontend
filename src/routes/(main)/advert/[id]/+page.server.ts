@@ -1,11 +1,13 @@
 import { error } from "@sveltejs/kit";
 import type { PageServerLoad } from "./$types";
 import apiPath from "$lib/apiPath";
-import type { LocalAdvert, Picture, User } from "$lib/types";
+import type { LocalAdvert, Manufacturer, Model, Picture, User } from "$lib/types";
 import noImage from "$lib/images/noImage";
 
 interface ExtendedLocalAdvert extends LocalAdvert {
     owner: User;
+    manufacturer: Manufacturer;
+    model: Model;
 }
 
 export const load: PageServerLoad = async ({ params, parent, url }) => {
@@ -17,6 +19,8 @@ export const load: PageServerLoad = async ({ params, parent, url }) => {
     if (!advertReq.ok || advertReq.status !== 200) {
         return error(404, "Advert not found");
     }
+
+    const data = await parent();
 
     const advertRes = await advertReq.json();
     const advert: ExtendedLocalAdvert = advertRes;
@@ -84,6 +88,30 @@ export const load: PageServerLoad = async ({ params, parent, url }) => {
         };
     }
 
+    const manufacturerReq = await fetch(`${apiPath}/filters/manufacturerOfModel?modelId=${advert.modelId}`);
+    if (manufacturerReq.ok) {
+        advert.manufacturer = await manufacturerReq.json();
+    } else {
+        advert.manufacturer = {
+            id: 0,
+            name: "Ismeretlen"
+        };
+    }
+    const modelReq = await fetch(`${apiPath}/filters/modelsForManufacturer?manufacturerId=${advert.manufacturer.id}`);
+    if (advert.manufacturer.id !== 0 && modelReq.ok) {
+        const models: Model[] = await modelReq.json();
+        console.log(models);
+        advert.model = models.find(model => model.id === advert.modelId)!;
+    } else {
+        advert.model = {
+            id: 0,
+            name: "Ismeretlen",
+            manufacturerId: 0
+        };
+    }
+
+    // advert.manufacturer = data.filters.manufacturers.find(manufacturer => manufacturer.id === advert.manufacturerId)!;
+
     const locationReq = await fetch(`${apiPath}/filters/locations/${advert.locationId}`);
     if (locationReq.ok) {
         advert.location = await locationReq.json();
@@ -97,6 +125,7 @@ export const load: PageServerLoad = async ({ params, parent, url }) => {
             longitude: "0"
         };
     }
+    console.log(advert);
 
     return {
         advert

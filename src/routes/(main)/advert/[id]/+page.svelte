@@ -42,7 +42,7 @@
                 </div>
             </div>
             <div id="data">
-                <h3>{data.filters.states.find(i => i.id == data.advert.stateId)?.name}</h3>
+                <!-- <h3>{data.filters.states.find(i => i.id == data.advert.stateId)?.name}</h3> -->
                 <h3>{data.advert.location.name}</h3>
                 <h2 class="price">{data.advert.priceHuf} HUF</h2>
             </div>
@@ -51,6 +51,32 @@
                 <div id="buttons">
                     <button>&hearts;</button>
                     <button>Kosárba</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="secondary-data-container">
+        <div id="secondary-data">
+            <div class="table">
+                <div class="col">
+                    <div class="row">
+                        <div class="cell title">Gyártó</div>
+                        <div class="cell">{data.advert.manufacturer.name}</div>
+                    </div>
+                    <div class="row">
+                        <div class="cell title">Modell</div>
+                        <div class="cell">{data.advert.model.name}</div>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="row">
+                        <div class="cell title">Állapot</div>
+                        <div class="cell">{data.filters.states.find(i => i.id == data.advert.stateId)?.name}</div>
+                    </div>
+                    <div class="row">
+                        <div class="cell title">Hely</div>
+                        <div class="cell">{data.advert.location.name} ({data.advert.location.zip})</div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -77,9 +103,15 @@
 
         #main-data-container {
             height: 25rem;
+            padding: 1rem;
             display: flex;
+            gap: 1rem;
 
             #pictures-container {
+                border: 1px solid black;
+                border-radius: 10px;
+                background-color: $color-white;
+                box-shadow: 1px 1px 5px 0px rgba($color-black, 0.5);
                 flex: 1;
                 display: grid;
                 grid-template-columns: 1.1fr 2.9fr;
@@ -105,13 +137,14 @@
                         display: flex;
                         justify-content: center;
                         align-items: center;
-                        border: 1px solid $color-black;
+                        border: 1px solid $color-blue;
                         border-radius: 5px;
-                        background-color: $color-white;
+                        background-color: $color-black;
+                        // background-color: darken($color-white, 10%);
                         cursor: pointer;
 
                         &:hover {
-                            outline: 1px solid black;
+                            outline: 1px solid $color-blue;
                         }
 
                         &.selected {
@@ -136,14 +169,19 @@
                         display: flex;
                         justify-content: center;
                         align-items: center;
-                        border: 1px solid $color-black;
+                        border: 1px solid $color-blue;
                         border-radius: 5px;
-                        background-color: $color-white;
+                        background-color: $color-black;
+                        // background-color: darken($color-white, 10%);
                     }
                 }
             }
 
             #data-container {
+                border: 1px solid $color-black;
+                border-radius: 10px;
+                box-shadow: 1px 1px 5px 0px rgba($color-black, 0.5);
+                background-color: $color-white;
                 flex: 1;
                 display: flex;
                 flex-direction: column;
@@ -190,8 +228,10 @@
                 }
 
                 #data {
+                    flex: 1;
                     display: flex;
                     flex-direction: column;
+                    justify-content: space-between;
                     align-items: flex-end;
                     gap: 1rem;
 
@@ -225,6 +265,53 @@
                             &:active {
                                 background-color: $color-dark-blue;
                                 color: $color-white;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        #secondary-data-container {
+            padding: 1rem;
+            #secondary-data {
+                border: 1px solid $color-black;
+                border-radius: 10px;
+                box-shadow: 1px 1px 5px 0px rgba($color-black, 0.5);
+                background-color: $color-white;
+                width: 100%;
+                padding: 0.5rem;
+
+                .table {
+                    width: 100%;
+                    height: 100%;
+                    // border: 1px solid $color-black;
+                    background-color: $color-black;
+                    display: flex;
+                    padding: 1px;
+                    align-items: stretch;
+                    gap: 5px;
+
+                    .col {
+                        flex: 1;
+                        display: flex;
+                        flex-direction: column;
+                        gap: 1px;
+
+                        .row {
+                            display: flex;
+                            width: 100%;
+                            gap: 1px;
+
+                            .cell {
+                                width: 100%;
+                                background-color: $color-white;
+                                padding: 5px;
+
+                                &.title {
+                                    font-weight: bold;
+                                    font-size: 1.2rem;
+                                }
                             }
                         }
                     }
