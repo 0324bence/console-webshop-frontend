@@ -42,6 +42,18 @@ export const actions: Actions = {
             redirectUrl += `title=${encodeURIComponent(title.toString())}&`;
         }
 
+        //location
+        const location = data.get("location");
+        if (location && location !== "") {
+            redirectUrl += `locationId=${encodeURIComponent(location.toString())}&`;
+        }
+
+        //distance
+        const distance = data.get("distance");
+        if (distance && location && location !== "") {
+            redirectUrl += `locationMaxDistance=${encodeURIComponent(distance.toString())}&`;
+        }
+
         return redirect(303, redirectUrl);
     }
 };

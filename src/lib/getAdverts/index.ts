@@ -1,6 +1,6 @@
 import apiPath from "$lib/apiPath";
 import noImage from "$lib/images/noImage";
-import type { LocalAdvert, Picture, User } from "$lib/types";
+import type { LocalAdvert, Location, Picture, User } from "$lib/types";
 import { error } from "@sveltejs/kit";
 
 async function getAdverts(
@@ -14,6 +14,8 @@ async function getAdverts(
         title: string;
         sortBy: string;
         sortOrder: string;
+        location: Location | undefined;
+        distance: number;
     };
     adverts: LocalAdvert[];
     advertCount?: number;
@@ -26,7 +28,9 @@ async function getAdverts(
                 models: [],
                 title: "",
                 sortBy: "",
-                sortOrder: ""
+                sortOrder: "",
+                location: undefined,
+                distance: 0
             },
             adverts: []
         };
@@ -111,6 +115,17 @@ async function getAdverts(
     //sortOrder
     const sortOrder = url.searchParams.get("sortOrder") || "";
 
+    //distance
+    const distance = parseInt(url.searchParams.get("locationMaxDistance") || "0");
+
+    const loactionReq = await fetch(`${apiPath}/filters/locations/${url.searchParams.get("locationId")}`);
+    let location: Location | undefined;
+    if (loactionReq.ok) {
+        location = await loactionReq.json();
+    } else {
+        location = undefined;
+    }
+
     return {
         activeFilters: {
             states: activeStates,
@@ -118,7 +133,9 @@ async function getAdverts(
             models: activeModels,
             title,
             sortBy,
-            sortOrder
+            sortOrder,
+            location,
+            distance
         },
         adverts,
         advertCount

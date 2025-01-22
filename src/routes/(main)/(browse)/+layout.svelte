@@ -1,6 +1,6 @@
 <script lang="ts">
     import apiPath from "$lib/apiPath";
-    import type { LocalAdvert, Model, Picture } from "$lib/types";
+    import type { LocalAdvert, Location, Model, Picture } from "$lib/types";
     import { onMount } from "svelte";
     import type { PageData } from "./$types";
     import { page } from "$app/stores";
@@ -8,6 +8,7 @@
     import { enhance } from "$app/forms";
     import IntersectionObserver from "$lib/components/IntersectionObserver.svelte";
     import noImage from "$lib/images/noImage";
+    import LocationSearch from "$lib/components/LocationSearch.svelte";
     interface LocalPicture extends Picture {
         object: HTMLImageElement;
     }
@@ -105,7 +106,7 @@
         clearTimeout(timeout);
         timeout = setTimeout(() => {
             console.log("submit", userId);
-            searchForm.submit();
+            searchForm.requestSubmit();
         }, 500);
     }
 
@@ -176,6 +177,16 @@
         loadingAdverts = false;
     }
 
+    let selectedLocation: Location | undefined = data.activeFilters.location;
+    let locationSearch: any;
+    let distanceValue = data.activeFilters.distance;
+
+    function clearLocation() {
+        selectedLocation = undefined;
+        locationSearch.clear();
+        changeSearch();
+    }
+
     afterNavigate(() => {
         invalidateAll();
         if ($page.url.pathname.search("/profile/") !== -1) {
@@ -200,7 +211,15 @@
 
 <slot></slot>
 <div class="main-container">
-    <form id="filter-container" method="post" action="/search?/filters" bind:this={searchForm}>
+    <form
+        id="filter-container"
+        method="post"
+        action="/search?/filters"
+        bind:this={searchForm}
+        use:enhance={({ formData }) => {
+            formData.append("location", selectedLocation?.id.toString() ?? "");
+        }}
+    >
         <!-- <div class="filter-group"><button id="search" type="submit">Keresés</button></div> -->
         <input type="text" name="title" id="title" class="hidden" value={data.activeFilters.title} />
         <input type="text" name="sortBy" id="sortBy" class="hidden" value={data.activeFilters.sortBy} />
@@ -222,6 +241,16 @@
                     <label for={"states" + state.id}>{state.name}</label>
                 </div>
             {/each}
+        </div>
+        <div id="location" class="filter-group">
+            <div class="title-row">
+                <h2>Hely</h2>
+                <button on:click={clearLocation}>&times;</button>
+            </div>
+            <hr />
+            <label for="distance">Max távolság: {distanceValue}km</label>
+            <input type="range" name="distance" id="distance" min="0" max="250" bind:value={distanceValue} />
+            <LocationSearch bind:selectedLocation bind:this={locationSearch} on:search={changeSearch} />
         </div>
         <div id="manufacturer" class="filter-group">
             <h2>Gyártó</h2>
@@ -369,6 +398,33 @@
                 border-radius: 0.3rem;
                 box-shadow: 1px 1px 5px 0px $color-black;
                 padding: 0.5rem;
+
+                .title-row {
+                    display: flex;
+                    flex-direction: row;
+                    justify-content: space-between;
+                    align-items: center;
+                }
+
+                button {
+                    background-color: $color-white;
+                    border: none;
+                    cursor: pointer;
+                    padding: 0.2rem;
+                    border-radius: 0.2rem;
+                    aspect-ratio: 1 / 1;
+                    font-size: 1.5rem;
+                    color: $color-red;
+
+                    &:hover {
+                        text-shadow: 1px 1px 5px $color-black;
+                    }
+
+                    &:active {
+                        transform: scale(0.9);
+                        text-shadow: none;
+                    }
+                }
 
                 &.models-group .checkboxgroup {
                     padding-left: 1rem;

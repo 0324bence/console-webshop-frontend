@@ -1,11 +1,16 @@
 <script lang="ts">
     import apiPath from "$lib/apiPath";
     import type { Location } from "$lib/types";
+    import { createEventDispatcher } from "svelte";
 
     let showResults = false;
     let loading = false;
 
     let locations: Location[] = [];
+
+    const dispatch = createEventDispatcher<{
+        search: Location;
+    }>();
 
     async function search() {
         if (textBoxValue.length === 0) {
@@ -24,6 +29,7 @@
         textBoxValue = `${location.name}`;
         showResults = false;
         selectedLocation = location;
+        dispatch("search", location);
     }
 
     export let selectedLocation: Location | undefined = undefined;
