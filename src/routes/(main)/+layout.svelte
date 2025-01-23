@@ -16,7 +16,7 @@
         if (userMenu) userMenu = false;
     }
 
-    let searchFieldValue = $page.url.searchParams.get("title") || "";
+    let searchFieldValue = $page.url.searchParams.get("title") || $page.url.searchParams.get("name") || "";
     let searchFieldFocus = false;
     let selectedSearchOption = 0;
 
@@ -26,7 +26,8 @@
     }
 
     function searchUser() {
-        console.log("searching for user ", searchFieldValue);
+        // console.log("searching for user ", searchFieldValue);
+        goto("/profiles?name=" + searchFieldValue);
     }
 
     function formSubmit() {
@@ -55,7 +56,7 @@
     });
 
     afterNavigate(() => {
-        searchFieldValue = $page.url.searchParams.get("title") || "";
+        searchFieldValue = $page.url.searchParams.get("title") || $page.url.searchParams.get("name") || "";
     });
 </script>
 
