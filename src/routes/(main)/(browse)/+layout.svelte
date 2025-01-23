@@ -187,6 +187,13 @@
         changeSearch();
     }
 
+    function changeSlider() {
+        if (selectedLocation === undefined) {
+            return;
+        }
+        changeSearch();
+    }
+
     afterNavigate(() => {
         invalidateAll();
         if ($page.url.pathname.search("/profile/") !== -1) {
@@ -249,7 +256,15 @@
             </div>
             <hr />
             <label for="distance">Max távolság: {distanceValue}km</label>
-            <input type="range" name="distance" id="distance" min="0" max="250" bind:value={distanceValue} />
+            <input
+                type="range"
+                name="distance"
+                id="distance"
+                min="0"
+                max="250"
+                bind:value={distanceValue}
+                on:change={changeSlider}
+            />
             <LocationSearch bind:selectedLocation bind:this={locationSearch} on:search={changeSearch} />
         </div>
         <div id="manufacturer" class="filter-group">
