@@ -3,6 +3,8 @@
     import Controller from "$lib/svgs/Controller.svelte";
     import Logo from "$lib/svgs/Logo.svelte";
     import { goto } from "$app/navigation";
+    import logo from "$lib/images/logo.svg";
+    import controller from "$lib/images/controller.svg";
 
     export let data: PageData;
     export let form: ActionData;
@@ -12,71 +14,72 @@
     <title>{data.action === "login" ? "Bejelentkezés" : "Regisztráció"}</title>
 </svelte:head>
 
-<div id="main-container">
-    <div id="left-container">
-        <button
-            on:click={() => {
-                goto("/");
-            }}
-            class="logo"
-            title="logo"
-        >
-            <Logo />
-        </button>
+<div id="main-container" style={"background-image: url(" + controller + ")"}>
+    <button
+        on:click={() => {
+            goto("/");
+        }}
+        style={"background-image: url(" + logo + ")"}
+        class="logo"
+        title="logo"
+    >
+    </button>
 
-        <form method="post">
-            <h1>{data.action === "login" ? "Bejelentkezés" : "Regisztráció"}</h1>
-            <div class="group">
-                <label for="name">Felhasználó név</label>
-                <input type="text" id="name" name="name" required />
-            </div>
-
-            {#if data.action === "register"}
-                <div class="group">
-                    <label for="email">E-mail</label>
-                    <input type="email" id="email" name="email" required />
-                </div>
-            {/if}
-
-            <div class="group">
-                <label for="password">Jelszó</label>
-                <input type="password" name="password" id="password" required />
-            </div>
-
-            <span id="error">{form?.message || ""}</span>
-
-            {#if data.action === "login"}
-                <a href="register">Regisztráció</a>
-            {/if}
-
-            <input
-                type="submit"
-                formaction="?/{data.action}"
-                value={data.action === "login" ? "Bejelentkezés" : "Regisztráció"}
-            />
-        </form>
-    </div>
-    <div id="right-container">
-        <div id="svg-container">
-            <Controller />
+    <form method="post">
+        <h1>{data.action === "login" ? "Bejelentkezés" : "Regisztráció"}</h1>
+        <div class="group">
+            <label for="name">Felhasználó név</label>
+            <input type="text" id="name" name="name" required />
         </div>
-    </div>
+
+        {#if data.action === "register"}
+            <div class="group">
+                <label for="email">E-mail</label>
+                <input type="email" id="email" name="email" required />
+            </div>
+        {/if}
+
+        <div class="group">
+            <label for="password">Jelszó</label>
+            <input type="password" name="password" id="password" required />
+        </div>
+
+        <span id="error">{form?.message || ""}</span>
+
+        {#if data.action === "login"}
+            <a href="register">Regisztráció</a>
+        {/if}
+
+        <input
+            type="submit"
+            formaction="?/{data.action}"
+            value={data.action === "login" ? "Bejelentkezés" : "Regisztráció"}
+        />
+    </form>
 </div>
 
 <style lang="scss">
     @import "$lib/styles/variables.scss";
 
+    // #main-container {
+    //     display: flex;
+    //     height: 100vh;
+    // }
     #main-container {
-        display: flex;
         height: 100vh;
-    }
-    #left-container {
-        flex: 1;
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: center;
         gap: 5rem;
+        background-repeat: no-repeat;
+        background-size: 30%;
+        background-position: right bottom;
+        background-attachment: fixed;
+
+        @include mobile {
+            background-image: none !important;
+        }
 
         .logo {
             background: none;
@@ -84,28 +87,14 @@
 
             cursor: pointer;
             display: block;
-            width: 55%;
-            margin-left: 5%;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            width: 25rem;
+            height: 15rem;
         }
     }
 
-    #right-container {
-        padding: 1rem;
-        padding-right: 0;
-        flex: 1;
-        display: flex;
-        justify-content: end;
-        align-items: end;
-
-        #svg-container {
-            height: 50%;
-
-            svg {
-                width: 100%;
-                height: 100%;
-            }
-        }
-    }
     form {
         display: flex;
         flex-direction: column;
