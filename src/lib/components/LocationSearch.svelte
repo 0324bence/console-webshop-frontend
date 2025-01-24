@@ -31,6 +31,33 @@
         selectedLocation = location;
         dispatch("search", location);
     }
+    let textBoxValue = "";
+    let textBoxFocus = false;
+    let selectedResult: number = -1;
+
+    const keyDownHandler = (e: KeyboardEvent) => {
+        if (e.key === "ArrowDown") {
+            e.preventDefault();
+            if (selectedResult < locations.length - 1) {
+                selectedResult++;
+            }
+        } else if (e.key === "ArrowUp") {
+            e.preventDefault();
+            if (selectedResult > -1) {
+                selectedResult--;
+            }
+        }
+    };
+
+    function focusTextBox() {
+        textBoxFocus = true;
+        window.addEventListener("keydown", keyDownHandler);
+    }
+
+    function blurTextBox() {
+        textBoxFocus = false;
+        window.removeEventListener("keydown", keyDownHandler);
+    }
 
     export let selectedLocation: Location | undefined = undefined;
 
@@ -42,8 +69,6 @@
         textBoxValue = "";
     }
 
-    let textBoxValue = "";
-
     export let error = false;
 </script>
 
@@ -51,15 +76,22 @@
     <label for="locationTextBox"
         >Település{selectedLocation !== undefined ? ` (${selectedLocation.name})` : ""}:
     </label>
-    <form on:submit|preventDefault={search} class="input-container">
+    <form on:submit|preventDefault class="input-container">
         <input
             class={error ? "error" : ""}
             type="text"
             placeholder={selectedLocation !== undefined ? `${selectedLocation.name}...` : "Település..."}
             bind:value={textBoxValue}
+            on:focus={focusTextBox}
+            on:blur={blurTextBox}
             id="locationTextBox"
         />
-        <button type="submit" disabled={loading}>
+        <button
+            type={selectedResult < 0 ? "submit" : "button"}
+            class={selectedResult < 0 && textBoxFocus ? "submit-btn selected" : "submit-btn"}
+            disabled={loading}
+            on:click={search}
+        >
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"
                 ><!--!Font Awesome Free 6.7.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path
                     d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z"
@@ -78,11 +110,13 @@
                             <span>Nincs találat</span>
                         </div>
                     {/if}
-                    {#each locations as location}
+                    {#each locations as location, index}
                         <button
-                            class="result"
+                            class={"result " + (selectedResult === index ? "selected" : "")}
+                            type={selectedResult === index ? "submit" : "button"}
                             on:click|stopPropagation={() => {
                                 hideResults();
+                                selectedResult = -1;
                                 selectLocation(location);
                             }}
                         >
@@ -118,7 +152,7 @@
             gap: 0.2rem;
         }
 
-        button[type="submit"] {
+        .submit-btn {
             color: $color-black;
             background-color: $color-white;
             border: 1px solid $color-black;
@@ -126,6 +160,14 @@
             padding: 0.2rem;
             aspect-ratio: 1 / 1;
             cursor: pointer;
+
+            &:hover {
+                background-color: darken($color-white, 5%);
+            }
+
+            &.selected {
+                background-color: darken($color-white, 5%);
+            }
 
             &:disabled {
                 cursor: not-allowed;
@@ -186,7 +228,8 @@
                 cursor: pointer;
                 padding: 2px;
 
-                &:hover {
+                &:hover,
+                &.selected {
                     background-color: darken($color-white, 5%);
                 }
 
