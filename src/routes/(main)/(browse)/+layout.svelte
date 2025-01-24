@@ -183,6 +183,7 @@
 
     function clearLocation() {
         selectedLocation = undefined;
+        distanceValue = 0;
         locationSearch.clear();
         changeSearch();
     }
