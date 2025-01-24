@@ -386,6 +386,7 @@
             display: flex;
             justify-content: end;
             align-items: center;
+            padding-right: 1rem;
 
             .sorting-group {
                 display: flex;
