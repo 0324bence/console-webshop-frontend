@@ -28,7 +28,7 @@ export const load: PageServerLoad = async ({ params, parent, url }) => {
     if (picturesReq.ok) {
         try {
             let pictures: Picture[] = await picturesReq.json();
-            console.log(pictures, typeof pictures);
+            // console.log(pictures, typeof pictures);
             if (pictures.length === 0) {
                 advert.pictures = [
                     {
@@ -42,7 +42,7 @@ export const load: PageServerLoad = async ({ params, parent, url }) => {
             } else {
                 advert.pictures = pictures;
                 let mainPicture = pictures.find(picture => picture.isPriority === 1);
-                console.log(mainPicture);
+                // console.log(mainPicture);
                 if (mainPicture == undefined) {
                     advert.mainPicture = pictures[0];
                 } else {
@@ -100,7 +100,7 @@ export const load: PageServerLoad = async ({ params, parent, url }) => {
     const modelReq = await fetch(`${apiPath}/filters/modelsForManufacturer?manufacturerId=${advert.manufacturer.id}`);
     if (advert.manufacturer.id !== 0 && modelReq.ok) {
         const models: Model[] = await modelReq.json();
-        console.log(models);
+        // console.log(models);
         advert.model = models.find(model => model.id === advert.modelId)!;
     } else {
         advert.model = {
@@ -125,7 +125,7 @@ export const load: PageServerLoad = async ({ params, parent, url }) => {
             longitude: "0"
         };
     }
-    console.log(advert);
+    // console.log(advert);
 
     return {
         advert

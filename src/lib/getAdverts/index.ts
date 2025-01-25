@@ -118,10 +118,14 @@ async function getAdverts(
     //distance
     const distance = parseInt(url.searchParams.get("locationMaxDistance") || "0");
 
-    const loactionReq = await fetch(`${apiPath}/filters/locations/${url.searchParams.get("locationId")}`);
     let location: Location | undefined;
-    if (loactionReq.ok) {
-        location = await loactionReq.json();
+    if (url.searchParams.get("locationId") !== null) {
+        const loactionReq = await fetch(`${apiPath}/filters/locations/${url.searchParams.get("locationId")}`);
+        if (loactionReq.ok) {
+            location = await loactionReq.json();
+        } else {
+            location = undefined;
+        }
     } else {
         location = undefined;
     }

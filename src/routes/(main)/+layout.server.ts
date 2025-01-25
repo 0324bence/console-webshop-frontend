@@ -5,6 +5,7 @@ import type { BasicFilters, User } from "$lib/types/";
 import { error } from "@sveltejs/kit";
 
 export const load: LayoutServerLoad = async ({ cookies }) => {
+    console.log(cookies.getAll());
     const token = cookies.get("token");
     let user: User | null = null;
     if (token != undefined) {

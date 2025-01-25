@@ -7,6 +7,9 @@
     import UserPlaceholder from "$lib/svgs/UserPlaceholder.svelte";
     import { onMount } from "svelte";
     import type { LayoutData } from "./$types";
+    import logo from "$lib/images/logo.svg";
+    import cart from "$lib/images/cart.svg";
+    import placeholder from "$lib/images/placeholder.png";
 
     export let data: LayoutData;
 
@@ -64,8 +67,8 @@
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <div id="window-container" on:click={closeMenu}>
     <div id="header">
-        <a href="/" id="logo-container">
-            <Logo />
+        <a href="/" id="logo-container" style={`background-image: url(${logo})`}>
+            <!-- <Logo /> -->
         </a>
         <div id="center-container">
             <form on:submit|preventDefault={formSubmit} class="searchContainer">
@@ -102,7 +105,7 @@
             </form>
         </div>
         <div id="right-container">
-            <Cart />
+            <div id="cart" style={`background-image: url(${cart})`}></div>
             {#if data.token === null || data.ownUser === null}
                 <div id="nologin">
                     <a href="/auth/login">Bejelentkezés</a>
@@ -114,8 +117,9 @@
                     on:click|stopPropagation={() => {
                         userMenu = !userMenu;
                     }}
+                    style={`background-image: url(${data.ownUser?.picture ? "data:image/jpeg;base64," + data.ownUser?.picture : placeholder})`}
                 >
-                    <UserPlaceholder url={data.ownUser.picture} />
+                    <!-- <UserPlaceholder url={data.ownUser.picture} /> -->
                 </button>
                 <div id="user-menu" class={userMenu ? "" : "hidden"}>
                     <a href="/profile" class="menu-item">Profil</a>
@@ -135,6 +139,7 @@
     @import "$lib/styles/variables.scss";
 
     #nologin {
+        height: 100%;
         display: flex;
         flex-direction: column;
         justify-content: center;
@@ -143,7 +148,7 @@
 
         a {
             color: $color-white;
-            font-size: 1.3rem;
+            font-size: 1rem;
         }
     }
 
@@ -158,22 +163,43 @@
     #header {
         width: 100%;
         z-index: 2;
-        height: 7rem;
-        padding: 1rem 2rem 1rem 2rem;
-        display: flex;
-        gap: 2rem;
+        min-height: 7rem;
+        padding: 1rem 1.5rem 1rem 1.5rem;
+        display: grid;
+        grid-template-columns: 1.5fr 11fr 1.5fr;
+        // gap: 2rem;
         align-items: center;
         background-color: $color-blue;
         position: relative;
 
+        @include mobile {
+            grid-template-columns: 2fr 2fr;
+            grid-template-rows: 1fr 1fr;
+        }
+
         #logo-container {
-            height: 100%;
             display: block;
+            height: 100%;
+            width: 100%;
+            background-position: center left;
+            background-size: contain;
+            background-repeat: no-repeat;
+
+            @include mobile {
+                grid-column: 1;
+                grid-row: 1;
+                margin-left: 0.5rem;
+            }
         }
 
         #center-container {
-            flex: 1;
             height: 100%;
+            width: 100%;
+
+            @include mobile {
+                grid-column: 1 / span 2;
+                grid-row: 2;
+            }
 
             form {
                 width: 100%;
@@ -233,14 +259,35 @@
 
         #right-container {
             display: flex;
-            gap: 2rem;
+            gap: 1rem;
             height: 100%;
             padding: 0.7rem;
+
+            @include mobile {
+                grid-column: 2;
+                grid-row: 1;
+                padding: 0.4rem;
+                padding-right: 0.5rem;
+            }
+
+            #cart {
+                height: 100%;
+                flex: 1;
+                background-position: center;
+                background-size: contain;
+                background-repeat: no-repeat;
+            }
 
             button {
                 background: none;
                 border: none;
                 cursor: pointer;
+                height: 100%;
+                max-height: 7rem;
+                flex: 1;
+                background-position: center;
+                background-size: contain;
+                background-repeat: no-repeat;
             }
 
             #user-menu {
@@ -259,6 +306,10 @@
                 transition: transform 0.3s;
                 // transform: translateY(0%);
                 visibility: visible;
+
+                @include mobile {
+                    width: 100%;
+                }
 
                 &.hidden {
                     // transform: translateY(-100%);

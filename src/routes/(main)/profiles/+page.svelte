@@ -3,7 +3,7 @@
 
     export let data: PageServerData;
 
-    console.log(data);
+    // console.log(data);
 </script>
 
 <!-- TODO pagination -->

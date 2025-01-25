@@ -63,7 +63,7 @@
     }
 
     onMount(async () => {
-        console.log(userId);
+        // console.log(userId);
         for (const manufacturerId of data.activeFilters.manufacturers) {
             await getModels(manufacturerId);
         }
@@ -81,7 +81,7 @@
     });
 
     function changeSorting(e: Event) {
-        console.log($page.url);
+        // console.log($page.url);
         const sortingValue = (e.target as HTMLSelectElement).value;
         const sorting = sortingValue.split("-");
         const localUrl = new URL($page.url.href);
@@ -105,7 +105,7 @@
     function changeSearch() {
         clearTimeout(timeout);
         timeout = setTimeout(() => {
-            console.log("submit", userId);
+            // console.log("submit", userId);
             searchForm.requestSubmit();
         }, 500);
     }
@@ -116,7 +116,7 @@
         if (data.advertCount == undefined || adverts.length >= data.advertCount) {
             return;
         }
-        console.log("loading more adverts", adverts.length);
+        // console.log("loading more adverts", adverts.length);
         loadingAdverts = true;
         const advertsReq = await fetch(
             `${apiPath}/adverts?${$page.url.search}${$page.url.search.length > 0 ? "&" : ""}skip=${adverts.length}`
@@ -202,7 +202,7 @@
         } else {
             userId = undefined;
         }
-        console.log(userId);
+        // console.log(userId);
         adverts = data.adverts.map(advert => {
             const newAdvert = {
                 ...advert,
@@ -215,6 +215,7 @@
             return newAdvert;
         });
     });
+    console.log(data.ownUser);
 </script>
 
 <slot></slot>
