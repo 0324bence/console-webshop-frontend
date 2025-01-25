@@ -72,6 +72,7 @@
         justify-content: center;
         align-items: center;
         gap: 5rem;
+        width: 100%;
         background-repeat: no-repeat;
         background-size: 30%;
         background-position: right bottom;
@@ -91,6 +92,7 @@
             background-repeat: no-repeat;
             background-position: center;
             width: 25rem;
+            max-width: 80%;
             height: 15rem;
         }
     }
