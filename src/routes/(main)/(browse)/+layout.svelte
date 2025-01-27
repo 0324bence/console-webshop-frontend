@@ -363,7 +363,7 @@
         </div>
     </div>
     <!-- TODO growing space under adverts on scroll -->
-    <div id="advert-container">
+    <div id="advert-container" class={filtersHidden ? "" : "hidden"}>
         {#if adverts.length == 0}
             <div class="no-adverts">Nincs találat</div>
         {/if}
@@ -413,7 +413,7 @@
         position: relative;
 
         .hidden {
-            display: none;
+            display: none !important;
         }
 
         #sorting-container {
@@ -500,6 +500,9 @@
                 98% {
                     transform: translateX(-101%);
                 }
+                99% {
+                    display: none;
+                }
                 100% {
                     display: none;
                 }
@@ -524,6 +527,7 @@
                 left: 0;
                 width: 100%;
                 background-color: darken($color-white, 10%);
+                min-height: 100%;
 
                 &.default {
                     transform: translateX(-101%);

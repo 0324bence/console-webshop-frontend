@@ -288,10 +288,11 @@
                 cursor: pointer;
                 height: 100%;
                 max-height: 7rem;
-                flex: 1;
+                aspect-ratio: 1/1;
                 background-position: center;
                 background-size: contain;
                 background-repeat: no-repeat;
+                border-radius: 50%;
             }
 
             #user-menu {
