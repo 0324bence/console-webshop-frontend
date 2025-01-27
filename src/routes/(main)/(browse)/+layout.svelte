@@ -66,6 +66,7 @@
 
     onMount(async () => {
         // console.log(userId);
+        filtersHidden = undefined;
         for (const manufacturerId of data.activeFilters.manufacturers) {
             await getModels(manufacturerId);
         }
@@ -221,6 +222,7 @@
 
     afterNavigate(() => {
         invalidateAll();
+        // filtersHidden = undefined;
         if ($page.url.pathname.search("/profile/") !== -1) {
             userId = $page.data.user.id;
         } else {
@@ -262,7 +264,7 @@
         <div id="title" class="filter-group">
             <div class="title-row">
                 <h2>Filterezés</h2>
-                <button on:click={hamburgerClick}>&times;</button>
+                <button on:click|preventDefault={hamburgerClick}>&times;</button>
             </div>
         </div>
         <div id="state" class="filter-group">
@@ -285,7 +287,7 @@
         <div id="location" class="filter-group">
             <div class="title-row">
                 <h2>Hely</h2>
-                <button on:click={clearLocation}>&#128465;</button>
+                <button on:click|preventDefault={clearLocation}>&#128465;</button>
             </div>
             <hr />
             <label for="distance">Max távolság: {distanceValue}km</label>
@@ -363,7 +365,7 @@
         </div>
     </div>
     <!-- TODO growing space under adverts on scroll -->
-    <div id="advert-container" class={filtersHidden ? "" : "hidden"}>
+    <div id="advert-container" class={filtersHidden !== undefined && !filtersHidden ? "hidden" : ""}>
         {#if adverts.length == 0}
             <div class="no-adverts">Nincs találat</div>
         {/if}
