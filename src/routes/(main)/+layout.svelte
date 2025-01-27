@@ -166,15 +166,19 @@
         min-height: 7rem;
         padding: 1rem 1.5rem 1rem 1.5rem;
         display: grid;
-        grid-template-columns: 1.5fr 11fr 1.5fr;
+        grid-template-columns: 1fr 8fr 1.5fr;
         // gap: 2rem;
         align-items: center;
         background-color: $color-blue;
         position: relative;
 
         @include mobile {
-            grid-template-columns: 2fr 2fr;
+            grid-template-columns: 1.5fr 2fr;
             grid-template-rows: 1fr 1fr;
+        }
+
+        @include tablet {
+            grid-template-columns: 1fr 3fr 1.5fr;
         }
 
         #logo-container {
