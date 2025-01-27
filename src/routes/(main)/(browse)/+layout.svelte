@@ -368,7 +368,7 @@
             <div class="no-adverts">Nincs találat</div>
         {/if}
         {#each adverts as advert, index}
-            <a href={`/advert/${advert.id}`} class="advert">
+            <a href={`/advert/${advert.id}`} class="advert" title={advert.title}>
                 <div
                     class="image"
                     style={`background-image: url('data:image/jpeg;base64,${advert.mainPicture.data}');`}
@@ -380,7 +380,7 @@
                     /> -->
                 </div>
                 <div class="data">
-                    <h2>{advert.title}</h2>
+                    <h2>{advert.title.substring(0, 25)}{advert.title.length > 25 ? "..." : ""}</h2>
                     <p>{data.filters.states.find(i => i.id == advert.stateId)?.name}</p>
                     <div class="flex-spacer"></div>
                     <h3>{advert.priceHuf} HUF</h3>
@@ -622,6 +622,14 @@
             padding: 1rem;
             gap: 1rem;
 
+            @include tablet {
+                grid-template-columns: 1fr;
+            }
+
+            @include mobile {
+                grid-column: 1 / span 2;
+            }
+
             .no-adverts {
                 grid-column: span 5;
                 display: flex;
@@ -639,10 +647,11 @@
             }
 
             .advert {
-                display: grid;
+                display: flex;
+                flex-direction: column;
                 color: $color-black;
                 text-decoration: none;
-                grid-template-rows: 1fr 1fr;
+                // grid-template-rows: 1fr 1fr;
                 width: 100%;
                 padding: 1rem;
                 border-radius: 0.3rem;
@@ -655,6 +664,15 @@
                     padding: 5px;
                     display: flex;
                     flex-direction: column;
+                    flex: 1;
+
+                    @include tablet {
+                        flex: 1;
+                    }
+
+                    h2 {
+                        font-size: 120%;
+                    }
                 }
 
                 .flex-spacer {
@@ -669,6 +687,7 @@
                 }
 
                 .image {
+                    flex: 0.8;
                     width: 100%;
                     aspect-ratio: 16 / 9;
                     display: flex;
@@ -678,6 +697,10 @@
                     background-size: contain;
                     background-repeat: no-repeat;
                     background-color: darken($color-white, 10%);
+
+                    @include tablet {
+                        flex: 2;
+                    }
                 }
             }
         }

@@ -172,13 +172,13 @@
         background-color: $color-blue;
         position: relative;
 
+        @include tablet {
+            grid-template-columns: 1fr 3fr 1.5fr;
+        }
+
         @include mobile {
             grid-template-columns: 1.5fr 2fr;
             grid-template-rows: 1fr 1fr;
-        }
-
-        @include tablet {
-            grid-template-columns: 1fr 3fr 1.5fr;
         }
 
         #logo-container {
