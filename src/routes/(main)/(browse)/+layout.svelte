@@ -9,6 +9,8 @@
     import IntersectionObserver from "$lib/components/IntersectionObserver.svelte";
     import noImage from "$lib/images/noImage";
     import LocationSearch from "$lib/components/LocationSearch.svelte";
+    import bars from "$lib/images/bars.svg";
+
     interface LocalPicture extends Picture {
         object: HTMLImageElement;
     }
@@ -195,6 +197,28 @@
         changeSearch();
     }
 
+    let filtersHidden: boolean | undefined = undefined;
+
+    function hamburgerClick() {
+        if (filtersHidden === undefined) {
+            filtersHidden = false;
+        } else {
+            filtersHidden = !filtersHidden;
+        }
+    }
+
+    let filterClass: string;
+
+    $: {
+        if (filtersHidden === undefined) {
+            filterClass = "default";
+        } else if (filtersHidden) {
+            filterClass = "slide-out";
+        } else {
+            filterClass = "slide-in";
+        }
+    }
+
     afterNavigate(() => {
         invalidateAll();
         if ($page.url.pathname.search("/profile/") !== -1) {
@@ -221,6 +245,7 @@
 <slot></slot>
 <div class="main-container">
     <form
+        class={filterClass}
         id="filter-container"
         method="post"
         action="/search?/filters"
@@ -234,6 +259,12 @@
         <input type="text" name="sortBy" id="sortBy" class="hidden" value={data.activeFilters.sortBy} />
         <input type="text" name="sortOrder" id="sortOrder" class="hidden" value={data.activeFilters.sortOrder} />
         <input type="text" name="userId" id="userId" class="hidden" bind:value={userId} />
+        <div id="title" class="filter-group">
+            <div class="title-row">
+                <h2>Filterezés</h2>
+                <button on:click={hamburgerClick}>&times;</button>
+            </div>
+        </div>
         <div id="state" class="filter-group">
             <h2>Állapot</h2>
             <hr />
@@ -254,7 +285,7 @@
         <div id="location" class="filter-group">
             <div class="title-row">
                 <h2>Hely</h2>
-                <button on:click={clearLocation}>&times;</button>
+                <button on:click={clearLocation}>&#128465;</button>
             </div>
             <hr />
             <label for="distance">Max távolság: {distanceValue}km</label>
@@ -315,6 +346,7 @@
         </div>
     </form>
     <div id="sorting-container">
+        <button id="open-menu-btn" style={`background-image: url(${bars});`} on:click={hamburgerClick}></button>
         <div class="sorting-group">
             <select
                 name="sorting"
@@ -378,6 +410,7 @@
         padding-right: 0.5rem;
         padding-left: 0.5rem;
         grid-template-rows: 2rem 15fr;
+        position: relative;
 
         .hidden {
             display: none;
@@ -388,6 +421,42 @@
             justify-content: end;
             align-items: center;
             padding-right: 1rem;
+            padding-left: 1rem;
+
+            @include mobile {
+                grid-column: 1 / span 2;
+                justify-content: space-between;
+            }
+
+            #open-menu-btn {
+                background-color: $color-white;
+                border: none;
+                cursor: pointer;
+                padding: 0.2rem;
+                border-radius: 0.2rem;
+                aspect-ratio: 1 / 1;
+                height: 100%;
+                background-position: center;
+                background-size: 70%;
+                background-repeat: no-repeat;
+
+                display: none;
+
+                @include mobile {
+                    display: block;
+                }
+
+                &:hover {
+                    box-shadow: 2px 2px 5px $color-black;
+                }
+
+                &:active {
+                    transform: scale(0.9);
+                    // box-shadow: 1px 1px 5px $color-black inset;
+                    box-shadow: none;
+                    outline: 1px solid black;
+                }
+            }
 
             .sorting-group {
                 display: flex;
@@ -407,6 +476,71 @@
             display: flex;
             flex-direction: column;
             gap: 1rem;
+            transition: transform 0.5s ease;
+
+            @keyframes slideIn {
+                0% {
+                    display: none;
+                }
+                1% {
+                    display: flex;
+                }
+                2% {
+                    transform: translateX(-101%);
+                }
+                100% {
+                    transform: translateX(0);
+                }
+            }
+
+            @keyframes slideOut {
+                0% {
+                    transform: translateX(0);
+                }
+                98% {
+                    transform: translateX(-101%);
+                }
+                100% {
+                    display: none;
+                }
+            }
+
+            @keyframes hideWhileSliding {
+                0% {
+                    visibility: hidden;
+                }
+                98% {
+                    visibility: hidden;
+                }
+                100% {
+                    visibility: visible;
+                }
+            }
+
+            @include mobile {
+                grid-row: auto;
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 100%;
+                background-color: darken($color-white, 10%);
+
+                &.default {
+                    transform: translateX(-101%);
+                    display: none;
+                }
+
+                &.slide-in {
+                    animation: slideIn 0.5s ease forwards;
+                }
+
+                &.slide-out {
+                    animation: slideOut 0.5s ease forwards;
+                }
+
+                // transform: translateX(-101%);
+                // display: none;
+            }
 
             .filter-group {
                 display: flex;
@@ -416,6 +550,16 @@
                 border-radius: 0.3rem;
                 box-shadow: 1px 1px 5px 0px $color-black;
                 padding: 0.5rem;
+
+                &#title {
+                    button {
+                        color: $color-dark-blue;
+                        display: none;
+                        @include mobile {
+                            display: flex;
+                        }
+                    }
+                }
 
                 .title-row {
                     display: flex;
@@ -433,6 +577,7 @@
                     aspect-ratio: 1 / 1;
                     font-size: 1.5rem;
                     color: $color-red;
+                    font-weight: 600;
 
                     &:hover {
                         text-shadow: 1px 1px 5px $color-black;
