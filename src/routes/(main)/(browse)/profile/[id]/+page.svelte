@@ -4,6 +4,7 @@
     import type { PageData } from "./$types";
     import { invalidateAll, onNavigate } from "$app/navigation";
     import { enhance } from "$app/forms";
+    import placeholder from "$lib/images/placeholder.png";
 
     export let data: PageData;
 
@@ -59,7 +60,10 @@
         bind:this={pictureForm}
         use:enhance={pictureEnhance}
     >
-        <UserPlaceholder url={data.user.picture} />
+        <div
+            class="picture"
+            style={`background-image: url(${data.user.picture ? "data:image/jpeg;base64," + data.user.picture : placeholder})`}
+        ></div>
         {#if data.isOwn}
             <input
                 type="file"
@@ -134,11 +138,44 @@
         // justify-content: center;
         gap: 2rem;
         // padding: 0 10rem 0 10rem;
+
+        @include tablet {
+            grid-template-columns: 1fr 1fr 1fr 1fr;
+            grid-template-rows: 50% 50%;
+            gap: 0.5rem;
+        }
+
+        @include mobile {
+            grid-template-columns: 1fr 1fr;
+            grid-template-rows: 50% 50%;
+            gap: 0.5rem;
+            padding: 0.5rem;
+        }
+
         .pic {
             grid-column: 2;
             height: 50%;
             margin-right: 10rem;
             position: relative;
+
+            @include tablet {
+                height: 100%;
+                padding: 1rem;
+                padding-left: 0;
+                margin-right: 1rem;
+            }
+
+            @include mobile {
+                grid-column: 1;
+            }
+
+            .picture {
+                aspect-ratio: 1/1;
+                height: 100%;
+                background-position: center;
+                background-size: contain;
+                background-repeat: no-repeat;
+            }
 
             input {
                 position: absolute;
@@ -181,6 +218,14 @@
             grid-column: 3;
             width: 100%;
 
+            @include tablet {
+                grid-column: 3 / 4;
+            }
+
+            @include mobile {
+                grid-column: 2;
+            }
+
             span:first-child {
                 font-weight: bold;
             }
@@ -194,6 +239,17 @@
             justify-content: start;
             height: 8rem;
             max-width: 100%;
+
+            @include tablet {
+                grid-column: 2 / span 2;
+                padding-left: 1rem;
+                padding-right: 1rem;
+                grid-row: 2;
+            }
+
+            @include mobile {
+                grid-column: 1 / span 2;
+            }
 
             p {
                 white-space: pre-wrap;
@@ -221,6 +277,11 @@
                 min-height: 70%;
                 height: 150%;
                 padding: 5px;
+
+                @include tablet {
+                    width: 100%;
+                    max-width: 100%;
+                }
             }
 
             button {
