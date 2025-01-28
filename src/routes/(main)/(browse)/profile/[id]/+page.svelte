@@ -47,6 +47,8 @@
     };
 </script>
 
+<!-- TODO show email if own user -->
+<!-- TODO editable email and password -->
 <div id="profile-container">
     <!-- <div id="profile"> -->
     <form

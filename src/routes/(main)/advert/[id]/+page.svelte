@@ -6,6 +6,7 @@
     let selectedImage = data.advert.mainPicture;
 </script>
 
+<!-- TODO comments -->
 <div id="advert-content">
     <div id="main-data-container">
         <div id="pictures-container">
