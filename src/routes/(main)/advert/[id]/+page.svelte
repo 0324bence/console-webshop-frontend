@@ -102,11 +102,21 @@
         padding-left: 5rem;
         padding-right: 5rem;
 
+        @include tablet {
+            padding-left: 1rem;
+            padding-right: 1rem;
+        }
+
         #main-data-container {
             height: 25rem;
             padding: 1rem;
             display: flex;
             gap: 1rem;
+
+            @include mobile {
+                flex-direction: column;
+                height: auto;
+            }
 
             #pictures-container {
                 border: 1px solid black;
@@ -119,6 +129,11 @@
                 gap: 1rem;
                 // background-color: rgb(20, 83, 62);
 
+                @include tablet {
+                    grid-template-columns: 1fr;
+                    grid-template-rows: 2.9fr 1.1fr;
+                }
+
                 #preview-container {
                     display: flex;
                     flex-direction: column;
@@ -128,6 +143,18 @@
                     overflow-y: auto;
                     height: 100%;
                     max-height: 100%;
+                    min-height: 5rem;
+
+                    @include tablet {
+                        grid-column: 1;
+                        grid-row: 2;
+                        flex-direction: row;
+                        padding: 0.4rem;
+
+                        &::-webkit-scrollbar {
+                            height: 0;
+                        }
+                    }
 
                     .image {
                         aspect-ratio: 16 / 9;
@@ -143,6 +170,11 @@
                         background-color: $color-black;
                         // background-color: darken($color-white, 10%);
                         cursor: pointer;
+
+                        @include tablet {
+                            width: auto;
+                            height: 100%;
+                        }
 
                         &:hover {
                             outline: 1px solid $color-blue;
@@ -160,6 +192,11 @@
                     justify-content: center;
                     align-items: center;
                     padding: 1rem;
+
+                    @include tablet {
+                        grid-column: 1;
+                        grid-row: 1;
+                    }
 
                     .image {
                         width: 100%;
@@ -292,6 +329,11 @@
                     padding: 1px;
                     align-items: stretch;
                     gap: 5px;
+
+                    @include mobile {
+                        flex-direction: column;
+                        gap: 1px;
+                    }
 
                     .col {
                         flex: 1;
