@@ -175,6 +175,7 @@
                 background-position: center;
                 background-size: contain;
                 background-repeat: no-repeat;
+                border-radius: 50%;
             }
 
             input {
