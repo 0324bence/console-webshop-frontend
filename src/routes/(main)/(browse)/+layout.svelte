@@ -621,12 +621,18 @@
             }
         }
 
+        // TODO padding bigger on right than left, center align whole list
         #advert-container {
-            display: grid;
-            grid-template-columns: repeat(5, 19%);
-            grid-template-rows: repeat(auto-fill, 20rem);
-            padding: 1rem;
-            gap: 1rem;
+            display: flex;
+            // grid-template-columns: repeat(5, 19%);
+            // grid-template-rows: repeat(auto-fill, 20rem);
+            padding: 0.9rem;
+            gap: 0.9rem;
+            flex-wrap: wrap;
+
+            @include tablet {
+                flex-direction: column;
+            }
 
             @include tablet {
                 grid-template-columns: 1fr;
@@ -658,13 +664,17 @@
                 color: $color-black;
                 text-decoration: none;
                 // grid-template-rows: 1fr 1fr;
-                width: 100%;
+                width: 19%;
                 padding: 1rem;
                 border-radius: 0.3rem;
-                height: 100%;
+                height: 20rem;
                 // border: 1px solid $color-black;
                 background-color: $color-white;
                 box-shadow: 1px 1px 5px 0px $color-black;
+
+                @include tablet {
+                    width: 100%;
+                }
 
                 .data {
                     padding: 5px;
