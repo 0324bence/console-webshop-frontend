@@ -46,6 +46,8 @@
             await update();
         };
     };
+
+    let editingPassword = false;
 </script>
 
 <!-- TODO show email if own user -->
@@ -83,18 +85,54 @@
             <span>Csatlakozott:</span>
             <span>{new Date(data.user.regDate).toLocaleDateString()}</span>
         </div>
-        <div class="row">
-            <span>Email:</span>
-            <span>{data.user.email}</span>
-        </div>
+        <!-- {#if data.isOwn}
+            <div class="row">
+                <span>Email:</span>
+                <span>{data.user.email}</span>
+            </div>
+        {/if} -->
         <div class="row">
             <span>Hirdetések:</span>
             <span>{data.advertCount} db</span>
         </div>
-        <div class="row">
+        {#if data.isOwn}
+            <div class="row">
+                {#if !editingPassword}
+                    <button
+                        on:click={() => {
+                            editingPassword = true;
+                        }}
+                    >
+                        Jelszó módosítás
+                    </button>
+                {:else}
+                    <form
+                        method="post"
+                        action="?/password"
+                        use:enhance={async () => {
+                            return async ({ update }) => {
+                                await update();
+                                editingPassword = false;
+                            };
+                        }}
+                    >
+                        <button
+                            type="button"
+                            class="cancel"
+                            on:click={() => {
+                                editingPassword = false;
+                            }}>&times;</button
+                        >
+                        <input type="password" name="new-password" id="new-password" placeholder="Új jelszó" />
+                        <button type="submit">Módosítás</button>
+                    </form>
+                {/if}
+            </div>
+        {/if}
+        <!-- <div class="row">
             <span>Értékelés:</span>
             <span>????</span>
-        </div>
+        </div> -->
     </div>
     <form method="post" action="?/bio" class="bio" bind:this={bioForm}>
         <div class="row">
@@ -213,6 +251,45 @@
             display: flex;
             align-items: start;
             gap: 0.2rem;
+
+            form {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+            }
+
+            input {
+                margin-right: 0.5rem;
+                padding: 0.2rem;
+                border: 1px solid $color-blue;
+            }
+
+            button {
+                margin-top: 0.4rem;
+                background: none;
+                border: none;
+                cursor: pointer;
+                color: $color-blue;
+                font-size: 1rem;
+
+                &:focus {
+                    outline: 1px solid black;
+                }
+
+                &:hover {
+                    text-decoration: underline;
+                }
+
+                &.cancel {
+                    color: $color-red;
+                    display: grid;
+                    place-items: center;
+
+                    &:hover {
+                        text-decoration: none;
+                    }
+                }
+            }
         }
 
         .infos {

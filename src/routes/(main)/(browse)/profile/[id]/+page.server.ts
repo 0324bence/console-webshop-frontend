@@ -116,5 +116,40 @@ export const actions = {
             return error(req.status, message);
         }
         return "ok";
+    },
+    password: async ({ cookies, request }) => {
+        const token = cookies.get("token");
+        if (token === undefined) {
+            return error(401, "Unauthorized");
+        }
+
+        const data = await request.formData();
+        const password = data.get("new-password");
+        if (password === null) {
+            return error(400, "No password provided");
+        }
+
+        const req = await fetch(`${apiPath}/user`, {
+            method: "PATCH",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`
+            },
+            body: JSON.stringify({
+                password
+            })
+        });
+        if (!req.ok) {
+            const json = await req.json();
+            console.log(json);
+            let message = "";
+            if (typeof json.message === "string") {
+                message = json.message;
+            } else {
+                message = json.message[0];
+            }
+            return error(req.status, message);
+        }
+        return "ok";
     }
 } satisfies Actions;
