@@ -1,4 +1,6 @@
 <script lang="ts">
+    import trash from "$lib/images/trash.svg";
+    import edit from "$lib/images/edit.svg";
     export let data;
 
     // console.log(data);
@@ -24,10 +26,12 @@
                     class="image"
                     style={`background-image: url('data:image/jpeg;base64,${selectedImage.data}');`}
                 ></div>
-                <div id="description">
+                <div id="description" class="multiple">
+                    <button id="delete" style={`background-image: url('${trash}');`}></button>
                     <p>
                         {selectedImage.description}
                     </p>
+                    <button id="modify" style={`background-image: url('${edit}');`}></button>
                 </div>
             </div>
         </div>
@@ -196,6 +200,26 @@
                     @include tablet {
                         grid-column: 1;
                         grid-row: 1;
+                    }
+
+                    #description {
+                        width: 100%;
+                        display: flex;
+
+                        &.multiple {
+                            justify-content: space-between;
+                        }
+
+                        button {
+                            height: 100%;
+                            aspect-ratio: 1 / 1;
+                            border: none;
+                            background-color: transparent;
+                            background-position: center;
+                            background-size: 70%;
+                            background-repeat: no-repeat;
+                            cursor: pointer;
+                        }
                     }
 
                     .image {
