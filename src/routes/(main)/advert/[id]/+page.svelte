@@ -1,11 +1,14 @@
 <script lang="ts">
     import trash from "$lib/images/trash.svg";
     import edit from "$lib/images/edit.svg";
+    import LocationSearch from "$lib/components/LocationSearch.svelte";
     export let data;
 
     // console.log(data);
 
     let selectedImage = data.advert.mainPicture;
+
+    let priceValue = data.advert.priceHuf;
 </script>
 
 <!-- TODO comments -->
@@ -26,30 +29,62 @@
                     class="image"
                     style={`background-image: url('data:image/jpeg;base64,${selectedImage.data}');`}
                 ></div>
-                <div id="description" class="multiple">
-                    <button id="delete" style={`background-image: url('${trash}');`}></button>
+                <div id="description" class={data.isOwn ? "multiple" : ""}>
+                    {#if data.isOwn}
+                        <button id="delete" style={`background-image: url('${trash}');`}></button>
+                    {/if}
                     <p>
                         {selectedImage.description}
                     </p>
-                    <button id="modify" style={`background-image: url('${edit}');`}></button>
+                    {#if data.isOwn}
+                        <button id="modify" style={`background-image: url('${edit}');`}></button>
+                    {/if}
                 </div>
             </div>
         </div>
         <div id="data-container">
             <div id="title-row">
+                {#if data.isOwn}
+                    <div id="edit-button">
+                        <button style={`background-image: url('${edit}');`}></button>
+                    </div>
+                {/if}
                 <div id="view-count" title="Megtekintések száma">
                     <span>&#128065;</span>
                     <span>{data.advert.viewCount}</span>
                 </div>
                 <div id="title">
-                    <h1>{data.advert.title}</h1>
+                    <!-- <h1>{data.advert.title}</h1> -->
+                    <input
+                        type="text"
+                        name="title"
+                        id="title-input"
+                        value={data.advert.title}
+                        placeholder={data.advert.title}
+                    />
                     <h3><a href={`/profile/${data.advert.ownerId}`}>{data.advert.owner.name}</a></h3>
                 </div>
             </div>
             <div id="data">
                 <!-- <h3>{data.filters.states.find(i => i.id == data.advert.stateId)?.name}</h3> -->
                 <h3>{data.advert.location.name}</h3>
-                <h2 class="price">{data.advert.priceHuf} HUF</h2>
+                <!-- <h2 class="price">{data.advert.priceHuf} HUF</h2> -->
+                <div id="price-input">
+                    <input
+                        type="number"
+                        name="price"
+                        id="price"
+                        placeholder={data.advert.priceHuf.toString()}
+                        min="0"
+                        max="10000000"
+                        bind:value={priceValue}
+                        on:change={() => {
+                            if (priceValue < 0) priceValue = 0;
+                            if (priceValue > 10000000) priceValue = 10000000;
+                        }}
+                    />
+                    <h2 class="price">HUF</h2>
+                </div>
             </div>
             <div id="button-row">
                 <span>Létrehozva: {new Date(data.advert.createdTime).toISOString().split("T")[0]}</span>
@@ -63,26 +98,38 @@
     <div id="secondary-data-container">
         <div id="secondary-data">
             <div class="table">
-                <div class="col">
-                    <div class="row">
-                        <div class="cell title">Gyártó</div>
-                        <div class="cell">{data.advert.manufacturer.name}</div>
-                    </div>
-                    <div class="row">
-                        <div class="cell title">Modell</div>
-                        <div class="cell">{data.advert.model.name}</div>
+                <!-- <div class="col"> -->
+                <div class="row">
+                    <div class="cell title">Gyártó</div>
+                    <!-- <div class="cell">{data.advert.manufacturer.name}</div> -->
+                    <div class="cell">
+                        <select name="manufacturer" id="manufacturer"></select>
                     </div>
                 </div>
-                <div class="col">
-                    <div class="row">
-                        <div class="cell title">Állapot</div>
-                        <div class="cell">{data.filters.states.find(i => i.id == data.advert.stateId)?.name}</div>
-                    </div>
-                    <div class="row">
-                        <div class="cell title">Hely</div>
-                        <div class="cell">{data.advert.location.name} ({data.advert.location.zip})</div>
+                <div class="row">
+                    <div class="cell title">Modell</div>
+                    <!-- <div class="cell">{data.advert.model.name}</div> -->
+                    <div class="cell">
+                        <select name="modell" id="modell"></select>
                     </div>
                 </div>
+                <!-- </div> -->
+                <!-- <div class="col"> -->
+                <div class="row">
+                    <div class="cell title">Állapot</div>
+                    <!-- <div class="cell">{data.filters.states.find(i => i.id == data.advert.stateId)?.name}</div> -->
+                    <div class="cell">
+                        <select name="state" id="state"></select>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="cell title">Hely</div>
+                    <!-- <div class="cell">{data.advert.location.name} ({data.advert.location.zip})</div> -->
+                    <div class="cell">
+                        <LocationSearch label={false} />
+                    </div>
+                </div>
+                <!-- </div> -->
             </div>
         </div>
     </div>
@@ -205,6 +252,7 @@
                     #description {
                         width: 100%;
                         display: flex;
+                        justify-content: center;
 
                         &.multiple {
                             justify-content: space-between;
@@ -275,13 +323,40 @@
                 #title-row {
                     width: 100%;
                     display: flex;
-                    justify-content: space-between;
+                    justify-content: start;
                     gap: 1rem;
 
+                    #edit-button {
+                        button {
+                            height: 20px;
+                            width: 20px;
+                            background-color: transparent;
+                            border: none;
+                            background-size: 80%;
+                            background-repeat: no-repeat;
+                            background-position: center;
+                            cursor: pointer;
+                            border-radius: 5px;
+
+                            &:hover {
+                                border: 1px solid $color-dark-blue;
+                            }
+                        }
+                    }
+
                     #title {
+                        margin-left: auto;
                         display: flex;
                         flex-direction: column;
                         align-items: flex-end;
+
+                        input {
+                            font-size: 2.2rem;
+                            font-weight: bold;
+                            background-color: transparent;
+                            text-align: right;
+                            width: 100%;
+                        }
 
                         a {
                             color: $color-dark-blue;
@@ -299,6 +374,21 @@
 
                     .price {
                         font-weight: bold;
+                    }
+
+                    #price-input {
+                        display: flex;
+                        align-items: center;
+                        justify-content: flex-end;
+                        gap: 0.5rem;
+
+                        input {
+                            font-size: 1.8rem;
+                            font-weight: bold;
+                            background-color: transparent;
+                            text-align: right;
+                            width: 100%;
+                        }
                     }
                 }
 
@@ -348,32 +438,53 @@
                     width: 100%;
                     height: 100%;
                     // border: 1px solid $color-black;
+                    // background-color: $color-black;
+                    // display: flex;
+
+                    display: grid;
+                    grid-template-columns: 1fr 1fr;
+                    grid-template-rows: 1fr 1fr;
+
                     background-color: $color-black;
-                    display: flex;
+
                     padding: 1px;
                     align-items: stretch;
-                    gap: 5px;
+                    gap: 1px;
 
                     @include mobile {
-                        flex-direction: column;
-                        gap: 1px;
+                        // flex-direction: column;
+                        // gap: 1px;
+                        grid-template-columns: 1fr;
                     }
 
-                    .col {
-                        flex: 1;
-                        display: flex;
-                        flex-direction: column;
-                        gap: 1px;
+                    & {
+                        // flex: 1;
+                        // display: flex;
+                        // flex-direction: column;
+                        // height: 100%;
+                        // gap: 1px;
 
                         .row {
                             display: flex;
+                            height: 100%;
                             width: 100%;
                             gap: 1px;
+                            background-color: $color-black;
 
                             .cell {
                                 width: 100%;
                                 background-color: $color-white;
                                 padding: 5px;
+                                display: flex;
+                                align-items: center;
+                                // border: 1px solid $color-black;
+
+                                select {
+                                    width: 90%;
+                                    padding: 5px;
+                                    border: 1px solid $color-black;
+                                    border-radius: 5px;
+                                }
 
                                 &.title {
                                     font-weight: bold;

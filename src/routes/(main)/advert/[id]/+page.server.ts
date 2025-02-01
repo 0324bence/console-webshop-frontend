@@ -127,7 +127,13 @@ export const load: PageServerLoad = async ({ params, parent, url }) => {
     }
     // console.log(advert);
 
+    let isOwn = false;
+    if (data.ownUser !== null) {
+        isOwn = data.ownUser.id === advert.ownerId;
+    }
+
     return {
-        advert
+        advert,
+        isOwn
     };
 };

@@ -61,6 +61,8 @@
 
     export let selectedLocation: Location | undefined = undefined;
 
+    export let label = true;
+
     export function hideResults() {
         showResults = false;
     }
@@ -73,9 +75,11 @@
 </script>
 
 <div class="container-box">
-    <label for="locationTextBox"
-        >Település{selectedLocation !== undefined ? ` (${selectedLocation.name})` : ""}:
-    </label>
+    {#if label}
+        <label for="locationTextBox"
+            >Település{selectedLocation !== undefined ? ` (${selectedLocation.name})` : ""}:
+        </label>
+    {/if}
     <form on:submit|preventDefault class="input-container">
         <input
             class={error ? "error" : ""}
