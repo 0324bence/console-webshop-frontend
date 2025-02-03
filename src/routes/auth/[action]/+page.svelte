@@ -14,8 +14,6 @@
     <title>{data.action === "login" ? "Bejelentkezés" : "Regisztráció"}</title>
 </svelte:head>
 
-<!-- TODO error message absent -->
-
 <div id="main-container" style={"background-image: url(" + controller + ")"}>
     <button
         on:click={() => {

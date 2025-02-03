@@ -23,6 +23,8 @@ export const actions = {
 
         const body = await res.json();
 
+        console.log("login res body:", body);
+
         if (res.status == 201) {
             //TODO
             cookies.set("token", body.access_token, {
