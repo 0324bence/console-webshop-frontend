@@ -184,5 +184,88 @@ export const actions = {
             return error(500, "Hiba történt az adatok mentése közben");
         }
     },
-    editPicture: async ({ cookies, request }) => {}
+    editPicture: async ({ cookies, request, params }) => {
+        const token = cookies.get("token");
+        if (token === undefined) {
+            return redirect(301, "/auth/");
+        }
+        const advertId = params.id;
+        const data = await request.formData();
+        const id = data.get("image");
+        const description = data.get("description");
+        const isPriority = data.get("isPriority");
+        console.log(id, description, isPriority);
+        const body = {
+            description
+        };
+        if (isPriority == "1") {
+            const primaryReq = await fetch(`${apiPath}/adverts/${advertId}/primaryPictureId`, {
+                method: "POST",
+                headers: {
+                    authorization: "Bearer " + token,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    picId: id
+                })
+            });
+            if (!primaryReq.ok) {
+                return error(500, "Hiba történt a kép beállítása közben");
+            }
+        }
+        const res = await fetch(`${apiPath}/adverts/${advertId}/pictures/`, {
+            method: "PATCH",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`
+            },
+            body: JSON.stringify({
+                id: id,
+                ...body
+            })
+        });
+    },
+    addPicture: async ({ cookies, request, params }) => {
+        const token = cookies.get("token");
+        if (token === undefined) {
+            return redirect(301, "/auth/");
+        }
+        const advertId = params.id;
+        const data = await request.formData();
+        const file = data.get("image-data") as string;
+        const description = data.get("description");
+        const isPriority = data.get("isPriority");
+
+        const body = {
+            data: file,
+            description
+        };
+        const res = await fetch(`${apiPath}/adverts/${advertId}/pictures`, {
+            method: "POST",
+            headers: {
+                authorization: "Bearer " + token,
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(body)
+        });
+        if (!res.ok) {
+            return error(500, "Hiba történt a kép feltöltése közben");
+        }
+        if (isPriority == "1") {
+            const resp = await res.json();
+            const primaryReq = await fetch(`${apiPath}/adverts/${advertId}/primaryPictureId`, {
+                method: "POST",
+                headers: {
+                    authorization: "Bearer " + token,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    picId: resp.id
+                })
+            });
+            if (!primaryReq.ok) {
+                return error(500, "Hiba történt a kép beállítása közben");
+            }
+        }
+    }
 } satisfies Actions;

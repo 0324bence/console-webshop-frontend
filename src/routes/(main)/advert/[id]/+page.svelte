@@ -5,6 +5,7 @@
     import LocationSearch from "$lib/components/LocationSearch.svelte";
     import type { Location } from "$lib/types";
     import { enhance } from "$app/forms";
+    import { Buffer } from "buffer";
     import apiPath from "$lib/apiPath/index.js";
     export let data;
 
@@ -44,9 +45,50 @@
 
     let fileInput: HTMLInputElement;
 
-    function imageDrop(e: DragEvent) {
+    let newFile = false;
+    let newFileData: string;
+
+    async function imageDrop(e: DragEvent) {
         if (!data.isOwn) return;
-        console.log(e);
+        newFile = true;
+        const file = e.dataTransfer?.files[0];
+        if (!file) return;
+        if (file.size > 50000000) {
+            alert("A fájl mérete túl nagy!");
+            return;
+        }
+        const base64 = await file.arrayBuffer().then(buffer => Buffer.from(buffer).toString("base64"));
+        newFileData = base64;
+        showImageModal = true;
+    }
+
+    async function fileHandle(event: Event | DragEvent) {
+        if (!data.isOwn) return;
+
+        event.preventDefault();
+
+        const target = event.target as HTMLInputElement;
+
+        let eventFiles: FileList | null | undefined;
+
+        if (event instanceof DragEvent) {
+            eventFiles = event.dataTransfer?.files;
+        } else {
+            eventFiles = target.files;
+        }
+
+        if (!eventFiles) return;
+
+        newFile = true;
+        const file = eventFiles[0];
+        if (!file) return;
+        if (file.size > 50000000) {
+            alert("A fájl mérete túl nagy!");
+            return;
+        }
+        const base64 = await file.arrayBuffer().then(buffer => Buffer.from(buffer).toString("base64"));
+        newFileData = base64;
+        showImageModal = true;
     }
 
     let timeout: NodeJS.Timeout;
@@ -62,31 +104,79 @@
     }
 
     let showImageModal = false;
+
+    function modifyClick() {
+        showImageModal = true;
+    }
+
+    function modalCancel() {
+        newFile = false;
+        newFileData = "";
+        showImageModal = false;
+    }
 </script>
 
 <!-- TODO comments -->
 <!-- TODO empty title -->
 <div id="advert-content">
-    <div id="modal-container">
-        <div id="image-modal">
-            <div id="title-container">
-                <h2>Kép módosítása</h2>
-            </div>
-            <div id="image-container">
-                <div
-                    class="image"
-                    style={`background-image: url('data:image/jpeg;base64,${selectedImage.data}');`}
-                ></div>
-            </div>
-            <div id="desc-container">
-                <textarea name="image-desc" id="image-desc" placeholder="Leírás..."></textarea>
-            </div>
-            <div id="button-container">
-                <button type="button" class="cancel">Mégse</button>
-                <button type="button" class="save">Mentés</button>
-            </div>
+    {#if showImageModal}
+        <div id="modal-container">
+            <form action={newFile ? "?/addPicture" : "?/editPicture"} method="post" id="image-modal">
+                <div id="title-container">
+                    {#if newFile}
+                        <h2>Új kép feltöltése</h2>
+                    {:else}
+                        <h2>Kép módosítása</h2>
+                    {/if}
+                </div>
+                <div id="image-container">
+                    <div
+                        class="image"
+                        style={`background-image: url('data:image/jpeg;base64,${newFile ? newFileData : selectedImage.data}');`}
+                    >
+                        <label class="checkbox-container" for="isPriority" title="Fő kép">
+                            <input
+                                type="checkbox"
+                                name="isPriority"
+                                id="isPriority"
+                                value="1"
+                                checked={newFile ? false : !!selectedImage.isPriority}
+                            />
+                            <span class="checkmark"></span>
+                        </label>
+                    </div>
+                </div>
+                <div id="desc-container">
+                    <input
+                        type="text"
+                        name="image-data"
+                        id="image-data"
+                        class="hidden"
+                        value={newFile ? newFileData : selectedImage.data}
+                        readonly
+                    />
+                    <input
+                        type="text"
+                        name="image"
+                        id="image-id"
+                        class="hidden"
+                        value={newFile ? "" : selectedImage.id}
+                        readonly
+                    />
+                    <textarea
+                        name="description"
+                        id="image-desc"
+                        value={newFile ? "" : selectedImage.description}
+                        placeholder="Leírás..."
+                    ></textarea>
+                </div>
+                <div id="button-container">
+                    <button type="button" class="cancel" on:click={modalCancel}>Mégse</button>
+                    <button type="submit" class="save">Mentés</button>
+                </div>
+            </form>
         </div>
-    </div>
+    {/if}
     <!-- svelte-ignore a11y-no-static-element-interactions -->
     <div id="main-data-container">
         <div
@@ -109,8 +199,16 @@
                     ></button>
                 {/each}
                 {#if data.isOwn}
-                    <button class="image add-button">+</button>
-                    <input type="file" name="new-pictures" id="new-pictures" class="hidden" bind:this={fileInput} />
+                    <button class="image add-button" on:click={() => fileInput.click()}>+</button>
+                    <input
+                        type="file"
+                        name="new-pictures"
+                        id="new-pictures"
+                        class="hidden"
+                        bind:this={fileInput}
+                        accept=".jpg,.png,.webp,.gif,.avif"
+                        on:change={fileHandle}
+                    />
                 {/if}
             </div>
             <div id="main-container">
@@ -126,7 +224,7 @@
                         {selectedImage.description}
                     </p>
                     {#if data.isOwn}
-                        <button id="modify" style={`background-image: url('${edit}');`}></button>
+                        <button id="modify" style={`background-image: url('${edit}');`} on:click={modifyClick}></button>
                     {/if}
                 </div>
             </div>
@@ -323,6 +421,10 @@
             padding-right: 1rem;
         }
 
+        .hidden {
+            display: none;
+        }
+
         #modal-container {
             position: absolute;
             top: 0;
@@ -400,6 +502,73 @@
                     justify-content: center;
                     align-items: center;
                     padding: 1rem;
+                    position: relative;
+
+                    .checkbox-container {
+                        display: flex;
+                        gap: 0.1rem;
+                        position: absolute;
+                        top: 1.3rem;
+                        left: 1.3rem;
+                        cursor: pointer;
+                        -webkit-user-select: none;
+                        -moz-user-select: none;
+                        -ms-user-select: none;
+                        user-select: none;
+                        color: $color-white;
+                    }
+
+                    /* Hide the browser's default checkbox */
+                    .checkbox-container input {
+                        opacity: 0;
+                        cursor: pointer;
+                        height: 0;
+                        width: 0;
+                    }
+
+                    /* Create a custom checkbox */
+                    .checkmark {
+                        position: relative;
+                        border-radius: 5px;
+                        border: 1px solid $color-dark-blue;
+                        display: block;
+                        z-index: 2;
+                        top: 0;
+                        left: 0;
+                        height: 25px;
+                        width: 25px;
+                        background-color: $color-white;
+                    }
+
+                    .checkbox-container:hover input ~ .checkmark {
+                        background-color: darken($color-white, 20%);
+                    }
+
+                    .checkbox-container input:checked ~ .checkmark {
+                        background-color: #2196f3;
+                    }
+
+                    .checkbox-container .checkmark:after {
+                        left: 50%;
+                        transform-origin: center;
+                        top: 50%;
+                        width: 5px;
+                        height: 10px;
+                        border: solid white;
+                        border-width: 0 3px 3px 0;
+                        transform: translate(-50%, -50%) rotate(45deg);
+                        transition: opacity 0.2s ease;
+                    }
+
+                    .checkmark:after {
+                        content: "";
+                        position: absolute;
+                        opacity: 0;
+                    }
+
+                    .checkbox-container input:checked ~ .checkmark:after {
+                        opacity: 1;
+                    }
 
                     .image {
                         width: 100%;
