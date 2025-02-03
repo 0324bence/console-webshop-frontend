@@ -43,12 +43,63 @@
     }
 
     let fileInput: HTMLInputElement;
+
+    function imageDrop(e: DragEvent) {
+        if (!data.isOwn) return;
+        console.log(e);
+    }
+
+    let timeout: NodeJS.Timeout;
+    let isHovering = false;
+
+    function imageDragOver(e: DragEvent) {
+        if (!data.isOwn) return;
+        isHovering = true;
+        clearTimeout(timeout);
+        timeout = setTimeout(() => {
+            isHovering = false;
+        }, 1000);
+    }
+
+    let showImageModal = false;
 </script>
 
 <!-- TODO comments -->
+<!-- TODO empty title -->
 <div id="advert-content">
+    <div id="modal-container">
+        <div id="image-modal">
+            <div id="title-container">
+                <h2>Kép módosítása</h2>
+            </div>
+            <div id="image-container">
+                <div
+                    class="image"
+                    style={`background-image: url('data:image/jpeg;base64,${selectedImage.data}');`}
+                ></div>
+            </div>
+            <div id="desc-container">
+                <textarea name="image-desc" id="image-desc" placeholder="Leírás..."></textarea>
+            </div>
+            <div id="button-container">
+                <button type="button" class="cancel">Mégse</button>
+                <button type="button" class="save">Mentés</button>
+            </div>
+        </div>
+    </div>
+    <!-- svelte-ignore a11y-no-static-element-interactions -->
     <div id="main-data-container">
-        <div id="pictures-container">
+        <div
+            id="pictures-container"
+            class={isHovering ? "image-hover" : ""}
+            on:dragover|preventDefault={imageDragOver}
+            on:drop|preventDefault={imageDrop}
+        >
+            {#if isHovering}
+                <div class="hover-text-container">
+                    <h2 class="hover-text">Fájl feltöltése</h2>
+                </div>
+            {/if}
             <div id="preview-container">
                 {#each data.advert.pictures as picture}
                     <button
@@ -272,6 +323,117 @@
             padding-right: 1rem;
         }
 
+        #modal-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: rgba($color-black, 0.7);
+            z-index: 5;
+
+            #image-modal {
+                width: 40%;
+                height: 60%;
+                background-color: $color-white;
+                border-radius: 10px;
+                box-shadow: 1px 1px 5px 0px rgba($color-black, 0.5);
+                border: 1px solid $color-black;
+                display: grid;
+                grid-template-columns: 100%;
+                grid-template-rows: 10% 50% 30% 10%;
+
+                #title-container {
+                    width: 100%;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+
+                    h2 {
+                        font-size: 2rem;
+                    }
+                }
+
+                #button-container {
+                    width: 100%;
+                    display: flex;
+                    justify-content: space-around;
+                    padding: 0.4rem;
+
+                    button {
+                        height: 100%;
+                        font-size: 1.6rem;
+                        padding: 0.4rem;
+                        border-radius: 10px;
+                        border: 1px solid $color-dark-blue;
+                        cursor: pointer;
+
+                        &.cancel {
+                            background-color: $color-red;
+                            color: $color-white;
+
+                            &:hover {
+                                background-color: lighten($color-red, 10%);
+                                color: $color-white;
+                            }
+                        }
+
+                        &.save {
+                            background-color: $color-dark-blue;
+                            color: $color-white;
+
+                            &:hover {
+                                background-color: lighten($color-dark-blue, 10%);
+                                color: $color-white;
+                            }
+                        }
+                    }
+                }
+
+                #image-container {
+                    height: 100%;
+                    width: 100%;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    padding: 1rem;
+
+                    .image {
+                        width: 100%;
+                        height: 100%;
+                        border: 1px solid $color-black;
+                        background-repeat: no-repeat;
+                        background-position: center;
+                        background-size: contain;
+                    }
+                }
+
+                #desc-container {
+                    height: 100%;
+                    width: 100%;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+
+                    textarea {
+                        width: 90%;
+                        height: 90%;
+                        max-width: 90%;
+                        max-height: 90%;
+                        min-width: 80%;
+                        min-height: 80%;
+                        border: 1px solid $color-black;
+                        border-radius: 5px;
+                        padding: 1rem;
+                        font-size: 1.2rem;
+                    }
+                }
+            }
+        }
+
         #main-data-container {
             height: 25rem;
             padding: 1rem;
@@ -293,10 +455,38 @@
                 grid-template-columns: 1.1fr 2.9fr;
                 gap: 1rem;
                 // background-color: rgb(20, 83, 62);
+                position: relative;
 
                 @include tablet {
                     grid-template-columns: 1fr;
                     grid-template-rows: 2.9fr 1.1fr;
+                }
+
+                &.image-hover {
+                    border: 2px dashed $color-dark-blue;
+                }
+
+                .hover-text-container {
+                    border-radius: 10px;
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    background-color: rgba($color-black, 0.5);
+
+                    .hover-text {
+                        position: absolute;
+                        top: 50%;
+                        left: 50%;
+                        transform: translate(-50%, -50%);
+                        font-size: 2rem;
+                        color: $color-white;
+                        font-weight: bold;
+                    }
                 }
 
                 #preview-container {
