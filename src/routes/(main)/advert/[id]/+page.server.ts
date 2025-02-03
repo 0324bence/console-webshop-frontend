@@ -267,5 +267,25 @@ export const actions = {
                 return error(500, "Hiba történt a kép beállítása közben");
             }
         }
+    },
+    deletePicture: async ({ cookies, request, params }) => {
+        const token = cookies.get("token");
+        if (token === undefined) {
+            return redirect(301, "/auth/");
+        }
+        const data = await request.formData();
+        const advertId = params.id;
+        const pictureId = data.get("image");
+
+        const res = await fetch(`${apiPath}/adverts/${advertId}/pictures/${pictureId}`, {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`
+            }
+        });
+        if (!res.ok) {
+            return error(500, "Hiba történt a kép törlése közben");
+        }
     }
 } satisfies Actions;

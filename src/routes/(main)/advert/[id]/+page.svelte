@@ -216,17 +216,30 @@
                     class="image"
                     style={`background-image: url('data:image/jpeg;base64,${selectedImage.data}');`}
                 ></div>
-                <div id="description" class={data.isOwn ? "multiple" : ""}>
+                <form method="post" action="?/deletePicture" id="description" class={data.isOwn ? "multiple" : ""}>
                     {#if data.isOwn}
-                        <button id="delete" style={`background-image: url('${trash}');`}></button>
+                        <input
+                            type="text"
+                            name="image"
+                            id="image-id"
+                            class="hidden"
+                            value={newFile ? "" : selectedImage.id}
+                            readonly
+                        />
+                        <button id="delete" type="submit" style={`background-image: url('${trash}');`}></button>
                     {/if}
                     <p>
                         {selectedImage.description}
                     </p>
                     {#if data.isOwn}
-                        <button id="modify" style={`background-image: url('${edit}');`} on:click={modifyClick}></button>
+                        <button
+                            id="modify"
+                            type="button"
+                            style={`background-image: url('${edit}');`}
+                            on:click={modifyClick}
+                        ></button>
                     {/if}
-                </div>
+                </form>
             </div>
         </div>
         <form
