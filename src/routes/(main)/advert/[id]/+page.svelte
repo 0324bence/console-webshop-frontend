@@ -1,14 +1,45 @@
 <script lang="ts">
     import trash from "$lib/images/trash.svg";
     import edit from "$lib/images/edit.svg";
+    import save from "$lib/images/save.svg";
     import LocationSearch from "$lib/components/LocationSearch.svelte";
+    import type { Location } from "$lib/types";
+    import { enhance } from "$app/forms";
+    import apiPath from "$lib/apiPath/index.js";
     export let data;
 
     // console.log(data);
 
     let selectedImage = data.advert.mainPicture;
 
+    let models = data.models;
+
     let priceValue = data.advert.priceHuf;
+    let priceError = false;
+    let formLoading = false;
+
+    let modelError = false;
+
+    let editMode = false;
+
+    let modifyForm: HTMLFormElement;
+    let selectedManufacturer: number = data.advert.manufacturer.id;
+    let selectedModel: number = data.advert.modelId;
+    let selectedState: number = data.advert.stateId;
+    let selectedLocation: Location = data.advert.location;
+
+    let locationError = false;
+
+    async function manufacturerSelect() {
+        const res = await fetch(`${apiPath}/filters/modelsForManufacturer?manufacturerId=${selectedManufacturer}`);
+        const data = await res.json();
+        selectedModel = 0;
+        models = data;
+    }
+
+    function saveClick() {
+        modifyForm.requestSubmit();
+    }
 </script>
 
 <!-- TODO comments -->
@@ -42,11 +73,46 @@
                 </div>
             </div>
         </div>
-        <div id="data-container">
+        <form
+            bind:this={modifyForm}
+            method="POST"
+            action="?/editData"
+            id="data-container"
+            use:enhance={({ formData, cancel }) => {
+                if (priceValue <= 0) {
+                    priceError = true;
+                    return cancel();
+                }
+                priceError = false;
+                formLoading = true;
+                if (selectedModel == 0) {
+                    formLoading = false;
+                    modelError = true;
+                    return cancel();
+                }
+                formData.append("modelId", selectedModel.toString());
+                formData.append("manufacturerId", selectedManufacturer.toString());
+                formData.append("stateId", selectedState.toString());
+                if (!selectedLocation) {
+                    formLoading = false;
+                    locationError = true;
+                    cancel();
+                }
+                if (selectedLocation) formData.append("locationId", selectedLocation.id.toString());
+            }}
+        >
             <div id="title-row">
-                {#if data.isOwn}
-                    <div id="edit-button">
-                        <button style={`background-image: url('${edit}');`}></button>
+                {#if data.isOwn && !editMode}
+                    <div id="edit-button" class="edit-button">
+                        <button
+                            type="button"
+                            style={`background-image: url('${edit}');`}
+                            on:click={() => (editMode = true)}
+                        ></button>
+                    </div>
+                {:else if data.isOwn && editMode}
+                    <div id="save-button" class="edit-button">
+                        <button type="button" style={`background-image: url('${save}');`} on:click={saveClick}></button>
                     </div>
                 {/if}
                 <div id="view-count" title="Megtekintések száma">
@@ -54,46 +120,53 @@
                     <span>{data.advert.viewCount}</span>
                 </div>
                 <div id="title">
-                    <!-- <h1>{data.advert.title}</h1> -->
-                    <input
-                        type="text"
-                        name="title"
-                        id="title-input"
-                        value={data.advert.title}
-                        placeholder={data.advert.title}
-                    />
+                    {#if data.isOwn && editMode}
+                        <input
+                            type="text"
+                            name="title"
+                            id="title-input"
+                            value={data.advert.title}
+                            placeholder={data.advert.title}
+                        />
+                    {:else}
+                        <h1>{data.advert.title}</h1>
+                    {/if}
                     <h3><a href={`/profile/${data.advert.ownerId}`}>{data.advert.owner.name}</a></h3>
                 </div>
             </div>
             <div id="data">
                 <!-- <h3>{data.filters.states.find(i => i.id == data.advert.stateId)?.name}</h3> -->
                 <h3>{data.advert.location.name}</h3>
-                <!-- <h2 class="price">{data.advert.priceHuf} HUF</h2> -->
-                <div id="price-input">
-                    <input
-                        type="number"
-                        name="price"
-                        id="price"
-                        placeholder={data.advert.priceHuf.toString()}
-                        min="0"
-                        max="10000000"
-                        bind:value={priceValue}
-                        on:change={() => {
-                            if (priceValue < 0) priceValue = 0;
-                            if (priceValue > 10000000) priceValue = 10000000;
-                        }}
-                    />
-                    <h2 class="price">HUF</h2>
-                </div>
+                {#if data.isOwn && editMode}
+                    <div id="price-input">
+                        <input
+                            type="number"
+                            name="priceHuf"
+                            id="price"
+                            placeholder={data.advert.priceHuf.toString()}
+                            class={priceError ? "error" : ""}
+                            min="0"
+                            max="10000000"
+                            bind:value={priceValue}
+                            on:change={() => {
+                                if (priceValue < 0) priceValue = 0;
+                                if (priceValue > 10000000) priceValue = 10000000;
+                            }}
+                        />
+                        <h2 class="price">HUF</h2>
+                    </div>
+                {:else}
+                    <h2 class="price">{data.advert.priceHuf} HUF</h2>
+                {/if}
             </div>
             <div id="button-row">
                 <span>Létrehozva: {new Date(data.advert.createdTime).toISOString().split("T")[0]}</span>
                 <div id="buttons">
-                    <button>&hearts;</button>
-                    <button>Kosárba</button>
+                    <button type="button">&hearts;</button>
+                    <button type="button">Kosárba</button>
                 </div>
             </div>
-        </div>
+        </form>
     </div>
     <div id="secondary-data-container">
         <div id="secondary-data">
@@ -101,33 +174,67 @@
                 <!-- <div class="col"> -->
                 <div class="row">
                     <div class="cell title">Gyártó</div>
-                    <!-- <div class="cell">{data.advert.manufacturer.name}</div> -->
-                    <div class="cell">
-                        <select name="manufacturer" id="manufacturer"></select>
-                    </div>
+                    {#if data.isOwn && editMode}
+                        <div class="cell">
+                            <select
+                                name="manufacturer"
+                                id="manufacturer"
+                                bind:value={selectedManufacturer}
+                                on:change={manufacturerSelect}
+                            >
+                                {#each data.filters.manufacturers as manufacturer}
+                                    <option value={manufacturer.id}>{manufacturer.name}</option>
+                                {/each}
+                            </select>
+                        </div>
+                    {:else}
+                        <div class="cell">{data.advert.manufacturer.name}</div>
+                    {/if}
                 </div>
                 <div class="row">
                     <div class="cell title">Modell</div>
-                    <!-- <div class="cell">{data.advert.model.name}</div> -->
-                    <div class="cell">
-                        <select name="modell" id="modell"></select>
-                    </div>
+                    {#if data.isOwn && editMode}
+                        <div class="cell">
+                            <select
+                                name="model"
+                                id="model"
+                                bind:value={selectedModel}
+                                class={modelError ? "error" : ""}
+                            >
+                                {#each models as model}
+                                    <option value={model.id}>{model.name}</option>
+                                {/each}
+                            </select>
+                        </div>
+                    {:else}
+                        <div class="cell">{data.advert.model.name}</div>
+                    {/if}
                 </div>
                 <!-- </div> -->
                 <!-- <div class="col"> -->
                 <div class="row">
                     <div class="cell title">Állapot</div>
-                    <!-- <div class="cell">{data.filters.states.find(i => i.id == data.advert.stateId)?.name}</div> -->
-                    <div class="cell">
-                        <select name="state" id="state"></select>
-                    </div>
+                    {#if data.isOwn && editMode}
+                        <div class="cell">
+                            <select name="state" id="state" bind:value={selectedState}>
+                                {#each data.filters.states as state}
+                                    <option value={state.id}>{state.name}</option>
+                                {/each}
+                            </select>
+                        </div>
+                    {:else}
+                        <div class="cell">{data.filters.states.find(i => i.id == data.advert.stateId)?.name}</div>
+                    {/if}
                 </div>
                 <div class="row">
                     <div class="cell title">Hely</div>
-                    <!-- <div class="cell">{data.advert.location.name} ({data.advert.location.zip})</div> -->
-                    <div class="cell">
-                        <LocationSearch label={false} />
-                    </div>
+                    {#if data.isOwn && editMode}
+                        <div class="cell">
+                            <LocationSearch bind:error={locationError} label={false} bind:selectedLocation />
+                        </div>
+                    {:else}
+                        <div class="cell">{data.advert.location.name} ({data.advert.location.zip})</div>
+                    {/if}
                 </div>
                 <!-- </div> -->
             </div>
@@ -326,7 +433,7 @@
                     justify-content: start;
                     gap: 1rem;
 
-                    #edit-button {
+                    .edit-button {
                         button {
                             height: 20px;
                             width: 20px;

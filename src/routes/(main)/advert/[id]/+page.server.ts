@@ -1,5 +1,5 @@
-import { error } from "@sveltejs/kit";
-import type { PageServerLoad } from "./$types";
+import { error, redirect } from "@sveltejs/kit";
+import type { Actions, PageServerLoad } from "./$types";
 import apiPath from "$lib/apiPath";
 import type { LocalAdvert, Manufacturer, Model, Picture, User } from "$lib/types";
 import noImage from "$lib/images/noImage";
@@ -97,9 +97,10 @@ export const load: PageServerLoad = async ({ params, parent, url }) => {
             name: "Ismeretlen"
         };
     }
+    let models: Model[] = [];
     const modelReq = await fetch(`${apiPath}/filters/modelsForManufacturer?manufacturerId=${advert.manufacturer.id}`);
     if (advert.manufacturer.id !== 0 && modelReq.ok) {
-        const models: Model[] = await modelReq.json();
+        models = await modelReq.json();
         // console.log(models);
         advert.model = models.find(model => model.id === advert.modelId)!;
     } else {
@@ -134,6 +135,51 @@ export const load: PageServerLoad = async ({ params, parent, url }) => {
 
     return {
         advert,
+        models,
         isOwn
     };
 };
+
+export const actions = {
+    editData: async ({ cookies, request, params }) => {
+        const token = cookies.get("token");
+        if (token === undefined) {
+            return redirect(301, "/auth/");
+        }
+        const id = params.id;
+        const data = await request.formData();
+        /*data structure:{
+            title	string
+            description	string
+            locationId	number
+            priceHuf	number
+            stateId	number
+            modelId	number
+        }*/
+        const title = data.get("title");
+        const locationId = data.get("locationId");
+        const priceHuf = data.get("priceHuf");
+        const stateId = data.get("stateId");
+        const modelId = data.get("modelId");
+
+        const res = await fetch(`${apiPath}/adverts/${id}`, {
+            method: "PATCH",
+            headers: {
+                Authorization: `Bearer ${token}`
+            },
+            body: JSON.stringify({
+                title,
+                locationId,
+                priceHuf,
+                stateId,
+                modelId
+            })
+        });
+        if (res.ok) {
+            return "ok";
+        } else {
+            return error(500, "Hiba történt az adatok mentése közben");
+        }
+    },
+    editPicture: async ({ cookies, request }) => {}
+} satisfies Actions;
