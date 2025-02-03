@@ -162,18 +162,21 @@ export const actions = {
         const stateId = data.get("stateId");
         const modelId = data.get("modelId");
 
+        const body = {
+            title,
+            locationId,
+            priceHuf,
+            stateId,
+            modelId
+        };
+
         const res = await fetch(`${apiPath}/adverts/${id}`, {
             method: "PATCH",
             headers: {
+                "Content-Type": "application/json",
                 Authorization: `Bearer ${token}`
             },
-            body: JSON.stringify({
-                title,
-                locationId,
-                priceHuf,
-                stateId,
-                modelId
-            })
+            body: JSON.stringify(body)
         });
         if (res.ok) {
             return "ok";

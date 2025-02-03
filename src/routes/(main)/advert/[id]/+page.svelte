@@ -38,8 +38,11 @@
     }
 
     function saveClick() {
+        editMode = false;
         modifyForm.requestSubmit();
     }
+
+    let fileInput: HTMLInputElement;
 </script>
 
 <!-- TODO comments -->
@@ -54,6 +57,10 @@
                         on:click={() => (selectedImage = picture)}
                     ></button>
                 {/each}
+                {#if data.isOwn}
+                    <button class="image add-button">+</button>
+                    <input type="file" name="new-pictures" id="new-pictures" class="hidden" bind:this={fileInput} />
+                {/if}
             </div>
             <div id="main-container">
                 <div
@@ -341,6 +348,12 @@
                         &.selected {
                             outline: 1px solid black;
                         }
+                    }
+
+                    .add-button {
+                        background-color: $color-dark-blue;
+                        color: $color-white;
+                        aspect-ratio: 16 / 5;
                     }
                 }
 
