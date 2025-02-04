@@ -50,8 +50,6 @@
     let editingPassword = false;
 </script>
 
-<!-- TODO show email if own user -->
-<!-- TODO editable email and password -->
 <div id="profile-container">
     <!-- <div id="profile"> -->
     <form
@@ -85,12 +83,12 @@
             <span>Csatlakozott:</span>
             <span>{new Date(data.user.regDate).toLocaleDateString()}</span>
         </div>
-        <!-- {#if data.isOwn}
+        {#if data.isOwn}
             <div class="row">
                 <span>Email:</span>
                 <span>{data.user.email}</span>
             </div>
-        {/if} -->
+        {/if}
         <div class="row">
             <span>Hirdetések:</span>
             <span>{data.advertCount} db</span>
