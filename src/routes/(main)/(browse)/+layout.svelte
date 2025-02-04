@@ -110,7 +110,7 @@
         timeout = setTimeout(() => {
             // console.log("submit", userId);
             searchForm.requestSubmit();
-        }, 500);
+        }, 1500);
     }
 
     let loadingAdverts = false;

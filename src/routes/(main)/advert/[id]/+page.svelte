@@ -126,6 +126,7 @@
 
 <!-- TODO comments -->
 <!-- TODO disable cart button if advert is already in cart -->
+<!-- Image buttons when no description is present -->
 <form action="?/addToCart" method="post" bind:this={addtoCartForm} class="hidden"></form>
 
 <div id="advert-content">
