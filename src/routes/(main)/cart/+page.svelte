@@ -3,37 +3,49 @@
     //Testing
     import nincskep from "$lib/images/nincs-kep-fekvo.png";
     import placeholder from "$lib/images/placeholder.png";
+
+    export let data;
 </script>
 
 <div id="cart-container">
     <div id="advert-list">
-        <div class="advert">
-            <div class="owner-container">
-                <div class="profile-picture" style={`background-image: url('${placeholder}')`}></div>
-                <a>Eladó neve</a>
-            </div>
-            <div class="top-bar">
-                <span>Hely neve (5000)</span>
-                <button class="delete-button" type="submit" style={`background-image: url('${trash}')`}></button>
-            </div>
-            <div class="picture-container">
-                <a class="picture" style={`background-image: url('${nincskep}')`}></a>
-            </div>
-            <div class="title-container">
-                <h2>Lorem ipsum dolor sit amet.</h2>
-            </div>
-            <div class="state-container">
-                <span>Új</span>
-            </div>
-            <div class="bottom-bar">
-                <div class="data-container">
-                    <span>Gyártó</span>
-                    <span>-</span>
-                    <span>Modell</span>
+        {#each data.adverts as advert}
+            <div class="advert">
+                <div class="owner-container">
+                    <div
+                        class="profile-picture"
+                        style={`background-image: url('data:image/jpeg;base64,${advert.owner.picture}')`}
+                    ></div>
+                    <a href={`/profile/${advert.ownerId}`}>{advert.owner.name}</a>
                 </div>
-                <h3>500000 HUF</h3>
+                <div class="top-bar">
+                    <span>{advert.location.name} ({advert.location.zip})</span>
+                    <button class="delete-button" type="submit" style={`background-image: url('${trash}')`}></button>
+                </div>
+                <div class="picture-container">
+                    <!-- svelte-ignore a11y-missing-content -->
+                    <a
+                        href={`/advert/${advert.id}`}
+                        class="picture"
+                        style={`background-image: url('data:image/jpeg;base64,${advert.mainPicture.data}')`}
+                    ></a>
+                </div>
+                <div class="title-container">
+                    <h2>{advert.title}</h2>
+                </div>
+                <div class="state-container">
+                    <span>{data.filters.states.find(i => i.id == advert.stateId)?.name}</span>
+                </div>
+                <div class="bottom-bar">
+                    <div class="data-container">
+                        <span>{advert.manufacturer.name}</span>
+                        <span>-</span>
+                        <span>{advert.model.name}</span>
+                    </div>
+                    <h3>{advert.priceHuf} HUF</h3>
+                </div>
             </div>
-        </div>
+        {/each}
     </div>
     <div id="info-box-container">
         <div id="info-box">

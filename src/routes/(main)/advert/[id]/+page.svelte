@@ -125,6 +125,7 @@
 </script>
 
 <!-- TODO comments -->
+<!-- TODO disable cart button if advert is already in cart -->
 <form action="?/addToCart" method="post" bind:this={addtoCartForm} class="hidden"></form>
 
 <div id="advert-content">

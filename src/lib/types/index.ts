@@ -66,4 +66,9 @@ interface BasicFilters {
     states: State[];
 }
 
-export type { User, Model, Advert, Picture, LocalAdvert, Location, Manufacturer, State, BasicFilters };
+interface CartItem {
+    userId: number;
+    advertId: number;
+}
+
+export type { User, Model, Advert, Picture, LocalAdvert, Location, Manufacturer, State, BasicFilters, CartItem };
