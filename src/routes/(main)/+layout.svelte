@@ -105,7 +105,7 @@
             </form>
         </div>
         <div id="right-container">
-            <div id="cart" style={`background-image: url(${cart})`}></div>
+            <a href="/cart" id="cart" style={`background-image: url(${cart})`}></a>
             {#if data.token === null || data.ownUser === null}
                 <div id="nologin">
                     <a href="/auth/login">Bejelentkezés</a>
@@ -276,6 +276,7 @@
             }
 
             #cart {
+                display: block;
                 height: 100%;
                 flex: 1;
                 background-position: center;
