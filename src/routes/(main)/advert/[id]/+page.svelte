@@ -216,8 +216,13 @@
                     class="image"
                     style={`background-image: url('data:image/jpeg;base64,${selectedImage.data}');`}
                 ></div>
-                <form method="post" action="?/deletePicture" id="description" class={data.isOwn ? "multiple" : ""}>
-                    {#if data.isOwn}
+                <form
+                    method="post"
+                    action="?/deletePicture"
+                    id="description"
+                    class={data.isOwn && data.advert.pictures[0].id !== 0 ? "multiple" : ""}
+                >
+                    {#if data.isOwn && data.advert.pictures[0].id !== 0}
                         <input
                             type="text"
                             name="image"
@@ -231,7 +236,7 @@
                     <p>
                         {selectedImage.description}
                     </p>
-                    {#if data.isOwn}
+                    {#if data.isOwn && data.advert.pictures[0].id !== 0}
                         <button
                             id="modify"
                             type="button"
