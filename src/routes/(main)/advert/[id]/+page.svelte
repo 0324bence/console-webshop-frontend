@@ -116,10 +116,15 @@
     }
 
     let addtoCartForm: HTMLFormElement;
+
+    let advertTitle = data.advert.title;
+
+    let titleError = false;
+
+    $: titleError = advertTitle.length == 0;
 </script>
 
 <!-- TODO comments -->
-<!-- TODO empty title -->
 <form action="?/addToCart" method="post" bind:this={addtoCartForm} class="hidden"></form>
 
 <div id="advert-content">
@@ -261,6 +266,10 @@
                     priceError = true;
                     return cancel();
                 }
+                if (advertTitle.length == 0) {
+                    titleError = true;
+                    return cancel();
+                }
                 priceError = false;
                 formLoading = true;
                 if (selectedModel == 0) {
@@ -303,8 +312,9 @@
                             type="text"
                             name="title"
                             id="title-input"
-                            value={data.advert.title}
+                            bind:value={advertTitle}
                             placeholder={data.advert.title}
+                            class={titleError ? "error" : ""}
                         />
                     {:else}
                         <h1>{data.advert.title}</h1>
@@ -855,6 +865,11 @@
                             background-color: transparent;
                             text-align: right;
                             width: 100%;
+
+                            &.error {
+                                border: 1px solid $color-red;
+                                outline: 1px solid $color-red;
+                            }
                         }
 
                         a {
