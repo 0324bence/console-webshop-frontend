@@ -287,5 +287,23 @@ export const actions = {
         if (!res.ok) {
             return error(500, "Hiba történt a kép törlése közben");
         }
+    },
+    addToCart: async ({ cookies, params, request }) => {
+        const token = cookies.get("token");
+        if (token === undefined) {
+            return redirect(301, "/auth/");
+        }
+        const advertId = params.id;
+
+        const res = await fetch(`${apiPath}/cart`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`
+            },
+            body: JSON.stringify({
+                advertId
+            })
+        });
     }
 } satisfies Actions;
