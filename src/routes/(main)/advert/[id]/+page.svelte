@@ -114,10 +114,14 @@
         newFileData = "";
         showImageModal = false;
     }
+
+    let addtoCartForm: HTMLFormElement;
 </script>
 
 <!-- TODO comments -->
 <!-- TODO empty title -->
+<form action="?/addToCart" method="post" bind:this={addtoCartForm} class="hidden"></form>
+
 <div id="advert-content">
     {#if showImageModal}
         <div id="modal-container">
@@ -337,7 +341,7 @@
                 <span>Létrehozva: {new Date(data.advert.createdTime).toISOString().split("T")[0]}</span>
                 <div id="buttons">
                     <button type="button">&hearts;</button>
-                    <button type="button">Kosárba</button>
+                    <button type="button" on:click={() => addtoCartForm.requestSubmit()}>Kosárba</button>
                 </div>
             </div>
         </form>
@@ -423,7 +427,9 @@
 
 <style lang="scss">
     @import "$lib/styles/variables.scss";
-
+    .hidden {
+        display: none;
+    }
     #advert-content {
         display: flex;
         // grid-template-rows: 40% 60%;
@@ -437,10 +443,6 @@
         @include tablet {
             padding-left: 1rem;
             padding-right: 1rem;
-        }
-
-        .hidden {
-            display: none;
         }
 
         #modal-container {
