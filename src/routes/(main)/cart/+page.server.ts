@@ -11,7 +11,6 @@ interface ExtendedLocalAdvert extends LocalAdvert {
     model: Model;
 }
 
-// TODO remove unnecesarry picture requests
 export const load: PageServerLoad = async ({ cookies, parent }) => {
     const data = await parent();
 
@@ -35,55 +34,39 @@ export const load: PageServerLoad = async ({ cookies, parent }) => {
 
         const advertRes = await advertReq.json();
         const advert: ExtendedLocalAdvert = advertRes;
-        const picturesReq = await fetch(`${apiPath}/adverts/${advert.id}/pictures`);
-        if (picturesReq.ok) {
+        const pictureReq = await fetch(`${apiPath}/adverts/${advert.id}/primaryPicture`);
+        if (pictureReq.ok) {
             try {
-                let pictures: Picture[] = await picturesReq.json();
+                let picture: Picture = await pictureReq.json();
                 // console.log(pictures, typeof pictures);
-                if (pictures.length === 0) {
-                    advert.pictures = [
-                        {
-                            id: 0,
-                            data: noImage,
-                            description: "Nincs megadva kép",
-                            advertId: advert.id,
-                            isPriority: 1
-                        }
-                    ];
-                } else {
-                    advert.pictures = pictures;
-                    let mainPicture = pictures.find(picture => picture.isPriority === 1);
-                    // console.log(mainPicture);
-                    if (mainPicture == undefined) {
-                        advert.mainPicture = pictures[0];
-                    } else {
-                        advert.mainPicture = mainPicture;
-                    }
-                }
-            } catch (error) {
-                advert.pictures = [
-                    {
+                if (picture == undefined) {
+                    advert.mainPicture = {
                         id: 0,
                         data: noImage,
                         description: "Nincs megadva kép",
                         advertId: advert.id,
                         isPriority: 1
-                    }
-                ];
-            }
-        } else {
-            advert.pictures = [
-                {
+                    };
+                } else {
+                    advert.mainPicture = picture;
+                }
+            } catch (error) {
+                advert.mainPicture = {
                     id: 0,
                     data: noImage,
                     description: "Nincs megadva kép",
                     advertId: advert.id,
                     isPriority: 1
-                }
-            ];
-        }
-        if (advert.pictures.length === 1) {
-            advert.mainPicture = advert.pictures[0];
+                };
+            }
+        } else {
+            advert.mainPicture = {
+                id: 0,
+                data: noImage,
+                description: "Nincs megadva kép",
+                advertId: advert.id,
+                isPriority: 1
+            };
         }
         const ownerReq = await fetch(`${apiPath}/user/${advert.ownerId}`);
         if (ownerReq.ok) {
