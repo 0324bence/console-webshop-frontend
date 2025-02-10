@@ -18,10 +18,11 @@
                     ></div>
                     <a href={`/profile/${advert.ownerId}`}>{advert.owner.name}</a>
                 </div>
-                <div class="top-bar">
+                <form method="post" action="?/deleteItem" class="top-bar">
                     <span>{advert.location.name} ({advert.location.zip})</span>
+                    <input type="hidden" name="advertId" value={advert.id} />
                     <button class="delete-button" type="submit" style={`background-image: url('${trash}')`}></button>
-                </div>
+                </form>
                 <div class="picture-container">
                     <!-- svelte-ignore a11y-missing-content -->
                     <a

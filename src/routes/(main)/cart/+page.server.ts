@@ -1,7 +1,7 @@
 import apiPath from "$lib/apiPath";
 import type { CartItem, LocalAdvert, Manufacturer, Model, Picture, User } from "$lib/types";
 import { error } from "@sveltejs/kit";
-import type { PageServerLoad } from "./$types";
+import type { Actions, PageServerLoad } from "./$types";
 import noImage from "$lib/images/noImage";
 import placeholder from "$lib/images/placeholder.png";
 
@@ -130,3 +130,21 @@ export const load: PageServerLoad = async ({ cookies, parent }) => {
         adverts
     };
 };
+
+export const actions = {
+    deleteItem: async ({ cookies, request }) => {
+        const token = cookies.get("token");
+        const data = await request.formData();
+        const advertId = data.get("advertId");
+        const res = await fetch(`${apiPath}/cart/${advertId}`, {
+            method: "DELETE",
+            headers: {
+                Authorization: "Bearer " + token,
+                "Content-Type": "application/json"
+            }
+        });
+        if (!res.ok) {
+            return res.json();
+        }
+    }
+} satisfies Actions;
