@@ -127,6 +127,7 @@
 <!-- TODO comments -->
 <!-- TODO disable cart button if advert is already in cart -->
 <!-- Image buttons when no description is present -->
+<!-- Limit picture description to 100 chars -->
 <form action="?/addToCart" method="post" bind:this={addtoCartForm} class="hidden"></form>
 
 <div id="advert-content">
