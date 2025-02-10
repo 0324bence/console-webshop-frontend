@@ -130,19 +130,34 @@
         sanitizer: DOMPurify.sanitize,
         theme: "github-light"
     });
+
+    let modalLoading = false;
 </script>
 
 <!-- TODO comments -->
 <!-- TODO disable cart button if advert is already in cart -->
 <!-- TODO Image buttons when no description is present -->
 <!-- TODO Limit picture description to 100 chars -->
-<!-- TODO Disable save button while processing image -->
+<!-- Edit responsivity -->
 <form action="?/addToCart" method="post" bind:this={addtoCartForm} class="hidden"></form>
 
 <div id="advert-content">
     {#if showImageModal}
         <div id="modal-container">
-            <form action={newFile ? "?/addPicture" : "?/editPicture"} method="post" id="image-modal">
+            <form
+                action={newFile ? "?/addPicture" : "?/editPicture"}
+                method="post"
+                id="image-modal"
+                use:enhance={({ formData, cancel }) => {
+                    if (modalLoading) return cancel();
+                    modalLoading = true;
+                    return async ({ update }) => {
+                        showImageModal = false;
+                        await update();
+                        modalLoading = false;
+                    };
+                }}
+            >
                 <div id="title-container">
                     {#if newFile}
                         <h2>Új kép feltöltése</h2>
@@ -193,7 +208,7 @@
                 </div>
                 <div id="button-container">
                     <button type="button" class="cancel" on:click={modalCancel}>Mégse</button>
-                    <button type="submit" class="save">Mentés</button>
+                    <button type="submit" disabled={modalLoading} class="save">Mentés</button>
                 </div>
             </form>
         </div>
@@ -517,6 +532,12 @@
                         border-radius: 10px;
                         border: 1px solid $color-dark-blue;
                         cursor: pointer;
+
+                        &:disabled {
+                            background-color: darken($color-white, 50%);
+                            color: $color-black;
+                            cursor: not-allowed;
+                        }
 
                         &.cancel {
                             background-color: $color-red;

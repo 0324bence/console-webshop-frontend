@@ -226,6 +226,7 @@ export const actions = {
         });
     },
     addPicture: async ({ cookies, request, params }) => {
+        console.log("addPicture");
         const token = cookies.get("token");
         if (token === undefined) {
             return redirect(301, "/auth/");
