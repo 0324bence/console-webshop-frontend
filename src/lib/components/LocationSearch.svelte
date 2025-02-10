@@ -231,6 +231,7 @@
                 flex-direction: column;
                 cursor: pointer;
                 padding: 2px;
+                z-index: 10;
 
                 &:hover,
                 &.selected {

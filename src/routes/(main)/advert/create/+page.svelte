@@ -185,6 +185,10 @@
             return cancel();
         }
         priceError = false;
+        if (descValue.length <= 0) {
+            return cancel();
+        }
+        formData.append("description", descValue);
         formLoading = true;
         for (const key in imageFiles) {
             formData.append("filelist", imageFiles[key].base64);
@@ -352,7 +356,7 @@
         </div>
     </div>
     <div id="description-container">
-        <MarkdownEditor {carta} bind:value={descValue} />
+        <MarkdownEditor {carta} bind:value={descValue} mode="tabs" />
         <!-- <textarea bind:value={descValue} name="description" id="description" required placeholder="Leírás"></textarea> -->
     </div>
     <div id="button-container">
@@ -741,6 +745,10 @@
             gap: 1rem;
             width: 100%;
             color: $color-black;
+
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
 
         #button-container {

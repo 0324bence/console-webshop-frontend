@@ -28,4 +28,14 @@ a {
 .carta-font-code {
     font-family: "Roboto Mono", monospace;
     font-size: 1.1rem;
+    height: 10rem !important;
+    min-height: 12rem !important;
+}
+
+.carta-input {
+    height: auto !important;
+}
+
+.carta-editor, .carta-editor * {
+    z-index: 0 !important;
 }
