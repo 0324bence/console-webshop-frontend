@@ -7,6 +7,9 @@
     import { enhance } from "$app/forms";
     import { Buffer } from "buffer";
     import apiPath from "$lib/apiPath/index.js";
+    import { Carta, Markdown } from "carta-md";
+    import DOMPurify from "isomorphic-dompurify";
+
     export let data;
 
     // console.log(data);
@@ -122,12 +125,18 @@
     let titleError = false;
 
     $: titleError = advertTitle.length == 0;
+
+    const carta = new Carta({
+        sanitizer: DOMPurify.sanitize,
+        theme: "github-light"
+    });
 </script>
 
 <!-- TODO comments -->
 <!-- TODO disable cart button if advert is already in cart -->
-<!-- Image buttons when no description is present -->
-<!-- Limit picture description to 100 chars -->
+<!-- TODO Image buttons when no description is present -->
+<!-- TODO Limit picture description to 100 chars -->
+<!-- TODO Disable save button while processing image -->
 <form action="?/addToCart" method="post" bind:this={addtoCartForm} class="hidden"></form>
 
 <div id="advert-content">
@@ -432,9 +441,12 @@
         </div>
     </div>
     <div id="description-container">
-        <p>
-            {data.advert.description}
-        </p>
+        <div class="description">
+            <!-- <p>
+                {data.advert.description}
+            </p> -->
+            <Markdown {carta} value={data.advert.description} />
+        </div>
     </div>
 </div>
 
@@ -1018,6 +1030,22 @@
             padding: 1rem;
             flex-grow: 0;
             height: 60%;
+
+            .description {
+                border: 1px solid $color-black;
+                border-radius: 10px;
+                box-shadow: 1px 1px 5px 0px rgba($color-black, 0.5);
+                background-color: $color-white;
+                flex: 5;
+                padding: 1rem;
+                gap: 1rem;
+                width: 100%;
+                color: $color-black;
+
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+            }
 
             p {
                 display: block;

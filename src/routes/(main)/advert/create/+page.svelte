@@ -356,7 +356,7 @@
         </div>
     </div>
     <div id="description-container">
-        <MarkdownEditor {carta} bind:value={descValue} mode="tabs" />
+        <MarkdownEditor {carta} bind:value={descValue} mode="tabs" theme="default" />
         <!-- <textarea bind:value={descValue} name="description" id="description" required placeholder="Leírás"></textarea> -->
     </div>
     <div id="button-container">
