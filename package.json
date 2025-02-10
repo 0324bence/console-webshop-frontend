@@ -15,6 +15,8 @@
         "@sveltejs/vite-plugin-svelte": "^3.0.0",
         "@types/node": "^22.8.7",
         "buffer": "^6.0.3",
+        "carta-md": "^4.6.7",
+        "isomorphic-dompurify": "^2.21.0",
         "sass": "^1.79.5",
         "svelte": "^4.2.7",
         "svelte-check": "^4.0.0",
@@ -31,5 +33,8 @@
         "tabWidth": 4,
         "trailingComma": "none"
     },
-    "type": "module"
+    "type": "module",
+    "dependencies": {
+        "github-markdown-css": "^5.8.1"
+    }
 }

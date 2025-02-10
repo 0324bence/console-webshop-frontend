@@ -10,6 +10,14 @@
     import { goto } from "$app/navigation";
     import { Buffer } from "buffer";
 
+    import { Carta, MarkdownEditor } from "carta-md";
+    import "carta-md/default.css";
+    import "github-markdown-css/github-markdown-light.css";
+
+    import DOMPurify from "isomorphic-dompurify";
+
+    ///////////
+
     export let data: PageData;
 
     let models: Model[];
@@ -157,6 +165,11 @@
     }
 
     let pictureInput: HTMLInputElement;
+
+    const carta = new Carta({
+        sanitizer: DOMPurify.sanitize,
+        theme: "github-light"
+    });
 </script>
 
 <!-- TODO new description editor -->
@@ -339,7 +352,8 @@
         </div>
     </div>
     <div id="description-container">
-        <textarea bind:value={descValue} name="description" id="description" required placeholder="Leírás"></textarea>
+        <MarkdownEditor {carta} bind:value={descValue} />
+        <!-- <textarea bind:value={descValue} name="description" id="description" required placeholder="Leírás"></textarea> -->
     </div>
     <div id="button-container">
         <button on:click|preventDefault={resetForm} class="reset-button">
