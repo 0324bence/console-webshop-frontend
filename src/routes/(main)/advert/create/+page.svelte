@@ -472,6 +472,11 @@
             display: flex;
             gap: 1rem;
 
+            @include tablet {
+                flex-direction: column;
+                height: auto;
+            }
+
             #picture-container {
                 border: 1px solid black;
                 border-radius: 10px;
@@ -487,6 +492,11 @@
                 padding: 0.5rem;
                 gap: 0.5rem;
                 overflow-y: auto;
+
+                @include tablet {
+                    flex: 1;
+                    min-height: 20rem;
+                }
 
                 &.image-hover {
                     border: 2px dashed $color-dark-blue;
@@ -695,6 +705,10 @@
                 flex-direction: column;
                 align-items: stretch;
 
+                @include tablet {
+                    flex: 1;
+                }
+
                 .row {
                     display: flex;
                     gap: 1rem;
@@ -734,6 +748,10 @@
                     background-color: transparent;
                     text-align: right;
                     width: 100%;
+
+                    @include tablet {
+                        font-size: 1.2rem;
+                    }
 
                     &.error {
                         border: 1px solid $color-red;
