@@ -148,6 +148,7 @@
 <!-- TODO comments -->
 <!-- TODO reactivity after changing image description -->
 <!-- TODO Edit responsivity -->
+<!-- TODO Remove from bookmark using bookmark button -->
 <form action="?/addToCart" method="post" bind:this={addtoCartForm} class="hidden"></form>
 <form action="?/addToBookmarks" method="post" bind:this={addtoBookmarksForm} class="hidden"></form>
 

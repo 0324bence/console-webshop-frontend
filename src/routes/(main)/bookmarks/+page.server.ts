@@ -1,6 +1,6 @@
 import apiPath from "$lib/apiPath";
 import type { CartItem, LocalAdvert, Manufacturer, Model, Picture, User } from "$lib/types";
-import { error } from "@sveltejs/kit";
+import { error, redirect } from "@sveltejs/kit";
 import type { Actions, PageServerLoad } from "./$types";
 import noImage from "$lib/images/noImage";
 import placeholder from "$lib/images/placeholder.png";
@@ -9,6 +9,7 @@ interface ExtendedLocalAdvert extends LocalAdvert {
     owner: User;
     manufacturer: Manufacturer;
     model: Model;
+    inCart: boolean;
 }
 
 export const load: PageServerLoad = async ({ cookies, parent }) => {
@@ -123,6 +124,20 @@ export const load: PageServerLoad = async ({ cookies, parent }) => {
             };
         }
 
+        let inCart = false;
+        const cartReq = await fetch(`${apiPath}/cart/${advert.id}`, {
+            headers: {
+                Authorization: `Bearer ${data.token}`,
+                "Content-Type": "application/json"
+            }
+        });
+        if (cartReq.ok) {
+            inCart = true;
+        } else {
+            inCart = false;
+        }
+        advert.inCart = inCart;
+
         adverts.push(advert);
     }
 
@@ -146,5 +161,24 @@ export const actions = {
         if (!res.ok) {
             return res.json();
         }
+    },
+    addToCart: async ({ cookies, params, request }) => {
+        const token = cookies.get("token");
+        if (token === undefined) {
+            return redirect(301, "/auth/");
+        }
+        const data = await request.formData();
+        const advertId = data.get("advertId");
+
+        const res = await fetch(`${apiPath}/cart`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`
+            },
+            body: JSON.stringify({
+                advertId
+            })
+        });
     }
 } satisfies Actions;

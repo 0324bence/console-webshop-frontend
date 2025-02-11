@@ -43,6 +43,10 @@
                 </div>
                 <div class="title-container">
                     <h2>{advert.title}</h2>
+                    <form class="button-container" method="post" action="?/addToCart">
+                        <input type="hidden" name="advertId" value={advert.id} />
+                        <button type="submit" disabled={advert.inCart}>Kosárba</button>
+                    </form>
                 </div>
                 <div class="state-container">
                     <span>{data.filters.states.find(i => i.id == advert.stateId)?.name}</span>
@@ -186,6 +190,48 @@
                     display: flex;
                     justify-content: space-between;
                     align-items: center;
+                }
+            }
+        }
+
+        .title-container {
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            justify-content: space-between;
+
+            .button-container {
+                display: flex;
+                justify-content: flex-end;
+                align-items: center;
+
+                button {
+                    padding: 0.5rem 1rem;
+                    border-radius: 15px;
+                    border: 1px solid $color-dark-blue;
+                    font-size: 1.2rem;
+                    cursor: pointer;
+
+                    &:hover {
+                        background-color: $color-dark-blue;
+                        color: $color-white;
+                    }
+
+                    &:active {
+                        background-color: $color-dark-blue;
+                        color: $color-white;
+                    }
+
+                    &:disabled {
+                        background-color: darken($color-white, 30%);
+                        color: $color-black;
+                        cursor: not-allowed;
+
+                        &:hover {
+                            background-color: darken($color-white, 30%);
+                            color: $color-black;
+                        }
+                    }
                 }
             }
         }
