@@ -172,7 +172,6 @@
     });
 </script>
 
-<!-- TODO new description editor -->
 <!-- Responsivity -->
 
 <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->

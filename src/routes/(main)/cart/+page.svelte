@@ -51,8 +51,18 @@
     <div id="info-box-container">
         <div id="info-box">
             <h2>Kosár:</h2>
-            <p>Termékek: <span>0</span><span>db</span></p>
-            <p class="price">Összesen: <span>50000</span> <span>HUF</span></p>
+            <p>Termékek: <span>{data.adverts.length}</span><span>db</span></p>
+            <p class="price">
+                Összesen:
+                <span>
+                    {data.adverts
+                        .map(e => e.priceHuf)
+                        .reduce((prev, currV, currI) => {
+                            return prev + currV;
+                        })}
+                </span>
+                <span>HUF</span>
+            </p>
             <button>Vásárlás</button>
         </div>
     </div>
