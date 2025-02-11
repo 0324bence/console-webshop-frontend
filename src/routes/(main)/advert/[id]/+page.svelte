@@ -141,6 +141,8 @@
             (e.target as HTMLInputElement).value = (e.target as HTMLInputElement).value.slice(0, 100);
         }
     }
+
+    let titleSize = 2.2 - Math.floor(data.advert.title.length / 10) * 0.1;
 </script>
 
 <!-- TODO comments -->
@@ -361,7 +363,9 @@
                             class={titleError ? "error" : ""}
                         />
                     {:else}
-                        <h1>{data.advert.title}</h1>
+                        <h1 style={`font-size: ${titleSize > 1 ? titleSize : 1}rem;`}>
+                            {data.advert.title}
+                        </h1>
                     {/if}
                     <h3><a href={`/profile/${data.advert.ownerId}`}>{data.advert.owner.name}</a></h3>
                 </div>
@@ -877,6 +881,13 @@
 
                 a {
                     color: inherit;
+                }
+
+                @include desktop {
+                    h1 {
+                        font-size: 2.2rem !important;
+                        font-weight: bold;
+                    }
                 }
 
                 h1 {
