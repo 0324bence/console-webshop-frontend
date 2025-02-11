@@ -8,6 +8,13 @@
 
     export let data: PageData;
     export let form: ActionData;
+
+    function limitTo20(e: Event) {
+        if (!e?.target) return;
+        if ((e.target as HTMLInputElement).value.length > 20) {
+            (e.target as HTMLInputElement).value = (e.target as HTMLInputElement).value.slice(0, 20);
+        }
+    }
 </script>
 
 <svelte:head>
@@ -29,7 +36,7 @@
         <h1>{data.action === "login" ? "Bejelentkezés" : "Regisztráció"}</h1>
         <div class="group">
             <label for="name">Felhasználó név</label>
-            <input type="text" id="name" name="name" required />
+            <input type="text" id="name" name="name" required maxlength="20" on:change={limitTo20} />
         </div>
 
         {#if data.action === "register"}
