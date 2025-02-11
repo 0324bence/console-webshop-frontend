@@ -293,6 +293,7 @@
         .infos {
             grid-column: 3;
             width: 100%;
+            line-break: anywhere;
 
             @include tablet {
                 grid-column: 3 / 4;

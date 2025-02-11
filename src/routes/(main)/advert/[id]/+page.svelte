@@ -397,7 +397,7 @@
                     <button
                         type="button"
                         on:click={() => addtoBookmarksForm.requestSubmit()}
-                        disabled={data.inBookmarks || data.isOwn}
+                        disabled={data.inBookmarks}
                     >
                         &hearts;
                     </button>
@@ -899,6 +899,8 @@
                     display: flex;
                     justify-content: start;
                     gap: 1rem;
+
+                    line-break: anywhere;
 
                     .edit-button {
                         button {

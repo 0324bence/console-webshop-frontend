@@ -30,6 +30,8 @@
 
     let descValue: string = "";
 
+    $: descValue = descValue.slice(0, 1000);
+
     let formLoading: boolean = false;
 
     async function handleFiles(event: Event | DragEvent) {
@@ -157,7 +159,7 @@
         }, 1000);
     }
 
-    function imageDescChange(e: Event) {
+    function limitTo100(e: Event) {
         if (!e?.target) return;
         if ((e.target as HTMLInputElement).value.length > 100) {
             (e.target as HTMLInputElement).value = (e.target as HTMLInputElement).value.slice(0, 100);
@@ -282,7 +284,7 @@
                             name={`image${index}desc`}
                             id={`image${index}desc`}
                             placeholder="Leaírás..."
-                            on:change={imageDescChange}
+                            on:change={limitTo100}
                         ></textarea>
                     </div>
                 {/each}
@@ -299,6 +301,8 @@
                         id="title"
                         placeholder="Cím"
                         required
+                        maxlength="100"
+                        on:change={limitTo100}
                         bind:value={advertTitle}
                     />
                 </div>
@@ -356,6 +360,10 @@
         </div>
     </div>
     <div id="description-container">
+        <div class="description-title-container">
+            <h3>Leírás</h3>
+            <span>{descValue.length} / 1000</span>
+        </div>
         <MarkdownEditor {carta} bind:value={descValue} mode="tabs" theme="default" />
         <!-- <textarea bind:value={descValue} name="description" id="description" required placeholder="Leírás"></textarea> -->
     </div>
@@ -749,6 +757,22 @@
             display: flex;
             flex-direction: column;
             justify-content: center;
+
+            .description-title-container {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+
+                h3 {
+                    font-size: 1.8rem;
+                    font-weight: bold;
+                }
+
+                span {
+                    font-size: 1.5rem;
+                    font-weight: bold;
+                }
+            }
         }
 
         #button-container {
