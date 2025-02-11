@@ -128,6 +128,19 @@ export const load: PageServerLoad = async ({ params, parent, url }) => {
     }
     // console.log(advert);
 
+    let inCart = false;
+    const cartReq = await fetch(`${apiPath}/cart/${advert.id}`, {
+        headers: {
+            Authorization: `Bearer ${data.token}`,
+            "Content-Type": "application/json"
+        }
+    });
+    if (cartReq.ok) {
+        inCart = true;
+    } else {
+        inCart = false;
+    }
+
     let isOwn = false;
     if (data.ownUser !== null) {
         isOwn = data.ownUser.id === advert.ownerId;
@@ -136,7 +149,8 @@ export const load: PageServerLoad = async ({ params, parent, url }) => {
     return {
         advert,
         models,
-        isOwn
+        isOwn,
+        inCart
     };
 };
 

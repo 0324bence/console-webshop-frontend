@@ -9,6 +9,7 @@
     import apiPath from "$lib/apiPath/index.js";
     import { Carta, Markdown } from "carta-md";
     import DOMPurify from "isomorphic-dompurify";
+    import { invalidateAll } from "$app/navigation";
 
     export let data;
 
@@ -132,13 +133,18 @@
     });
 
     let modalLoading = false;
+
+    function imageDescChange(e: Event) {
+        if (!e?.target) return;
+        if ((e.target as HTMLInputElement).value.length > 100) {
+            (e.target as HTMLInputElement).value = (e.target as HTMLInputElement).value.slice(0, 100);
+        }
+    }
 </script>
 
 <!-- TODO comments -->
-<!-- TODO disable cart button if advert is already in cart -->
-<!-- TODO Image buttons when no description is present -->
-<!-- TODO Limit picture description to 100 chars -->
-<!-- Edit responsivity -->
+<!-- TODO reactivity after changing image description -->
+<!-- TODO Edit responsivity -->
 <form action="?/addToCart" method="post" bind:this={addtoCartForm} class="hidden"></form>
 
 <div id="advert-content">
@@ -154,6 +160,7 @@
                     return async ({ update }) => {
                         showImageModal = false;
                         await update();
+                        invalidateAll();
                         modalLoading = false;
                     };
                 }}
@@ -204,6 +211,8 @@
                         id="image-desc"
                         value={newFile ? "" : selectedImage.description}
                         placeholder="Leírás..."
+                        maxlength="100"
+                        on:change={imageDescChange}
                     ></textarea>
                 </div>
                 <div id="button-container">
@@ -270,7 +279,11 @@
                         <button id="delete" type="submit" style={`background-image: url('${trash}');`}></button>
                     {/if}
                     <p>
-                        {selectedImage.description}
+                        {#if data.isOwn && (!selectedImage.description || selectedImage.description.length == 0)}
+                            Kép leírása...
+                        {:else}
+                            {selectedImage.description}
+                        {/if}
                     </p>
                     {#if data.isOwn && data.advert.pictures[0].id !== 0}
                         <button
@@ -329,10 +342,12 @@
                         <button type="button" style={`background-image: url('${save}');`} on:click={saveClick}></button>
                     </div>
                 {/if}
-                <div id="view-count" title="Megtekintések száma">
-                    <span>&#128065;</span>
-                    <span>{data.advert.viewCount}</span>
-                </div>
+                {#if data.isOwn}
+                    <div id="view-count" title="Megtekintések száma">
+                        <span>&#128065;</span>
+                        <span>{data.advert.viewCount}</span>
+                    </div>
+                {/if}
                 <div id="title">
                     {#if data.isOwn && editMode}
                         <input
@@ -378,7 +393,13 @@
                 <span>Létrehozva: {new Date(data.advert.createdTime).toISOString().split("T")[0]}</span>
                 <div id="buttons">
                     <button type="button">&hearts;</button>
-                    <button type="button" on:click={() => addtoCartForm.requestSubmit()}>Kosárba</button>
+                    <button
+                        type="button"
+                        on:click={() => addtoCartForm.requestSubmit()}
+                        disabled={data.inCart || data.isOwn}
+                    >
+                        {data.inCart ? "Kosárban van" : "Kosárba"}
+                    </button>
                 </div>
             </div>
         </form>
@@ -967,6 +988,17 @@
                             &:active {
                                 background-color: $color-dark-blue;
                                 color: $color-white;
+                            }
+
+                            &:disabled {
+                                background-color: darken($color-white, 30%);
+                                color: $color-black;
+                                cursor: not-allowed;
+
+                                &:hover {
+                                    background-color: darken($color-white, 30%);
+                                    color: $color-black;
+                                }
                             }
                         }
                     }
