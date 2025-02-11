@@ -141,6 +141,19 @@ export const load: PageServerLoad = async ({ params, parent, url }) => {
         inCart = false;
     }
 
+    let inBookmarks = false;
+    const bookmarksReq = await fetch(`${apiPath}/bookmarks/${advert.id}`, {
+        headers: {
+            Authorization: `Bearer ${data.token}`,
+            "Content-Type": "application/json"
+        }
+    });
+    if (bookmarksReq.ok) {
+        inBookmarks = true;
+    } else {
+        inBookmarks = false;
+    }
+
     let isOwn = false;
     if (data.ownUser !== null) {
         isOwn = data.ownUser.id === advert.ownerId;
@@ -150,7 +163,8 @@ export const load: PageServerLoad = async ({ params, parent, url }) => {
         advert,
         models,
         isOwn,
-        inCart
+        inCart,
+        inBookmarks
     };
 };
 
@@ -311,6 +325,24 @@ export const actions = {
         const advertId = params.id;
 
         const res = await fetch(`${apiPath}/cart`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`
+            },
+            body: JSON.stringify({
+                advertId
+            })
+        });
+    },
+    addToBookmarks: async ({ cookies, params, request }) => {
+        const token = cookies.get("token");
+        if (token === undefined) {
+            return redirect(301, "/auth/");
+        }
+        const advertId = params.id;
+
+        const res = await fetch(`${apiPath}/bookmarks`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

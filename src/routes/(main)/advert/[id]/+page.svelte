@@ -120,6 +120,7 @@
     }
 
     let addtoCartForm: HTMLFormElement;
+    let addtoBookmarksForm: HTMLFormElement;
 
     let advertTitle = data.advert.title;
 
@@ -146,6 +147,7 @@
 <!-- TODO reactivity after changing image description -->
 <!-- TODO Edit responsivity -->
 <form action="?/addToCart" method="post" bind:this={addtoCartForm} class="hidden"></form>
+<form action="?/addToBookmarks" method="post" bind:this={addtoBookmarksForm} class="hidden"></form>
 
 <div id="advert-content">
     {#if showImageModal}
@@ -392,7 +394,13 @@
             <div id="button-row">
                 <span>Létrehozva: {new Date(data.advert.createdTime).toISOString().split("T")[0]}</span>
                 <div id="buttons">
-                    <button type="button">&hearts;</button>
+                    <button
+                        type="button"
+                        on:click={() => addtoBookmarksForm.requestSubmit()}
+                        disabled={data.inBookmarks || data.isOwn}
+                    >
+                        &hearts;
+                    </button>
                     <button
                         type="button"
                         on:click={() => addtoCartForm.requestSubmit()}

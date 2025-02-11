@@ -60,7 +60,7 @@
     </div>
     <div id="info-box-container">
         <div id="info-box">
-            <h2>Kosár:</h2>
+            <h2>Könyvjelzők:</h2>
             <p>Termékek: <span>{data.adverts.length}</span><span>db</span></p>
             <p class="price">
                 Összesen:
@@ -69,7 +69,6 @@
                 </span>
                 <span>HUF</span>
             </p>
-            <button>Vásárlás</button>
         </div>
     </div>
 </div>
