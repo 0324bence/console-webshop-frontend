@@ -352,5 +352,20 @@ export const actions = {
                 advertId
             })
         });
+    },
+    removeFromBookmarks: async ({ cookies, params, request }) => {
+        const token = cookies.get("token");
+        if (token === undefined) {
+            return redirect(301, "/auth/");
+        }
+        const advertId = params.id;
+
+        const res = await fetch(`${apiPath}/bookmarks/${advertId}`, {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`
+            }
+        });
     }
 } satisfies Actions;

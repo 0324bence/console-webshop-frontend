@@ -121,6 +121,7 @@
 
     let addtoCartForm: HTMLFormElement;
     let addtoBookmarksForm: HTMLFormElement;
+    let removeFromBookmarksForm: HTMLFormElement;
 
     let advertTitle = data.advert.title;
 
@@ -148,9 +149,9 @@
 <!-- TODO comments -->
 <!-- TODO reactivity after changing image description -->
 <!-- TODO Edit responsivity -->
-<!-- TODO Remove from bookmark using bookmark button -->
 <form action="?/addToCart" method="post" bind:this={addtoCartForm} class="hidden"></form>
 <form action="?/addToBookmarks" method="post" bind:this={addtoBookmarksForm} class="hidden"></form>
+<form action="?/removeFromBookmarks" method="post" bind:this={removeFromBookmarksForm} class="hidden"></form>
 
 <div id="advert-content">
     {#if showImageModal}
@@ -401,8 +402,11 @@
                 <div id="buttons">
                     <button
                         type="button"
-                        on:click={() => addtoBookmarksForm.requestSubmit()}
-                        disabled={data.inBookmarks}
+                        on:click={() =>
+                            data.inBookmarks
+                                ? removeFromBookmarksForm.requestSubmit()
+                                : addtoBookmarksForm.requestSubmit()}
+                        class={data.inBookmarks ? "in-bookmarks" : ""}
                     >
                         &hearts;
                     </button>
@@ -1001,6 +1005,32 @@
                             border: 1px solid $color-dark-blue;
                             font-size: 1.2rem;
                             cursor: pointer;
+
+                            &.in-bookmarks {
+                                background-color: $color-light-blue;
+                                color: $color-red;
+                                position: relative;
+                                overflow: hidden;
+
+                                &:hover {
+                                    background-color: $color-red;
+                                    color: $color-white;
+
+                                    &::after {
+                                        content: "×";
+                                        width: 100%;
+                                        height: 100%;
+                                        position: absolute;
+                                        top: 0;
+                                        left: 0;
+                                        background-color: $color-red;
+                                        color: $color-white;
+                                        display: flex;
+                                        justify-content: center;
+                                        align-items: center;
+                                    }
+                                }
+                            }
 
                             &:hover {
                                 background-color: $color-dark-blue;
