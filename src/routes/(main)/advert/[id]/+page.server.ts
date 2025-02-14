@@ -1,7 +1,7 @@
 import { error, redirect } from "@sveltejs/kit";
 import type { Actions, PageServerLoad } from "./$types";
 import apiPath from "$lib/apiPath";
-import type { LocalAdvert, Manufacturer, Model, Picture, User } from "$lib/types";
+import type { Comment, LocalAdvert, Manufacturer, Model, Picture, User, localComment } from "$lib/types";
 import noImage from "$lib/images/noImage";
 
 interface ExtendedLocalAdvert extends LocalAdvert {
@@ -126,7 +126,28 @@ export const load: PageServerLoad = async ({ params, parent, url }) => {
             longitude: "0"
         };
     }
-    // console.log(advert);
+
+    const commentsReq = await fetch(`${apiPath}/adverts/${advert.id}/comments/direct`);
+    let comments: localComment[] = [];
+    if (commentsReq.ok) {
+        comments = await commentsReq.json();
+        for (let comment of comments) {
+            comment.createdTime = new Date(comment.createdTime);
+            const userReq = await fetch(`${apiPath}/user/${comment.userId}`);
+            if (userReq.ok) {
+                comment.user = await userReq.json();
+            } else {
+                comment.user = {
+                    id: 0,
+                    name: "Ismeretlen",
+                    email: "Ismeretlen",
+                    bio: "Ismeretlen",
+                    picture: "",
+                    regDate: new Date()
+                };
+            }
+        }
+    }
 
     let inCart = false;
     const cartReq = await fetch(`${apiPath}/cart/${advert.id}`, {
@@ -164,7 +185,8 @@ export const load: PageServerLoad = async ({ params, parent, url }) => {
         models,
         isOwn,
         inCart,
-        inBookmarks
+        inBookmarks,
+        comments
     };
 };
 

@@ -10,6 +10,7 @@
     import { Carta, Markdown } from "carta-md";
     import DOMPurify from "isomorphic-dompurify";
     import { invalidateAll } from "$app/navigation";
+    import Comment from "$lib/components/Comment.svelte";
 
     export let data;
 
@@ -499,6 +500,24 @@
                 {data.advert.description}
             </p> -->
             <Markdown {carta} value={data.advert.description} />
+        </div>
+    </div>
+    <div id="comment-editor-container">
+        <form id="comment-editor">
+            <textarea name="comment" id="comment" autocorrect="on" placeholder="Komment..." required spellcheck="true"
+            ></textarea>
+            <button type="submit">Küldés</button>
+        </form>
+    </div>
+    <div id="comment-list-container">
+        <div id="comment-list">
+            <div id="comment-list-header">
+                <h2>Kommentek</h2>
+                <span>{data.comments.length}db</span>
+            </div>
+            {#each data.comments as comment}
+                <Comment {comment} />
+            {/each}
         </div>
     </div>
 </div>
@@ -1158,6 +1177,96 @@
                 height: 100%;
                 word-wrap: normal;
                 white-space: pre-wrap;
+            }
+        }
+
+        #comment-editor-container {
+            padding: 1rem;
+            flex-grow: 0;
+
+            #comment-editor {
+                border: 1px solid $color-black;
+                border-radius: 10px;
+                box-shadow: 1px 1px 5px 0px rgba($color-black, 0.5);
+                background-color: $color-white;
+                padding: 1rem;
+                gap: 1rem;
+                width: 100%;
+                color: $color-black;
+
+                display: flex;
+                flex-direction: row;
+                align-items: end;
+
+                textarea {
+                    width: 100%;
+                    height: 100%;
+                    min-height: 6rem;
+                    padding: 0.5rem;
+                    border: 1px solid $color-black;
+                    border-radius: 5px;
+                    font-size: 1.2rem;
+                    resize: none;
+                }
+
+                button {
+                    padding: 0.5rem 1rem;
+                    border-radius: 15px;
+                    border: 1px solid $color-dark-blue;
+                    font-size: 1.2rem;
+                    cursor: pointer;
+
+                    &:hover {
+                        background-color: $color-dark-blue;
+                        color: $color-white;
+                    }
+
+                    &:active {
+                        background-color: $color-dark-blue;
+                        color: $color-white;
+                    }
+
+                    &:disabled {
+                        background-color: darken($color-white, 30%);
+                        color: $color-black;
+                        cursor: not-allowed;
+
+                        &:hover {
+                            background-color: darken($color-white, 30%);
+                            color: $color-black;
+                        }
+                    }
+                }
+            }
+        }
+
+        #comment-list-container {
+            padding: 1rem;
+            flex-grow: 0;
+
+            #comment-list {
+                border: 1px solid $color-black;
+                border-radius: 10px;
+                box-shadow: 1px 1px 5px 0px rgba($color-black, 0.5);
+                background-color: $color-white;
+                padding: 1rem;
+                gap: 1rem;
+                width: 100%;
+                color: $color-black;
+
+                #comment-list-header {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+
+                    h2 {
+                        font-size: 1.2rem;
+                    }
+
+                    span {
+                        font-size: 1rem;
+                    }
+                }
             }
         }
     }

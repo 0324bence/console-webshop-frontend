@@ -71,4 +71,30 @@ interface CartItem {
     advertId: number;
 }
 
-export type { User, Model, Advert, Picture, LocalAdvert, Location, Manufacturer, State, BasicFilters, CartItem };
+interface Comment {
+    id: number;
+    userId: number;
+    advertId: number;
+    text: string;
+    replyToId: number | null;
+    createdTime: Date;
+}
+
+interface localComment extends Comment {
+    user: User;
+}
+
+export type {
+    User,
+    Model,
+    Advert,
+    Picture,
+    LocalAdvert,
+    Location,
+    Manufacturer,
+    State,
+    BasicFilters,
+    CartItem,
+    Comment,
+    localComment
+};
