@@ -78,6 +78,7 @@ interface Comment {
     text: string;
     replyToId: number | null;
     createdTime: Date;
+    replyCount: number;
 }
 
 interface localComment extends Comment {

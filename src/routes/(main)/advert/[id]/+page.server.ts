@@ -129,8 +129,11 @@ export const load: PageServerLoad = async ({ params, parent, url }) => {
 
     const commentsReq = await fetch(`${apiPath}/adverts/${advert.id}/comments/direct`);
     let comments: localComment[] = [];
+    let commentCount = 0;
     if (commentsReq.ok) {
-        comments = await commentsReq.json();
+        const commentJSON = await commentsReq.json();
+        comments = commentJSON.items;
+        commentCount = commentJSON.resultCount;
         for (let comment of comments) {
             comment.createdTime = new Date(comment.createdTime);
             const userReq = await fetch(`${apiPath}/user/${comment.userId}`);
@@ -186,7 +189,8 @@ export const load: PageServerLoad = async ({ params, parent, url }) => {
         isOwn,
         inCart,
         inBookmarks,
-        comments
+        comments,
+        commentCount
     };
 };
 

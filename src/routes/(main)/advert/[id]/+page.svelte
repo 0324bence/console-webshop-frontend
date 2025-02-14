@@ -513,7 +513,7 @@
         <div id="comment-list">
             <div id="comment-list-header">
                 <h2>Kommentek</h2>
-                <span>{data.comments.length}db</span>
+                <span>{data.commentCount}db</span>
             </div>
             {#each data.comments as comment}
                 <Comment {comment} />

@@ -71,7 +71,10 @@
         </div>
         <div class="comment-text">{comment.text}.</div>
         <div class="comment-actions">
-            <button on:click={repliesButtonClicked}><span>+</span> 15 válasz</button>
+            {#if comment.replyCount > 0}
+                <button on:click={repliesButtonClicked}><span>+</span> {comment.replyCount} válasz</button>
+            {/if}
+            <!-- <button on:click={repliesButtonClicked}><span>+</span> {comment.replyCount} válasz</button> -->
             <button>Válasz küldése</button>
         </div>
         <div class="replies">
