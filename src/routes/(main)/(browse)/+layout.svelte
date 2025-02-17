@@ -263,7 +263,7 @@
         <input type="text" name="userId" id="userId" class="hidden" bind:value={userId} />
         <div id="title" class="filter-group">
             <div class="title-row">
-                <h2>Filterezés</h2>
+                <h2>Szűrés</h2>
                 <button on:click|preventDefault={hamburgerClick}>&times;</button>
             </div>
         </div>

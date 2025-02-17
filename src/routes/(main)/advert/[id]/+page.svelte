@@ -173,7 +173,6 @@
 
 <!-- TODO comments -->
 <!-- TODO Edit responsivity -->
-<!-- TODO Magyarosítás (Komment, filter) -->
 <form action="?/addToCart" method="post" bind:this={addtoCartForm} class="hidden"></form>
 <form action="?/addToBookmarks" method="post" bind:this={addtoBookmarksForm} class="hidden"></form>
 <form action="?/removeFromBookmarks" method="post" bind:this={removeFromBookmarksForm} class="hidden"></form>
@@ -533,7 +532,7 @@
                 name="comment"
                 id="comment"
                 autocorrect="on"
-                placeholder="Komment..."
+                placeholder="Hozzászólás..."
                 required
                 spellcheck="true"
                 maxlength="1000"
@@ -545,7 +544,7 @@
     <div id="comment-list-container">
         <div id="comment-list">
             <div id="comment-list-header">
-                <h2>Kommentek</h2>
+                <h2>Hozzászólások</h2>
                 <span>{data.commentCount}db</span>
             </div>
             {#each localComments as comment}
