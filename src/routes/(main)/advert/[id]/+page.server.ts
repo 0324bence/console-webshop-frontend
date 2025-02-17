@@ -278,6 +278,7 @@ export const actions = {
                 ...body
             })
         });
+        return "ok";
     },
     addPicture: async ({ cookies, request, params }) => {
         console.log("addPicture");
@@ -322,6 +323,7 @@ export const actions = {
                 return error(500, "Hiba történt a kép beállítása közben");
             }
         }
+        return "ok";
     },
     deletePicture: async ({ cookies, request, params }) => {
         const token = cookies.get("token");

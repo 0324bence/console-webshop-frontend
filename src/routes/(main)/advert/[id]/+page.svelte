@@ -9,7 +9,7 @@
     import apiPath from "$lib/apiPath/index.js";
     import { Carta, Markdown } from "carta-md";
     import DOMPurify from "isomorphic-dompurify";
-    import { invalidateAll } from "$app/navigation";
+    import { goto, invalidateAll } from "$app/navigation";
     import Comment from "$lib/components/Comment.svelte";
 
     export let data;
@@ -111,6 +111,7 @@
     let showImageModal = false;
 
     function modifyClick() {
+        newFile = false;
         showImageModal = true;
     }
 
@@ -145,10 +146,15 @@
     }
 
     let titleSize = 2.2 - Math.floor(data.advert.title.length / 10) * 0.1;
+    let selectedImageId = selectedImage.id;
+
+    $: selectedImageId = selectedImage.id;
+
+    $: data.advert.pictures,
+        (selectedImage = data.advert.pictures.find(i => i.id == selectedImage.id) || data.advert.mainPicture);
 </script>
 
 <!-- TODO comments -->
-<!-- TODO reactivity after changing image description -->
 <!-- TODO Edit responsivity -->
 <form action="?/addToCart" method="post" bind:this={addtoCartForm} class="hidden"></form>
 <form action="?/addToBookmarks" method="post" bind:this={addtoBookmarksForm} class="hidden"></form>
@@ -167,8 +173,9 @@
                     return async ({ update }) => {
                         showImageModal = false;
                         await update();
-                        invalidateAll();
                         modalLoading = false;
+                        invalidateAll();
+                        goto(location.href);
                     };
                 }}
             >
@@ -280,7 +287,7 @@
                             name="image"
                             id="image-id"
                             class="hidden"
-                            value={newFile ? "" : selectedImage.id}
+                            bind:value={selectedImageId}
                             readonly
                         />
                         <button id="delete" type="submit" style={`background-image: url('${trash}');`}></button>
