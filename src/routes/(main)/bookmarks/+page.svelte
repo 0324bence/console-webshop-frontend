@@ -17,7 +17,6 @@
     }
 </script>
 
-<!-- TODO disable add to cart button when item already in cart -->
 <div id="cart-container">
     <div id="advert-list">
         {#each data.adverts as advert}
@@ -46,7 +45,9 @@
                     <h2>{advert.title}</h2>
                     <form class="button-container" method="post" action="?/addToCart">
                         <input type="hidden" name="advertId" value={advert.id} />
-                        <button type="submit" disabled={advert.inCart}>Kosárba</button>
+                        <button type="submit" disabled={advert.inCart || data.ownUser?.id === advert.ownerId}
+                            >Kosárba</button
+                        >
                     </form>
                 </div>
                 <div class="state-container">

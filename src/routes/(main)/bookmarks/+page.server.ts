@@ -180,5 +180,9 @@ export const actions = {
                 advertId
             })
         });
+        if (!res.ok) {
+            return error(500, "Hiba történt a kosárba helyezés során");
+        }
+        return "ok";
     }
 } satisfies Actions;
