@@ -17,6 +17,7 @@
     }
 </script>
 
+<!-- TODO disable add to cart button when item already in cart -->
 <div id="cart-container">
     <div id="advert-list">
         {#each data.adverts as advert}

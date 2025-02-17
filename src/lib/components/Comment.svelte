@@ -1,11 +1,15 @@
 <script lang="ts">
-    import type { Comment, localComment } from "$lib/types";
+    import type { Comment, localComment, User } from "$lib/types";
     import { createEventDispatcher } from "svelte";
     import IntersectionObserver from "./IntersectionObserver.svelte";
     import apiPath from "$lib/apiPath";
 
     export let comment: localComment;
     export let observer: boolean = false;
+    export let token: string | null = null;
+    export let currentUser: User | null = null;
+
+    let commentValue: string = "";
 
     const dispatch = createEventDispatcher<{
         intersect: void;
@@ -48,6 +52,8 @@
         replies = localReplies;
     }
 
+    let replyCount = comment.replyCount;
+
     function repliesButtonClicked() {
         if (replies.length === 0) {
             getReplies();
@@ -56,7 +62,46 @@
         }
     }
 
-    console.log(comment);
+    let isCommenting = false;
+
+    async function sendComment() {
+        if (token == null || token == "" || currentUser == null) {
+            return;
+        }
+
+        const advertId = comment.advertId;
+        const commentId = comment.id;
+
+        const res = await fetch(`${apiPath}/adverts/${advertId}/comments/${commentId}/replies`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`
+            },
+            body: JSON.stringify({
+                text: commentValue
+            })
+        });
+        if (!res.ok) {
+            console.error("Failed to send comment");
+            return;
+        }
+        const data = await res.json();
+        replies = [
+            ...replies,
+            {
+                id: data.id,
+                userId: currentUser.id,
+                advertId: advertId,
+                text: commentValue,
+                createdTime: new Date(),
+                user: currentUser,
+                replyCount: 0
+            } as localComment
+        ];
+        replyCount++;
+        isCommenting = false;
+    }
 </script>
 
 <div class="comment">
@@ -71,15 +116,47 @@
         </div>
         <div class="comment-text">{comment.text}.</div>
         <div class="comment-actions">
-            {#if comment.replyCount > 0}
-                <button on:click={repliesButtonClicked}><span>+</span> {comment.replyCount} válasz</button>
+            {#if replyCount > 0}
+                <button type="button" on:click={repliesButtonClicked}><span>+</span> {replyCount} válasz</button>
             {/if}
             <!-- <button on:click={repliesButtonClicked}><span>+</span> {comment.replyCount} válasz</button> -->
-            <button>Válasz küldése</button>
+            {#if token != "" && token != null}
+                <button
+                    type="button"
+                    on:click={() => {
+                        isCommenting = true;
+                    }}>Válasz küldése</button
+                >
+            {/if}
         </div>
+        {#if isCommenting}
+            <div class="comment-textbox">
+                <div class="collapse-button"></div>
+                <div class="textarea-container">
+                    <textarea
+                        placeholder="Hozzászólás..."
+                        autocorrect="on"
+                        required
+                        spellcheck="true"
+                        maxlength="1000"
+                        bind:value={commentValue}
+                    ></textarea>
+                    <div class="button-container">
+                        <button
+                            type="button"
+                            class="cancel"
+                            on:click={() => {
+                                isCommenting = false;
+                            }}>Mégse</button
+                        >
+                        <button type="button" on:click={sendComment}>Küldés</button>
+                    </div>
+                </div>
+            </div>
+        {/if}
         <div class="replies">
             {#each replies as reply}
-                <svelte:self comment={reply} {observer} />
+                <svelte:self comment={reply} {observer} {token} {currentUser} />
             {/each}
         </div>
     </div>
@@ -116,6 +193,91 @@
             flex-direction: column;
             align-items: stretch;
             padding: 5px;
+
+            .comment-textbox {
+                display: flex;
+                align-items: stretch;
+
+                .collapse-button {
+                    width: 2px;
+                    outline: none;
+                    border: none;
+                    background-color: $color-dark-blue;
+                    border-radius: 2px;
+                    // cursor: pointer;
+                    margin: 2px;
+
+                    // &:hover {
+                    //     background-color: lighten($color-dark-blue, 10%);
+                    // }
+
+                    // &:focus {
+                    //     background-color: lighten($color-dark-blue, 10%);
+                    // }
+                }
+
+                .textarea-container {
+                    flex: 1;
+                    display: flex;
+                    flex-direction: column;
+                    align-items: end;
+
+                    textarea {
+                        flex: 1;
+                        padding: 0.4rem;
+                        font-size: 1rem;
+                        border: 1px solid $color-black;
+                        border-radius: 5px;
+                        width: 100%;
+                        resize: none;
+                        gap: 0.5rem;
+                    }
+
+                    .button-container {
+                        display: flex;
+                        justify-content: end;
+                    }
+
+                    button {
+                        padding: 0.5rem 1rem;
+                        border-radius: 15px;
+                        border: 1px solid $color-dark-blue;
+                        font-size: 1rem;
+                        margin: 0.5rem;
+                        cursor: pointer;
+                        &.cancel {
+                            background-color: $color-red;
+                            color: $color-white;
+
+                            &:hover {
+                                background-color: lighten($color-red, 10%);
+                                color: $color-white;
+                            }
+                        }
+
+                        &:hover {
+                            background-color: $color-dark-blue;
+                            color: $color-white;
+                        }
+
+                        &:active {
+                            background-color: $color-dark-blue;
+                            color: $color-white;
+                        }
+
+                        &:disabled {
+                            background-color: darken($color-white, 30%);
+                            color: $color-black;
+                            cursor: not-allowed;
+
+                            &:hover {
+                                background-color: darken($color-white, 30%);
+                                color: $color-black;
+                            }
+                        }
+                    }
+                }
+            }
 
             .comment-header {
                 width: 100%;

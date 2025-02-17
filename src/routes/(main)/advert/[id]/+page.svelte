@@ -3,7 +3,7 @@
     import edit from "$lib/images/edit.svg";
     import save from "$lib/images/save.svg";
     import LocationSearch from "$lib/components/LocationSearch.svelte";
-    import type { Location } from "$lib/types";
+    import type { localComment, Location } from "$lib/types";
     import { enhance } from "$app/forms";
     import { Buffer } from "buffer";
     import apiPath from "$lib/apiPath/index.js";
@@ -11,6 +11,11 @@
     import DOMPurify from "isomorphic-dompurify";
     import { goto, invalidateAll } from "$app/navigation";
     import Comment from "$lib/components/Comment.svelte";
+    import Cart from "$lib/svgs/Cart.svelte";
+
+    interface extendedLocalComment extends localComment {
+        commentValue: string;
+    }
 
     export let data;
 
@@ -35,6 +40,8 @@
     let selectedLocation: Location = data.advert.location;
 
     let locationError = false;
+
+    let localComments: extendedLocalComment[] = data.comments.map(c => ({ ...c, commentValue: "" }));
 
     async function manufacturerSelect() {
         const res = await fetch(`${apiPath}/filters/modelsForManufacturer?manufacturerId=${selectedManufacturer}`);
@@ -146,16 +153,27 @@
     }
 
     let titleSize = 2.2 - Math.floor(data.advert.title.length / 10) * 0.1;
+
+    function limitTo1000(e: Event) {
+        if (!e?.target) return;
+        if ((e.target as HTMLInputElement).value.length > 1000) {
+            (e.target as HTMLInputElement).value = (e.target as HTMLInputElement).value.slice(0, 1000);
+        }
+    }
+
     let selectedImageId = selectedImage.id;
 
     $: selectedImageId = selectedImage.id;
 
     $: data.advert.pictures,
         (selectedImage = data.advert.pictures.find(i => i.id == selectedImage.id) || data.advert.mainPicture);
+
+    let currentCommentValue = "";
 </script>
 
 <!-- TODO comments -->
 <!-- TODO Edit responsivity -->
+<!-- TODO Magyarosítás (Komment, filter) -->
 <form action="?/addToCart" method="post" bind:this={addtoCartForm} class="hidden"></form>
 <form action="?/addToBookmarks" method="post" bind:this={addtoBookmarksForm} class="hidden"></form>
 <form action="?/removeFromBookmarks" method="post" bind:this={removeFromBookmarksForm} class="hidden"></form>
@@ -510,10 +528,18 @@
         </div>
     </div>
     <div id="comment-editor-container">
-        <form id="comment-editor">
-            <textarea name="comment" id="comment" autocorrect="on" placeholder="Komment..." required spellcheck="true"
+        <form id="comment-editor" method="post" action="?/addComment">
+            <textarea
+                name="comment"
+                id="comment"
+                autocorrect="on"
+                placeholder="Komment..."
+                required
+                spellcheck="true"
+                maxlength="1000"
+                on:change={limitTo1000}
             ></textarea>
-            <button type="submit">Küldés</button>
+            <button type="submit" disabled={data.ownUser == null}>Küldés</button>
         </form>
     </div>
     <div id="comment-list-container">
@@ -522,8 +548,10 @@
                 <h2>Kommentek</h2>
                 <span>{data.commentCount}db</span>
             </div>
-            {#each data.comments as comment}
-                <Comment {comment} />
+            {#each localComments as comment}
+                <form action="?/addCommentToComment" method="post">
+                    <Comment {comment} token={data.token} currentUser={data.ownUser} />
+                </form>
             {/each}
         </div>
     </div>
@@ -1202,7 +1230,7 @@
                 color: $color-black;
 
                 display: flex;
-                flex-direction: row;
+                flex-direction: column;
                 align-items: end;
 
                 textarea {

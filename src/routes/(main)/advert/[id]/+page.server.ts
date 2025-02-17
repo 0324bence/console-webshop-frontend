@@ -395,5 +395,55 @@ export const actions = {
                 Authorization: `Bearer ${token}`
             }
         });
+    },
+    addComment: async ({ cookies, params, request }) => {
+        const token = cookies.get("token");
+        if (token === undefined) {
+            return redirect(301, "/auth/");
+        }
+        const advertId = params.id;
+        const data = await request.formData();
+        const text = data.get("comment");
+
+        const res = await fetch(`${apiPath}/adverts/${advertId}/comments`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`
+            },
+            body: JSON.stringify({
+                text
+            })
+        });
+        if (!res.ok) {
+            return error(500, "Hiba történt a komment hozzáadása közben");
+        }
+    },
+    addCommentToComment: async ({ cookies, params, request }) => {
+        const token = cookies.get("token");
+        if (token === undefined) {
+            return redirect(301, "/auth/");
+        }
+        const advertId = params.id;
+        const data = await request.formData();
+        const text = data.get("comment");
+        const commentId = data.get("commentId");
+
+        console.log("addCommentToComment", advertId, commentId, text);
+
+        const res = await fetch(`${apiPath}/adverts/${advertId}/comments/${commentId}/replies`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`
+            },
+            body: JSON.stringify({
+                text
+            })
+        });
+        if (!res.ok) {
+            return error(500, "Hiba történt a komment hozzáadása közben");
+        }
+        return "ok";
     }
 } satisfies Actions;
