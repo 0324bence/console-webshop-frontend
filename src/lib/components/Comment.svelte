@@ -119,7 +119,7 @@
             <h3>{comment.user.name}</h3>
             <span>{transformDate(comment.createdTime)}</span>
         </div>
-        <div class="comment-text">{comment.text}.</div>
+        <div class="comment-text">{comment.text}</div>
         <div class="comment-actions">
             {#if replyCount > 0}
                 <button type="button" on:click={repliesButtonClicked}>
