@@ -3,6 +3,7 @@
     import { createEventDispatcher } from "svelte";
     import IntersectionObserver from "./IntersectionObserver.svelte";
     import apiPath from "$lib/apiPath";
+    import placeholder from "$lib/images/placeholder.png";
 
     export let comment: localComment;
     export let observer: boolean = false;
@@ -47,7 +48,7 @@
                     name: "Ismeretlen",
                     email: "Ismeretlen",
                     bio: "Ismeretlen",
-                    picture: "",
+                    picture: placeholder,
                     regDate: new Date()
                 };
             }
@@ -119,6 +120,10 @@
     <div class="collapse-button"></div>
     <div class="content">
         <div class="comment-header">
+            <div
+                class="picture"
+                style={`background-image: url('data:image/jpeg;base64,${comment.user.picture}')`}
+            ></div>
             <h3>{comment.user.name}</h3>
             <span>{transformDate(comment.createdTime)}</span>
         </div>
@@ -300,13 +305,23 @@
                 display: flex;
                 justify-content: start;
                 align-items: center;
-                gap: 1rem;
+                gap: 0.5rem;
+
+                .picture {
+                    height: 100%;
+                    aspect-ratio: 1 / 1;
+                    border-radius: 50%;
+                    background-size: contain;
+                    background-repeat: no-repeat;
+                    background-position: center;
+                }
 
                 h3 {
                     font-size: 1.2rem;
                 }
 
                 span {
+                    margin-left: 0.5rem;
                     font-size: 0.8rem;
                     color: lighten($color-black, 40%);
                 }
