@@ -100,8 +100,13 @@
             } as localComment
         ];
         replyCount++;
+        commentValue = "";
         isCommenting = false;
     }
+
+    let commentText: HTMLTextAreaElement;
+
+    $: commentText?.focus();
 </script>
 
 <div class="comment">
@@ -130,7 +135,7 @@
             {#if token != "" && token != null}
                 <button
                     type="button"
-                    on:click={() => {
+                    on:click={async () => {
                         isCommenting = true;
                     }}>Válasz küldése</button
                 >
@@ -147,12 +152,14 @@
                         spellcheck="true"
                         maxlength="1000"
                         bind:value={commentValue}
+                        bind:this={commentText}
                     ></textarea>
                     <div class="button-container">
                         <button
                             type="button"
                             on:click={() => {
                                 isCommenting = false;
+                                commentValue = "";
                             }}>Mégse</button
                         >
                         <button type="button" on:click={sendComment}>Küldés</button>
