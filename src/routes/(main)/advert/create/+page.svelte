@@ -109,7 +109,7 @@
     let advertTitle: string = "";
     let priceError: boolean = false;
 
-    let priceValue = 0;
+    let priceValue: number | null = null;
 
     async function imageDrop(e: DragEvent) {
         e.preventDefault();
@@ -181,8 +181,7 @@
     action="?/submit"
     method="post"
     use:enhance={({ formData, cancel }) => {
-        console.log(priceValue);
-        if (priceValue <= 0) {
+        if (priceValue == null || priceValue <= 0) {
             priceError = true;
             return cancel();
         }
@@ -326,6 +325,8 @@
                         required
                         bind:value={priceValue}
                         on:change={() => {
+                            console.log(priceValue);
+                            if (priceValue == null) return;
                             if (priceValue < 0) priceValue = 0;
                             if (priceValue > 10000000) priceValue = 10000000;
                         }}
