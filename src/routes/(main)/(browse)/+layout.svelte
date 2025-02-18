@@ -244,6 +244,7 @@
     console.log(data.ownUser);
 </script>
 
+<!-- TODO models not removed when unchecking manufacturers -->
 <slot></slot>
 <div class="main-container">
     <form

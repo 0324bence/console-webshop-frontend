@@ -117,7 +117,14 @@
         <div class="comment-text">{comment.text}.</div>
         <div class="comment-actions">
             {#if replyCount > 0}
-                <button type="button" on:click={repliesButtonClicked}><span>+</span> {replyCount} válasz</button>
+                <button type="button" on:click={repliesButtonClicked}>
+                    {#if replies.length > 0}
+                        <span>&minus;</span>
+                    {:else}
+                        <span>+</span>
+                    {/if}
+                    {replyCount} válasz</button
+                >
             {/if}
             <!-- <button on:click={repliesButtonClicked}><span>+</span> {comment.replyCount} válasz</button> -->
             {#if token != "" && token != null}
@@ -144,7 +151,6 @@
                     <div class="button-container">
                         <button
                             type="button"
-                            class="cancel"
                             on:click={() => {
                                 isCommenting = false;
                             }}>Mégse</button

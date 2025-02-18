@@ -746,7 +746,7 @@
                     padding: 0.1rem;
                     font-weight: bold;
                     background-color: transparent;
-                    text-align: right;
+                    text-align: left;
                     width: 100%;
 
                     @include tablet {
