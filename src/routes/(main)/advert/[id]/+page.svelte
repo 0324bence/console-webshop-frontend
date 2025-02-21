@@ -12,6 +12,7 @@
     import { goto, invalidateAll } from "$app/navigation";
     import Comment from "$lib/components/Comment.svelte";
     import Cart from "$lib/svgs/Cart.svelte";
+    import RootComment from "$lib/components/RootComment.svelte";
 
     interface extendedLocalComment extends localComment {
         commentValue: string;
@@ -549,7 +550,7 @@
             </div>
             {#each localComments as comment}
                 <form action="?/addCommentToComment" method="post">
-                    <Comment {comment} token={data.token} currentUser={data.ownUser} />
+                    <RootComment {comment} token={data.token} currentUser={data.ownUser} />
                 </form>
             {/each}
         </div>

@@ -9,6 +9,7 @@
     export let observer: boolean = false;
     export let token: string | null = null;
     export let currentUser: User | null = null;
+    export let depthCounter: number;
 
     let commentValue: string = "";
 
@@ -140,7 +141,7 @@
                 >
             {/if}
             <!-- <button on:click={repliesButtonClicked}><span>+</span> {comment.replyCount} válasz</button> -->
-            {#if token != "" && token != null}
+            {#if token != "" && token != null && depthCounter < 10}
                 <button
                     type="button"
                     on:click={async () => {
@@ -177,7 +178,7 @@
         {/if}
         <div class="replies">
             {#each replies as reply}
-                <svelte:self comment={reply} {observer} {token} {currentUser} />
+                <svelte:self comment={reply} {observer} {token} {currentUser} depthCounter={depthCounter + 1} />
             {/each}
         </div>
     </div>
@@ -333,6 +334,7 @@
                 // border: 1px solid $color-black;
                 white-space: pre-wrap;
                 font-size: 1rem;
+                word-break: break-word;
             }
 
             .comment-actions {
