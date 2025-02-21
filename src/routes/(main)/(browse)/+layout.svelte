@@ -60,7 +60,13 @@
         if (target.checked) {
             await getModels(value);
         } else {
-            delete modelGroups[manufacturerId];
+            let models: { [key: string]: CheckBoxModel[] } = {};
+            for (const key in modelGroups) {
+                if (key !== manufacturerId) {
+                    models[key] = modelGroups[key];
+                }
+            }
+            modelGroups = models;
         }
     }
 
@@ -244,7 +250,6 @@
     console.log(data.ownUser);
 </script>
 
-<!-- TODO models not removed when unchecking manufacturers -->
 <slot></slot>
 <div class="main-container">
     <form
@@ -312,6 +317,7 @@
                         type="checkbox"
                         name="manufacturer"
                         id={"manufacturers" + manufacturer.id}
+                        data-manufacturerId={manufacturer.id}
                         value={manufacturer.id}
                         checked={data.activeFilters.manufacturers.includes(manufacturer.id)}
                         on:change={onManufacturerSelect}
@@ -338,7 +344,6 @@
                             name="model"
                             id={"models" + model.id}
                             value={model.id}
-                            data-manufacturerId={model.manufacturerId}
                             checked={data.activeFilters.models.includes(model.id)}
                             on:change={changeSearch}
                         />
