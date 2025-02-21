@@ -50,6 +50,7 @@
     let editingPassword = false;
 </script>
 
+<!-- TODO image hover responsivity -->
 <div id="profile-container">
     <!-- <div id="profile"> -->
     <form

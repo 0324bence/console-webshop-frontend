@@ -31,13 +31,15 @@
 
     let replies: localComment[] = [];
 
-    async function getReplies() {
-        const repliesReq = await fetch(`${apiPath}/adverts/${comment.advertId}/comments/${comment.id}/replies`);
+    async function getReplies(offset: number) {
+        const repliesReq = await fetch(
+            `${apiPath}/adverts/${comment.advertId}/comments/${comment.id}/replies?count=20&skip=${offset}`
+        );
         if (!repliesReq.ok) {
             console.error("Failed to fetch replies");
             return;
         }
-        let localReplies = await repliesReq.json();
+        let localReplies = (await repliesReq.json()).items;
         for (let comment of localReplies) {
             comment.createdTime = new Date(comment.createdTime);
             const userReq = await fetch(`${apiPath}/user/${comment.userId}`);
@@ -54,14 +56,14 @@
                 };
             }
         }
-        replies = localReplies;
+        replies = [...replies, ...localReplies];
     }
 
     let replyCount = comment.replyCount;
 
     function repliesButtonClicked() {
         if (replies.length === 0) {
-            getReplies();
+            getReplies(0);
         } else {
             replies = [];
         }
@@ -177,8 +179,17 @@
             </div>
         {/if}
         <div class="replies">
-            {#each replies as reply}
-                <svelte:self comment={reply} {observer} {token} {currentUser} depthCounter={depthCounter + 1} />
+            {#each replies as reply, index}
+                <svelte:self
+                    comment={reply}
+                    observer={(index + 1 + 5) % 20 == 0}
+                    {token}
+                    {currentUser}
+                    depthCounter={depthCounter + 1}
+                    on:intersect={() => {
+                        getReplies(replies.length);
+                    }}
+                />
             {/each}
         </div>
     </div>

@@ -17,6 +17,7 @@
     }
 </script>
 
+<!-- TODO responsivity -->
 <div id="cart-container">
     <div id="advert-list">
         {#each data.adverts as advert}

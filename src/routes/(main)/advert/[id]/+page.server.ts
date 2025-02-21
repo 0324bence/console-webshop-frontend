@@ -127,7 +127,7 @@ export const load: PageServerLoad = async ({ params, parent, url }) => {
         };
     }
 
-    const commentsReq = await fetch(`${apiPath}/adverts/${advert.id}/comments/direct`);
+    const commentsReq = await fetch(`${apiPath}/adverts/${advert.id}/comments/direct?count=20`);
     let comments: localComment[] = [];
     let commentCount = 0;
     if (commentsReq.ok) {

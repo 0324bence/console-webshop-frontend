@@ -7,16 +7,13 @@
     import { enhance } from "$app/forms";
     import { Buffer } from "buffer";
     import apiPath from "$lib/apiPath/index.js";
-    import { Carta, Markdown } from "carta-md";
+    import { Carta, Markdown, MarkdownEditor } from "carta-md";
     import DOMPurify from "isomorphic-dompurify";
     import { goto, invalidateAll } from "$app/navigation";
     import Comment from "$lib/components/Comment.svelte";
     import Cart from "$lib/svgs/Cart.svelte";
     import RootComment from "$lib/components/RootComment.svelte";
-
-    interface extendedLocalComment extends localComment {
-        commentValue: string;
-    }
+    import placeholder from "$lib/images/placeholder.png";
 
     export let data;
 
@@ -42,7 +39,7 @@
 
     let locationError = false;
 
-    let localComments: extendedLocalComment[] = data.comments.map(c => ({ ...c, commentValue: "" }));
+    let localComments: localComment[] = data.comments;
 
     async function manufacturerSelect() {
         const res = await fetch(`${apiPath}/filters/modelsForManufacturer?manufacturerId=${selectedManufacturer}`);
@@ -169,11 +166,36 @@
     $: data.advert.pictures,
         (selectedImage = data.advert.pictures.find(i => i.id == selectedImage.id) || data.advert.mainPicture);
 
-    let currentCommentValue = "";
+    let descValue = data.advert.description;
+
+    async function commentIntersection() {
+        const req = await fetch(
+            `${apiPath}/adverts/${data.advert.id}/comments/direct?skip=${localComments.length}&count=20`
+        );
+        let comments = (await req.json()).items;
+        for (let comment of comments) {
+            comment.createdTime = new Date(comment.createdTime);
+            const userReq = await fetch(`${apiPath}/user/${comment.userId}`);
+            if (userReq.ok) {
+                comment.user = await userReq.json();
+            } else {
+                comment.user = {
+                    id: 0,
+                    name: "Ismeretlen",
+                    email: "Ismeretlen",
+                    bio: "Ismeretlen",
+                    picture: placeholder,
+                    regDate: new Date()
+                };
+            }
+        }
+        localComments = [...localComments, ...comments];
+    }
 </script>
 
 <!-- TODO comments -->
 <!-- TODO Edit responsivity -->
+<!-- Markdown viewer and editor style not working -->
 <form action="?/addToCart" method="post" bind:this={addtoCartForm} class="hidden"></form>
 <form action="?/addToBookmarks" method="post" bind:this={addtoBookmarksForm} class="hidden"></form>
 <form action="?/removeFromBookmarks" method="post" bind:this={removeFromBookmarksForm} class="hidden"></form>
@@ -338,6 +360,9 @@
                     priceError = true;
                     return cancel();
                 }
+                if (descValue.length == 0) {
+                    return cancel();
+                }
                 if (advertTitle.length == 0) {
                     titleError = true;
                     return cancel();
@@ -352,6 +377,7 @@
                 formData.append("modelId", selectedModel.toString());
                 formData.append("manufacturerId", selectedManufacturer.toString());
                 formData.append("stateId", selectedState.toString());
+                formData.append("description", descValue);
                 if (!selectedLocation) {
                     formLoading = false;
                     locationError = true;
@@ -521,10 +547,14 @@
     </div>
     <div id="description-container">
         <div class="description">
+            {#if data.isOwn && editMode}
+                <MarkdownEditor {carta} bind:value={descValue} mode="tabs" theme="default" />
+            {:else}
+                <Markdown {carta} value={data.advert.description} />
+            {/if}
             <!-- <p>
                 {data.advert.description}
             </p> -->
-            <Markdown {carta} value={data.advert.description} />
         </div>
     </div>
     <div id="comment-editor-container">
@@ -548,9 +578,15 @@
                 <h2>Hozzászólások</h2>
                 <span>{data.commentCount}db</span>
             </div>
-            {#each localComments as comment}
+            {#each localComments as comment, index}
                 <form action="?/addCommentToComment" method="post">
-                    <RootComment {comment} token={data.token} currentUser={data.ownUser} />
+                    <RootComment
+                        {comment}
+                        token={data.token}
+                        currentUser={data.ownUser}
+                        observer={(index + 1 + 5) % 20 == 0}
+                        on:intersect={commentIntersection}
+                    />
                 </form>
             {/each}
         </div>
@@ -969,8 +1005,7 @@
                     display: flex;
                     justify-content: start;
                     gap: 1rem;
-
-                    line-break: anywhere;
+                    word-break: break-word;
 
                     .edit-button {
                         button {
