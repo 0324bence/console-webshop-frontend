@@ -650,6 +650,7 @@
                 align-items: center;
                 font-size: 2rem;
                 font-weight: bold;
+                width: 100%;
             }
 
             #loading-container {
