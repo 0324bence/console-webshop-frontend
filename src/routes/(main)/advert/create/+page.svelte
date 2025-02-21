@@ -174,8 +174,6 @@
     });
 </script>
 
-<!-- Responsivity -->
-
 <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
 <form
     action="?/submit"
@@ -468,6 +466,11 @@
         height: 100%;
         flex: 1;
 
+        @include tablet {
+            padding-left: 1rem;
+            padding-right: 1rem;
+        }
+
         #main-content {
             height: 25rem;
             display: flex;
@@ -716,11 +719,19 @@
                     align-items: center;
                     justify-content: end;
 
+                    @include mobile {
+                        flex-direction: column;
+                    }
+
                     .group {
                         display: flex;
                         align-items: center;
                         gap: 1rem;
                         flex: 1;
+
+                        @include mobile {
+                            width: 100%;
+                        }
 
                         // #title {
                         //     width: 100%;
