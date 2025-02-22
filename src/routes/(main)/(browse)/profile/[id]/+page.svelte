@@ -183,7 +183,7 @@
         }
 
         @include mobile {
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: 1fr 1.5fr;
             grid-template-rows: 50% 50%;
             gap: 0.5rem;
             padding: 0.5rem;
@@ -199,7 +199,7 @@
                 height: 100%;
                 padding: 1rem;
                 padding-left: 0;
-                margin-right: 1rem;
+                margin-right: 0;
             }
 
             @include mobile {
@@ -217,8 +217,14 @@
 
             input {
                 position: absolute;
-                width: 100%;
+                aspect-ratio: 1/1;
                 height: 100%;
+
+                @include tablet {
+                    top: 1rem;
+                    height: calc(100% - 2rem);
+                }
+
                 top: 0;
                 left: 0;
                 border-radius: 50%;

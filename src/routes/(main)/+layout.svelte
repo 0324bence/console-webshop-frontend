@@ -158,7 +158,7 @@
         flex-direction: column;
         min-height: 100vh;
         width: 100%;
-        min-width: 450px;
+        min-width: 350px;
         background-color: darken($color-white, 10%);
     }
 
