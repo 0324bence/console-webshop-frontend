@@ -193,8 +193,6 @@
     }
 </script>
 
-<!-- TODO comments -->
-<!-- TODO Edit responsivity -->
 <!-- Markdown viewer and editor style not working -->
 <form action="?/addToCart" method="post" bind:this={addtoCartForm} class="hidden"></form>
 <form action="?/addToBookmarks" method="post" bind:this={addtoBookmarksForm} class="hidden"></form>
@@ -1193,6 +1191,11 @@
                             width: 100%;
                             gap: 1px;
                             background-color: $color-black;
+
+                            @include mobile {
+                                flex-direction: column;
+                                gap: 1px;
+                            }
 
                             .cell {
                                 width: 100%;
