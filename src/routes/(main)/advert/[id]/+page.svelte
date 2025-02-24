@@ -419,7 +419,11 @@
                             {data.advert.title}
                         </h1>
                     {/if}
-                    <h3><a href={`/profile/${data.advert.ownerId}`}>{data.advert.owner.name}</a></h3>
+                    <h3>
+                        <a href={data.advert.ownerId ? `/profile/${data.advert.ownerId}` : ""}
+                            >{data.advert.owner.name}</a
+                        >
+                    </h3>
                 </div>
             </div>
             <div id="data">

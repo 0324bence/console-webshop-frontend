@@ -3,6 +3,7 @@ import type { Actions, PageServerLoad } from "./$types";
 import apiPath from "$lib/apiPath";
 import type { Comment, LocalAdvert, Manufacturer, Model, Picture, User, localComment } from "$lib/types";
 import noImage from "$lib/images/noImage";
+import placeholder from "$lib/images/userPlaceholder";
 
 interface ExtendedLocalAdvert extends LocalAdvert {
     owner: User;
@@ -145,7 +146,7 @@ export const load: PageServerLoad = async ({ params, parent, url }) => {
                     name: "Ismeretlen",
                     email: "Ismeretlen",
                     bio: "Ismeretlen",
-                    picture: "",
+                    picture: placeholder,
                     regDate: new Date()
                 };
             }

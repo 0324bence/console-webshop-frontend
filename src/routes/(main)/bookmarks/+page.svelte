@@ -26,7 +26,7 @@
                         class="profile-picture"
                         style={`background-image: url('data:image/jpeg;base64,${advert.owner.picture}')`}
                     ></div>
-                    <a href={`/profile/${advert.ownerId}`}>{advert.owner.name}</a>
+                    <a href={advert.ownerId ? `/profile/${advert.ownerId}` : ""}>{advert.owner.name}</a>
                 </div>
                 <form method="post" action="?/deleteItem" class="top-bar">
                     <span>{advert.location.name} ({advert.location.zip})</span>
