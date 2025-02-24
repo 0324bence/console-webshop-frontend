@@ -678,6 +678,7 @@
                 // border: 1px solid $color-black;
                 background-color: $color-white;
                 box-shadow: 1px 1px 5px 0px $color-black;
+                word-break: break-word;
 
                 @include tablet {
                     width: 100%;
