@@ -25,7 +25,18 @@
 
     function searchAdvert() {
         // console.log("searching for advert ", searchFieldValue);
-        goto($page.url.pathname + "?title=" + searchFieldValue + "&");
+        console.log($page.url);
+        let url = new URL($page.url.origin);
+        if ($page.url.pathname.length <= 1) {
+            url.search = $page.url.search;
+            if (url.searchParams.has("title")) {
+                url.searchParams.set("title", searchFieldValue);
+            } else {
+                url.searchParams.append("title", searchFieldValue);
+            }
+        }
+        // goto(($page.url.pathname.length > 1 ? "/" + $page.url.search + "&" : "/?") + "title=" + searchFieldValue + "&");
+        goto(url.toString());
     }
 
     function searchUser() {
