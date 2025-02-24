@@ -17,7 +17,6 @@
     }
 </script>
 
-<!-- TODO responsivity -->
 <div id="cart-container">
     <div id="advert-list">
         {#each data.adverts as advert}
@@ -38,12 +37,13 @@
                     <!-- svelte-ignore a11y-missing-content -->
                     <a
                         href={`/advert/${advert.id}`}
+                        title={advert.title}
                         class="picture"
                         style={`background-image: url('data:image/jpeg;base64,${advert.mainPicture.data}')`}
                     ></a>
                 </div>
                 <div class="title-container">
-                    <h2>{advert.title}</h2>
+                    <h2 title={advert.title}>{advert.title.substring(0, 45)}{advert.title.length > 45 ? "..." : ""}</h2>
                     <form class="button-container" method="post" action="?/addToCart">
                         <input type="hidden" name="advertId" value={advert.id} />
                         <button type="submit" disabled={advert.inCart || data.ownUser?.id === advert.ownerId}
@@ -91,6 +91,11 @@
         align-items: stretch;
         padding: 0 1.5rem;
 
+        @include tablet {
+            flex-direction: column;
+            padding: 0 0.5rem;
+        }
+
         #advert-list {
             flex: 1;
             padding: 1.5rem 1.5rem;
@@ -99,6 +104,11 @@
             flex-direction: column;
             align-items: stretch;
             gap: 1.5rem;
+
+            @include tablet {
+                padding: 0.5rem 0.5rem;
+                flex: 0;
+            }
 
             .advert {
                 display: grid;
@@ -112,6 +122,12 @@
                 padding: 1rem 1.4rem;
                 // padding-left: 1.4rem;
                 gap: 0.5rem;
+                word-break: break-word;
+
+                @include tablet {
+                    grid-template-columns: 40% 60%;
+                    height: 20rem;
+                }
 
                 .owner-container {
                     display: flex;
@@ -179,6 +195,10 @@
                         background-repeat: no-repeat;
                         background-position: center;
                         cursor: pointer;
+
+                        @include tablet {
+                            width: 100%;
+                        }
                     }
                 }
 
@@ -247,6 +267,11 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+
+            @include tablet {
+                width: 100%;
+                padding: 0.5rem 0.5rem;
+            }
 
             #info-box {
                 width: 100%;

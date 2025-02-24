@@ -304,7 +304,7 @@
                     />
                 </div>
             </div>
-            <div class="row">
+            <div class="row manufacturerRow">
                 <div class="group">
                     <label for="manufacturer">Gyártó:</label>
                     <select required bind:value={brandId} name="brandId" id="brandId" on:change={manufacturerSelect}>
@@ -723,6 +723,12 @@
                         flex-direction: column;
                     }
 
+                    &.manufacturerRow {
+                        @include mobile {
+                            flex-direction: column-reverse;
+                        }
+                    }
+
                     .group {
                         display: flex;
                         align-items: center;
@@ -743,6 +749,14 @@
 
                         .locationSeach-container {
                             width: 50%;
+
+                            @include tablet {
+                                width: 75%;
+                            }
+
+                            @include mobile {
+                                width: 100%;
+                            }
                         }
                     }
                 }
