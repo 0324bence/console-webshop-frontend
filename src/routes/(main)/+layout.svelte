@@ -27,13 +27,14 @@
         // console.log("searching for advert ", searchFieldValue);
         console.log($page.url);
         let url = new URL($page.url.origin);
-        if ($page.url.pathname.length <= 1) {
+        if (!$page.url.pathname.endsWith("profiles")) {
             url.search = $page.url.search;
-            if (url.searchParams.has("title")) {
-                url.searchParams.set("title", searchFieldValue);
-            } else {
-                url.searchParams.append("title", searchFieldValue);
-            }
+            url.pathname = $page.url.pathname;
+        }
+        if (url.searchParams.has("title")) {
+            url.searchParams.set("title", searchFieldValue);
+        } else {
+            url.searchParams.append("title", searchFieldValue);
         }
         // goto(($page.url.pathname.length > 1 ? "/" + $page.url.search + "&" : "/?") + "title=" + searchFieldValue + "&");
         goto(url.toString());
