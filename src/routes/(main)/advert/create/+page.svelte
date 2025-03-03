@@ -377,6 +377,10 @@
         <button type="submit">Létrehozás</button>
     </div>
 </form>
+<div id="footer">
+    <a href="">Új menüpont kérvényezése</a>
+    <span>&copy; 2025</span>
+</div>
 
 <style lang="scss">
     @import "$lib/styles/variables";
@@ -448,6 +452,20 @@
                     height: 32px;
                 }
             }
+        }
+    }
+
+    #footer {
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        padding: 0.5rem;
+        background-color: $color-blue;
+        color: $color-white;
+        height: 7rem;
+
+        a {
+            color: $color-white;
         }
     }
 
