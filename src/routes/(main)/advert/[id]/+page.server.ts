@@ -184,6 +184,20 @@ export const load: PageServerLoad = async ({ params, parent, url }) => {
         isOwn = data.ownUser.id === advert.ownerId;
     }
 
+    let editable = false;
+    if (isOwn) {
+        const inCartReq = await fetch(`${apiPath}/adverts/${advert.id}/isInCart`, {
+            headers: {
+                Authorization: `Bearer ${data.token}`,
+                "Content-Type": "application/json"
+            }
+        });
+        if (inCartReq.ok) {
+            const inCartJSON = await inCartReq.json();
+            editable = !inCartJSON.result;
+        }
+    }
+
     return {
         advert,
         models,
@@ -191,7 +205,8 @@ export const load: PageServerLoad = async ({ params, parent, url }) => {
         inCart,
         inBookmarks,
         comments,
-        commentCount
+        commentCount,
+        editable
     };
 };
 

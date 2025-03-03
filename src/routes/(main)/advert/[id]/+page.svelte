@@ -391,6 +391,8 @@
                             type="button"
                             style={`background-image: url('${edit}');`}
                             on:click={() => (editMode = true)}
+                            disabled={!data.editable}
+                            title={data.editable ? "Szerkesztés" : "Nem szerkeszthető"}
                         ></button>
                     </div>
                 {:else if data.isOwn && editMode}
@@ -1023,6 +1025,12 @@
 
                             &:hover {
                                 border: 1px solid $color-dark-blue;
+                            }
+
+                            &:disabled {
+                                cursor: not-allowed;
+                                filter: opacity(50%);
+                                border: none;
                             }
                         }
                     }
