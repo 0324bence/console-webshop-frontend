@@ -85,6 +85,12 @@ interface localComment extends Comment {
     user: User;
 }
 
+interface PurchaseItem {
+    userId: number;
+    advertId: number;
+    createdTime: string;
+}
+
 export type {
     User,
     Model,
@@ -97,5 +103,6 @@ export type {
     BasicFilters,
     CartItem,
     Comment,
-    localComment
+    localComment,
+    PurchaseItem
 };
