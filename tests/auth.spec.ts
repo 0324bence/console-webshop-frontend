@@ -75,33 +75,6 @@ test.describe("Registration", () => {
     });
 
     test.describe("Credentials", () => {
-        test.describe("Good", () => {
-            let usernameInput: Locator;
-            let emailInput: Locator;
-            let passwordInput: Locator;
-            let registerButton: Locator;
-            test.beforeEach(async ({ page }) => {
-                usernameInput = await page.getByLabel("Felhasználó név");
-                emailInput = await page.getByLabel("E-mail");
-                passwordInput = await page.getByLabel("Jelszó");
-                registerButton = await page.getByRole("button", { name: "Regisztráció" });
-
-                await usernameInput.fill(goodCredentials.username);
-                await emailInput.fill(goodCredentials.email);
-                await passwordInput.fill(goodCredentials.password);
-            });
-
-            test("Good credentials should be able to be submitted", async ({ page }) => {
-                await registerButton.click();
-
-                await page.waitForURL(/\/auth\/login/, { timeout: 2000 });
-
-                expect(page.url()).toContain("/auth/login");
-
-                registered = true;
-            });
-        });
-
         test.describe("Bad", () => {
             let usernameInput: Locator;
             let emailInput: Locator;
@@ -151,6 +124,33 @@ test.describe("Registration", () => {
                 });
             });
         });
+
+        test.describe("Good", () => {
+            let usernameInput: Locator;
+            let emailInput: Locator;
+            let passwordInput: Locator;
+            let registerButton: Locator;
+            test.beforeEach(async ({ page }) => {
+                usernameInput = await page.getByLabel("Felhasználó név");
+                emailInput = await page.getByLabel("E-mail");
+                passwordInput = await page.getByLabel("Jelszó");
+                registerButton = await page.getByRole("button", { name: "Regisztráció" });
+
+                await usernameInput.fill(goodCredentials.username);
+                await emailInput.fill(goodCredentials.email);
+                await passwordInput.fill(goodCredentials.password);
+            });
+
+            test("Good credentials should be able to be submitted", async ({ page }) => {
+                await registerButton.click();
+
+                await page.waitForURL(/\/auth\/login/, { timeout: 2000 });
+
+                expect(page.url()).toContain("/auth/login");
+
+                registered = true;
+            });
+        });
     });
 });
 
@@ -179,28 +179,6 @@ test.describe("Login", () => {
     });
 
     test.describe("Credentials", () => {
-        test.describe("Good", () => {
-            let usernameInput: Locator;
-            let passwordInput: Locator;
-            let loginButton: Locator;
-            test.beforeEach(async ({ page }) => {
-                usernameInput = await page.getByLabel("Felhasználó név");
-                passwordInput = await page.getByLabel("Jelszó");
-                loginButton = await page.getByRole("button", { name: "Bejelentkezés" });
-
-                await usernameInput.fill(goodCredentials.username);
-                await passwordInput.fill(goodCredentials.password);
-            });
-
-            test("Good credentials should be able to be submitted", async ({ page }) => {
-                await loginButton.click();
-
-                await page.waitForURL(/\/$/, { timeout: 2000 });
-
-                expect(page.url()).toContain("/");
-            });
-        });
-
         test.describe("Bad", () => {
             let usernameInput: Locator;
             let passwordInput: Locator;
@@ -262,6 +240,28 @@ test.describe("Login", () => {
 
                     expect(page.url()).toContain("/auth/login");
                 });
+            });
+        });
+
+        test.describe("Good", () => {
+            let usernameInput: Locator;
+            let passwordInput: Locator;
+            let loginButton: Locator;
+            test.beforeEach(async ({ page }) => {
+                usernameInput = await page.getByLabel("Felhasználó név");
+                passwordInput = await page.getByLabel("Jelszó");
+                loginButton = await page.getByRole("button", { name: "Bejelentkezés" });
+
+                await usernameInput.fill(goodCredentials.username);
+                await passwordInput.fill(goodCredentials.password);
+            });
+
+            test("Good credentials should be able to be submitted", async ({ page }) => {
+                await loginButton.click();
+
+                await page.waitForURL(/\/$/, { timeout: 2000 });
+
+                expect(page.url()).toContain("/");
             });
         });
     });
