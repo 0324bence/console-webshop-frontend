@@ -5,6 +5,8 @@
     import { invalidateAll, onNavigate } from "$app/navigation";
     import { enhance } from "$app/forms";
     import placeholder from "$lib/images/placeholder.png";
+    import grayStar from "$lib/images/star_gray.svg";
+    import yellowStar from "$lib/images/star_yellow.svg";
 
     export let data: PageData;
 
@@ -50,6 +52,7 @@
     let editingPassword = false;
 </script>
 
+<!-- TODO star functionality -->
 <div id="profile-container">
     <!-- <div id="profile"> -->
     <form
@@ -92,6 +95,12 @@
         <div class="row">
             <span>Hirdetések:</span>
             <span>{data.advertCount} db</span>
+        </div>
+        <div class="row">
+            <div id="star-container">
+                <div id="grey-stars" class="stars" style={`background-image: url('${grayStar}');`}></div>
+                <div id="yellow-stars" class="stars" style={`background-image: url('${yellowStar}');`}></div>
+            </div>
         </div>
         {#if data.isOwn}
             <div class="row">
@@ -228,7 +237,9 @@
                 left: 0;
                 border-radius: 50%;
 
-                visibility: hidden;
+                & {
+                    visibility: hidden;
+                }
 
                 &:hover::before {
                     content: "Kép módosítása";
@@ -255,6 +266,28 @@
             display: flex;
             align-items: start;
             gap: 0.2rem;
+
+            #star-container {
+                width: calc(24px * 5);
+                height: calc(24px * 1);
+                position: relative;
+
+                .stars {
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background-size: contain;
+                    background-repeat: repeat-x;
+                    background-position: left;
+                }
+
+                #yellow-stars {
+                    z-index: 2;
+                    width: calc(24px * 2.5);
+                }
+            }
 
             form {
                 display: flex;
