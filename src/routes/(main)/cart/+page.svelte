@@ -60,7 +60,7 @@
         {/each}
     </div>
     <div id="info-box-container">
-        <div id="info-box">
+        <form method="post" action="?/purchase" id="info-box">
             <h2>Kosár:</h2>
             <p>Termékek: <span>{data.adverts.length}</span><span>db</span></p>
             <p class="price">
@@ -70,8 +70,8 @@
                 </span>
                 <span>HUF</span>
             </p>
-            <button>Vásárlás</button>
-        </div>
+            <button type="submit" disabled={data.adverts.length < 1}>Vásárlás</button>
+        </form>
     </div>
 </div>
 
@@ -305,6 +305,11 @@
 
                     &:hover {
                         background-color: darken($color-blue, 10%);
+                    }
+
+                    &:disabled {
+                        background-color: darken($color-blue, 30%);
+                        cursor: not-allowed;
                     }
                 }
             }

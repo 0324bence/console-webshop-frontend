@@ -146,5 +146,19 @@ export const actions = {
         if (!res.ok) {
             return res.json();
         }
+    },
+    purchase: async ({ cookies, request }) => {
+        const token = cookies.get("token");
+        const res = await fetch(`${apiPath}/cart/purchase`, {
+            method: "POST",
+            headers: {
+                Authorization: "Bearer " + token,
+                "Content-Type": "application/json"
+            }
+        });
+        if (!res.ok) {
+            const edata = await res.json();
+            return error(res.status, edata.message);
+        }
     }
 } satisfies Actions;
