@@ -9,6 +9,16 @@ interface ExtendedLocalAdvert extends LocalAdvert {
     owner: User;
     manufacturer: Manufacturer;
     model: Model;
+    rating: number | null;
+    purchaseId: number;
+}
+
+interface ExtendedRatedLocalAdvert extends ExtendedLocalAdvert {
+    rating: number;
+}
+
+interface ExtendedUnratedLocalAdvert extends ExtendedLocalAdvert {
+    rating: null;
 }
 
 export const load: PageServerLoad = async ({ cookies, parent }) => {
@@ -34,6 +44,8 @@ export const load: PageServerLoad = async ({ cookies, parent }) => {
 
         const advertRes = await advertReq.json();
         const advert: ExtendedLocalAdvert = advertRes;
+        advert.rating = item.rating;
+        advert.purchaseId = item.id;
         const pictureReq = await fetch(`${apiPath}/adverts/${advert.id}/primaryPicture`);
         if (pictureReq.ok) {
             try {
@@ -126,7 +138,16 @@ export const load: PageServerLoad = async ({ cookies, parent }) => {
         adverts.push(advert);
     }
 
+    const ratedAdverts: ExtendedRatedLocalAdvert[] = adverts
+        .filter(advert => advert.rating != null)
+        .map(advert => ({ ...advert, rating: advert.rating as number }));
+    const unratedAdverts: ExtendedUnratedLocalAdvert[] = adverts
+        .filter(advert => advert.rating == null)
+        .map(advert => ({ ...advert, rating: advert.rating as null }));
+
     return {
-        adverts
+        adverts,
+        ratedAdverts,
+        unratedAdverts
     };
 };

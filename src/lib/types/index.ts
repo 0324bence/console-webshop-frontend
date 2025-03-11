@@ -86,9 +86,11 @@ interface localComment extends Comment {
 }
 
 interface PurchaseItem {
+    id: number;
     userId: number;
     advertId: number;
     createdTime: string;
+    rating: number | null;
 }
 
 export type {

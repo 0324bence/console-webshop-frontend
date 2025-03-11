@@ -5,6 +5,8 @@
     import placeholder from "$lib/images/placeholder.png";
     import grayStar from "$lib/images/star_gray.svg";
     import yellowStar from "$lib/images/star_yellow.svg";
+    import apiPath from "$lib/apiPath";
+    import { invalidateAll } from "$app/navigation";
 
     export let data;
 
@@ -34,6 +36,25 @@
             setable = true;
         }, 500);
     }
+    async function rateAdvert(index: number) {
+        const req = await fetch(`${apiPath}/ratings`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${data.token}`
+            },
+            body: JSON.stringify({
+                purchaseId: data.adverts[index].purchaseId,
+                value: stars[index]
+            })
+        });
+        if (!req.ok) {
+            console.error("Error while rating advert");
+            console.log(await req.json());
+            return;
+        }
+        invalidateAll();
+    }
 </script>
 
 <!-- TODO review system -->
@@ -42,7 +63,7 @@
         <div class="title-container">
             <h2>Értékeletlen hirdetések</h2>
         </div>
-        {#each data.adverts as advert, i}
+        {#each data.unratedAdverts as advert, i}
             <div class="advert">
                 <div class="owner-container">
                     <div
@@ -87,7 +108,13 @@
                                 {/each}
                             </div>
                         </div>
-                        <button type="button" class="rate-button">Értékelés</button>
+                        <button
+                            type="button"
+                            class="rate-button"
+                            on:click={() => {
+                                rateAdvert(i);
+                            }}>Értékelés</button
+                        >
                     </div>
                 </div>
                 <div class="state-container">
@@ -107,7 +134,7 @@
         <div class="title-container">
             <h2>Értékelt hirdetések</h2>
         </div>
-        {#each data.adverts as advert}
+        {#each data.ratedAdverts as advert}
             <div class="advert">
                 <div class="owner-container">
                     <div
@@ -137,7 +164,7 @@
                             <div
                                 id="yellow-stars"
                                 class="stars"
-                                style={`background-image: url('${yellowStar}');`}
+                                style={`background-image: url('${yellowStar}'); width: ${24 * advert.rating}px;`}
                             ></div>
                         </div>
                     </div>
