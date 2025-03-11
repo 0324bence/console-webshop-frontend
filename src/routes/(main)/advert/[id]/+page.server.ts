@@ -254,7 +254,8 @@ export const actions = {
         if (res.ok) {
             return "ok";
         } else {
-            return error(500, "Hiba történt az adatok mentése közben");
+            const data = await res.json();
+            return error(data.statusCode, data.message);
         }
     },
     editPicture: async ({ cookies, request, params }) => {
@@ -283,7 +284,8 @@ export const actions = {
                 })
             });
             if (!primaryReq.ok) {
-                return error(500, "Hiba történt a kép beállítása közben");
+                const data = await primaryReq.json();
+                return error(data.statusCode, data.message);
             }
         }
         const res = await fetch(`${apiPath}/adverts/${advertId}/pictures/`, {
@@ -297,7 +299,12 @@ export const actions = {
                 ...body
             })
         });
-        return "ok";
+        if (res.ok) {
+            return "ok";
+        } else {
+            const data = await res.json();
+            return error(data.statusCode, data.message);
+        }
     },
     addPicture: async ({ cookies, request, params }) => {
         console.log("addPicture");
@@ -324,7 +331,8 @@ export const actions = {
             body: JSON.stringify(body)
         });
         if (!res.ok) {
-            return error(500, "Hiba történt a kép feltöltése közben");
+            const data = await res.json();
+            return error(data.statusCode, data.message);
         }
         if (isPriority == "1") {
             const resp = await res.json();
@@ -339,7 +347,8 @@ export const actions = {
                 })
             });
             if (!primaryReq.ok) {
-                return error(500, "Hiba történt a kép beállítása közben");
+                const data = await primaryReq.json();
+                return error(data.statusCode, data.message);
             }
         }
         return "ok";
@@ -361,7 +370,8 @@ export const actions = {
             }
         });
         if (!res.ok) {
-            return error(500, "Hiba történt a kép törlése közben");
+            const data = await res.json();
+            return error(data.statusCode, data.message);
         }
     },
     addToCart: async ({ cookies, params, request }) => {
@@ -452,7 +462,8 @@ export const actions = {
             })
         });
         if (!res.ok) {
-            return error(500, "Hiba történt a komment hozzáadása közben");
+            const data = await res.json();
+            return error(data.statusCode, data.message);
         }
     },
     addCommentToComment: async ({ cookies, params, request }) => {
@@ -478,7 +489,8 @@ export const actions = {
             })
         });
         if (!res.ok) {
-            return error(500, "Hiba történt a komment hozzáadása közben");
+            const data = await res.json();
+            return error(data.statusCode, data.message);
         }
         return "ok";
     }
