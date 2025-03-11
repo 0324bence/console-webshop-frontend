@@ -136,6 +136,7 @@
                 <div id="user-menu" class={userMenu ? "" : "hidden"}>
                     <a href="/profile" class="menu-item">Profil</a>
                     <a href="/history" class="menu-item">Vásárlási előzmények</a>
+                    <a href="/sales" class="menu-item">Eladott termékek</a>
                     <a href="/bookmarks" class="menu-item">Könyvjelzők</a>
                     <a href="/advert/create" class="menu-item">Új hirdetés</a>
                     <a href="/auth/logout" class="menu-item" data-sveltekit-reload>Kijelentkezés</a>

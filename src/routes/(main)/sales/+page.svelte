@@ -9,51 +9,15 @@
     import { invalidateAll } from "$app/navigation";
 
     export let data;
-
-    let stars = new Array(data.adverts.length).fill(0);
-
-    let timeout: NodeJS.Timeout | number;
-    let setable = true;
-
-    function setStars(index: number, value: number) {
-        if (setable) stars[index] = value;
-    }
-    function clickStars(index: number, value: number) {
-        clearTimeout(timeout as NodeJS.Timeout);
-        setable = false;
-        stars[index] = value;
-        timeout = setTimeout(() => {
-            setable = true;
-        }, 500);
-    }
-    async function rateAdvert(index: number) {
-        const req = await fetch(`${apiPath}/ratings`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${data.token}`
-            },
-            body: JSON.stringify({
-                purchaseId: data.adverts[index].purchaseId,
-                value: stars[index]
-            })
-        });
-        if (!req.ok) {
-            console.error("Error while rating advert");
-            console.log(await req.json());
-            return;
-        }
-        invalidateAll();
-    }
 </script>
 
 <!-- TODO review system -->
 <div id="cart-container">
     <div id="advert-list">
         <div class="title-container">
-            <h2>Értékeletlen hirdetések</h2>
+            <h2>Eladott termékek</h2>
         </div>
-        {#each data.unratedAdverts as advert, i}
+        {#each data.adverts as advert}
             <div class="advert">
                 <div class="owner-container">
                     <div
@@ -83,78 +47,7 @@
                             <div
                                 id="yellow-stars"
                                 class="stars"
-                                style={`background-image: url('${yellowStar}'); width: ${24 * stars[i]}px;`}
-                            ></div>
-                            <div id="interaction-fields">
-                                {#each new Array(10) as _, num}
-                                    <button
-                                        on:mouseenter={() => {
-                                            setStars(i, (num + 1) / 2);
-                                        }}
-                                        on:click={() => {
-                                            clickStars(i, (num + 1) / 2);
-                                        }}
-                                    ></button>
-                                {/each}
-                            </div>
-                        </div>
-                        <button
-                            type="button"
-                            class="rate-button"
-                            on:click={() => {
-                                rateAdvert(i);
-                            }}>Értékelés</button
-                        >
-                    </div>
-                </div>
-                <div class="state-container">
-                    <span>{data.filters.states.find(i => i.id == advert.stateId)?.name}</span>
-                </div>
-                <div class="bottom-bar">
-                    <div class="data-container">
-                        <span>{advert.manufacturer.name}</span>
-                        <span>-</span>
-                        <span>{advert.model.name}</span>
-                    </div>
-                    <h3>{advert.priceHuf} HUF</h3>
-                </div>
-            </div>
-        {/each}
-        <hr />
-        <div class="title-container">
-            <h2>Értékelt hirdetések</h2>
-        </div>
-        {#each data.ratedAdverts as advert}
-            <div class="advert">
-                <div class="owner-container">
-                    <div
-                        class="profile-picture"
-                        style={`background-image: url('data:image/jpeg;base64,${advert.owner.picture}')`}
-                    ></div>
-                    <a href={advert.ownerId ? `/profile/${advert.ownerId}` : ""}>{advert.owner.name}</a>
-                </div>
-                <form method="post" action="?/deleteItem" class="top-bar">
-                    <span>{advert.location.name} ({advert.location.zip})</span>
-                    <input type="hidden" name="advertId" value={advert.id} />
-                </form>
-                <div class="picture-container">
-                    <!-- svelte-ignore a11y-missing-content -->
-                    <a
-                        href={`/advert/${advert.id}`}
-                        title={advert.title}
-                        class="picture"
-                        style={`background-image: url('data:image/jpeg;base64,${advert.mainPicture.data}')`}
-                    ></a>
-                </div>
-                <div class="title-container">
-                    <h2 title={advert.title}>{advert.title.substring(0, 45)}{advert.title.length > 45 ? "..." : ""}</h2>
-                    <div class="row">
-                        <div id="star-container">
-                            <div id="grey-stars" class="stars" style={`background-image: url('${grayStar}');`}></div>
-                            <div
-                                id="yellow-stars"
-                                class="stars"
-                                style={`background-image: url('${yellowStar}'); width: ${24 * advert.rating}px;`}
+                                style={`background-image: url('${yellowStar}'); width: ${24 * (advert.rating ?? 0)}px;`}
                             ></div>
                         </div>
                     </div>
