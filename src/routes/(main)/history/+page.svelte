@@ -11,20 +11,25 @@
     export let data;
 
     let stars = new Array(data.adverts.length).fill(0);
+    let savedStars = new Array(data.adverts.length).fill(0);
 
     let timeout: NodeJS.Timeout | number;
     let setable = true;
 
     function setStars(index: number, value: number) {
-        if (setable) stars[index] = value;
+        // if (setable) stars[index] = value;
+        stars[index] = value;
+    }
+    function setToSavedStars(index: number) {
+        stars[index] = savedStars[index];
     }
     function clickStars(index: number, value: number) {
-        clearTimeout(timeout as NodeJS.Timeout);
-        setable = false;
-        stars[index] = value;
-        timeout = setTimeout(() => {
-            setable = true;
-        }, 500);
+        // clearTimeout(timeout as NodeJS.Timeout);
+        // setable = false;
+        savedStars[index] = value;
+        // timeout = setTimeout(() => {
+        //     setable = true;
+        // }, 500);
     }
     async function rateAdvert(index: number) {
         const req = await fetch(`${apiPath}/ratings`, {
@@ -93,6 +98,9 @@
                                         }}
                                         on:click={() => {
                                             clickStars(i, (num + 1) / 2);
+                                        }}
+                                        on:mouseleave={() => {
+                                            setToSavedStars(i);
                                         }}
                                     ></button>
                                 {/each}
