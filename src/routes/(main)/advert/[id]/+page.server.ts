@@ -382,6 +382,23 @@ export const actions = {
             })
         });
     },
+    removeFromCart: async ({ cookies, params, request }) => {
+        const token = cookies.get("token");
+        if (token === undefined) {
+            return redirect(301, "/auth/");
+        }
+        const advertId = params.id;
+        const res = await fetch(`${apiPath}/cart/${advertId}`, {
+            method: "DELETE",
+            headers: {
+                Authorization: "Bearer " + token,
+                "Content-Type": "application/json"
+            }
+        });
+        if (!res.ok) {
+            return res.json();
+        }
+    },
     addToBookmarks: async ({ cookies, params, request }) => {
         const token = cookies.get("token");
         if (token === undefined) {

@@ -184,5 +184,23 @@ export const actions = {
             return error(500, "Hiba történt a kosárba helyezés során");
         }
         return "ok";
+    },
+    removeFromCart: async ({ cookies, params, request }) => {
+        const token = cookies.get("token");
+        if (token === undefined) {
+            return redirect(301, "/auth/");
+        }
+        const data = await request.formData();
+        const advertId = data.get("advertId");
+        const res = await fetch(`${apiPath}/cart/${advertId}`, {
+            method: "DELETE",
+            headers: {
+                Authorization: "Bearer " + token,
+                "Content-Type": "application/json"
+            }
+        });
+        if (!res.ok) {
+            return res.json();
+        }
     }
 } satisfies Actions;

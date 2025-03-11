@@ -129,6 +129,7 @@
     }
 
     let addtoCartForm: HTMLFormElement;
+    let removeFromCartForm: HTMLFormElement;
     let addtoBookmarksForm: HTMLFormElement;
     let removeFromBookmarksForm: HTMLFormElement;
 
@@ -197,6 +198,7 @@
 
 <!-- Markdown viewer and editor style not working -->
 <form action="?/addToCart" method="post" bind:this={addtoCartForm} class="hidden"></form>
+<form action="?/removeFromCart" method="post" bind:this={removeFromCartForm} class="hidden"></form>
 <form action="?/addToBookmarks" method="post" bind:this={addtoBookmarksForm} class="hidden"></form>
 <form action="?/removeFromBookmarks" method="post" bind:this={removeFromBookmarksForm} class="hidden"></form>
 
@@ -480,8 +482,9 @@
                     </button>
                     <button
                         type="button"
-                        on:click={() => addtoCartForm.requestSubmit()}
-                        disabled={data.inCart || data.isOwn || data.isSold}
+                        on:click={() =>
+                            data.inCart ? removeFromCartForm.requestSubmit() : addtoCartForm.requestSubmit()}
+                        disabled={data.isOwn || data.isSold}
                     >
                         {data.isSold ? "Eladva" : data.inCart ? "Kosárban van" : "Kosárba"}
                     </button>

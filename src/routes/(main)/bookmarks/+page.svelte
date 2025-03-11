@@ -50,7 +50,8 @@
                         <input type="hidden" name="advertId" value={advert.id} />
                         <button
                             type="submit"
-                            disabled={advert.inCart || data.ownUser?.id === advert.ownerId || advert.isSold == 1}
+                            formaction={advert.inCart ? "?/removeFromCart" : "?/addToCart"}
+                            disabled={data.ownUser?.id === advert.ownerId || advert.isSold == 1}
                         >
                             {advert.isSold == 1 ? "Eladva" : advert.inCart ? "Kosárban van" : "Kosárba"}
                         </button>
