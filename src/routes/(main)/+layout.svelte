@@ -317,7 +317,7 @@
                 flex-direction: column;
                 gap: 2px;
                 align-items: stretch;
-                z-index: -1;
+                z-index: 50000;
                 top: 100%;
                 right: 0;
                 background-color: $color-dark-blue;
