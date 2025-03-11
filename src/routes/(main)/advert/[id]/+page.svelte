@@ -16,6 +16,7 @@
     import placeholder from "$lib/images/placeholder.png";
     import grayStar from "$lib/images/star_gray.svg";
     import yellowStar from "$lib/images/star_yellow.svg";
+    import SvelteMarkdown from "svelte-markdown";
 
     export let data;
 
@@ -565,11 +566,12 @@
         </div>
     </div>
     <div id="description-container">
-        <div class="description">
+        <div class="description markdown-body">
             {#if data.isOwn && editMode}
                 <MarkdownEditor {carta} bind:value={descValue} mode="tabs" theme="default" />
             {:else}
-                <Markdown {carta} value={data.advert.description} />
+                <SvelteMarkdown source={DOMPurify.sanitize(data.advert.description)} />
+                <!-- <Markdown {carta} value={data.advert.description} /> -->
             {/if}
             <!-- <p>
                 {data.advert.description}
