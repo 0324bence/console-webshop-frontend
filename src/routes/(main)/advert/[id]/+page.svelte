@@ -481,9 +481,9 @@
                     <button
                         type="button"
                         on:click={() => addtoCartForm.requestSubmit()}
-                        disabled={data.inCart || data.isOwn}
+                        disabled={data.inCart || data.isOwn || data.isSold}
                     >
-                        {data.inCart ? "Kosárban van" : "Kosárba"}
+                        {data.isSold ? "Eladva" : data.inCart ? "Kosárban van" : "Kosárba"}
                     </button>
                 </div>
             </div>

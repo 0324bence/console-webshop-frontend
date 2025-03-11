@@ -198,6 +198,8 @@ export const load: PageServerLoad = async ({ params, parent, url }) => {
         }
     }
 
+    const isSold = advert.isSold == 1;
+
     return {
         advert,
         models,
@@ -206,7 +208,8 @@ export const load: PageServerLoad = async ({ params, parent, url }) => {
         inBookmarks,
         comments,
         commentCount,
-        editable
+        editable,
+        isSold
     };
 };
 

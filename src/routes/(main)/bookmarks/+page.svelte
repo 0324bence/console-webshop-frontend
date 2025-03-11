@@ -43,12 +43,17 @@
                     ></a>
                 </div>
                 <div class="title-container">
-                    <h2 title={advert.title}>{advert.title.substring(0, 45)}{advert.title.length > 45 ? "..." : ""}</h2>
+                    <h2 title={advert.title} style={advert.isSold == 1 ? "text-decoration: line-through;" : ""}>
+                        {advert.title.substring(0, 45)}{advert.title.length > 45 ? "..." : ""}
+                    </h2>
                     <form class="button-container" method="post" action="?/addToCart">
                         <input type="hidden" name="advertId" value={advert.id} />
-                        <button type="submit" disabled={advert.inCart || data.ownUser?.id === advert.ownerId}
-                            >Kosárba</button
+                        <button
+                            type="submit"
+                            disabled={advert.inCart || data.ownUser?.id === advert.ownerId || advert.isSold == 1}
                         >
+                            {advert.isSold == 1 ? "Eladva" : advert.inCart ? "Kosárban van" : "Kosárba"}
+                        </button>
                     </form>
                 </div>
                 <div class="state-container">
