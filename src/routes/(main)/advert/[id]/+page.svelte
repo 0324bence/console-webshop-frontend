@@ -14,6 +14,8 @@
     import Cart from "$lib/svgs/Cart.svelte";
     import RootComment from "$lib/components/RootComment.svelte";
     import placeholder from "$lib/images/placeholder.png";
+    import grayStar from "$lib/images/star_gray.svg";
+    import yellowStar from "$lib/images/star_yellow.svg";
 
     export let data;
 
@@ -421,11 +423,21 @@
                             {data.advert.title}
                         </h1>
                     {/if}
-                    <h3>
-                        <a href={data.advert.ownerId ? `/profile/${data.advert.ownerId}` : ""}
-                            >{data.advert.owner.name}</a
-                        >
-                    </h3>
+                    <div class="row">
+                        <h3>
+                            <a href={data.advert.ownerId ? `/profile/${data.advert.ownerId}` : ""}
+                                >{data.advert.owner.name}</a
+                            >
+                        </h3>
+                        <div id="star-container">
+                            <div id="grey-stars" class="stars" style={`background-image: url('${grayStar}');`}></div>
+                            <div
+                                id="yellow-stars"
+                                class="stars"
+                                style={`background-image: url('${yellowStar}');`}
+                            ></div>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div id="data">
@@ -984,7 +996,7 @@
 
                 @include desktop {
                     h1 {
-                        font-size: 2.2rem !important;
+                        font-size: 2.2rem;
                         font-weight: bold;
                     }
                 }
@@ -1040,6 +1052,32 @@
                         display: flex;
                         flex-direction: column;
                         align-items: flex-end;
+
+                        .row {
+                            display: flex;
+                            gap: 1rem;
+                            #star-container {
+                                width: calc(24px * 5);
+                                height: calc(24px * 1);
+                                position: relative;
+
+                                .stars {
+                                    position: absolute;
+                                    top: 0;
+                                    left: 0;
+                                    width: 100%;
+                                    height: 100%;
+                                    background-size: 24px;
+                                    background-repeat: repeat-x;
+                                    background-position: left;
+                                }
+
+                                #yellow-stars {
+                                    z-index: 2;
+                                    // width: calc(24px * 2.5);
+                                }
+                            }
+                        }
 
                         input {
                             font-size: 2.2rem;
