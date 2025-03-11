@@ -20,8 +20,19 @@
 
     let stars = new Array(data.adverts.length).fill(0);
 
+    let timeout: NodeJS.Timeout | number;
+    let setable = true;
+
     function setStars(index: number, value: number) {
+        if (setable) stars[index] = value;
+    }
+    function clickStars(index: number, value: number) {
+        clearTimeout(timeout as NodeJS.Timeout);
+        setable = false;
         stars[index] = value;
+        timeout = setTimeout(() => {
+            setable = true;
+        }, 500);
     }
 </script>
 
@@ -69,10 +80,14 @@
                                         on:mouseenter={() => {
                                             setStars(i, (num + 1) / 2);
                                         }}
+                                        on:click={() => {
+                                            clickStars(i, (num + 1) / 2);
+                                        }}
                                     ></button>
                                 {/each}
                             </div>
                         </div>
+                        <button type="button" class="rate-button">Értékelés</button>
                     </div>
                 </div>
                 <div class="state-container">
@@ -288,6 +303,37 @@
 
             .row {
                 width: 100%;
+                display: flex;
+                gap: 2rem;
+
+                .rate-button {
+                    padding: 0.25rem 0.5rem;
+                    border-radius: 10px;
+                    border: 1px solid $color-dark-blue;
+                    font-size: 1rem;
+                    cursor: pointer;
+
+                    &:hover {
+                        background-color: $color-dark-blue;
+                        color: $color-white;
+                    }
+
+                    &:active {
+                        background-color: $color-dark-blue;
+                        color: $color-white;
+                    }
+
+                    &:disabled {
+                        background-color: darken($color-white, 30%);
+                        color: $color-black;
+                        cursor: not-allowed;
+
+                        &:hover {
+                            background-color: darken($color-white, 30%);
+                            color: $color-black;
+                        }
+                    }
+                }
 
                 #star-container {
                     width: calc(24px * 5);
