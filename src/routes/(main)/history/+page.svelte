@@ -52,80 +52,90 @@
     }
 </script>
 
+<!-- Show purchase time -->
 <div id="cart-container">
     <div id="advert-list">
         <div class="title-container">
             <h2>Nem értékelt hirdetések</h2>
         </div>
-        {#each data.unratedAdverts as advert, i}
-            <div class="advert">
-                <div class="owner-container">
-                    <div
-                        class="profile-picture"
-                        style={`background-image: url('data:image/jpeg;base64,${advert.owner.picture}')`}
-                    ></div>
-                    <a href={advert.ownerId ? `/profile/${advert.ownerId}` : ""}>{advert.owner.name}</a>
-                </div>
-                <form method="post" action="?/deleteItem" class="top-bar">
-                    <span>{advert.location.name} ({advert.location.zip})</span>
-                    <input type="hidden" name="advertId" value={advert.id} />
-                </form>
-                <div class="picture-container">
-                    <!-- svelte-ignore a11y-missing-content -->
-                    <a
-                        href={`/advert/${advert.id}`}
-                        title={advert.title}
-                        class="picture"
-                        style={`background-image: url('data:image/jpeg;base64,${advert.mainPicture.data}')`}
-                    ></a>
-                </div>
-                <div class="title-container">
-                    <h2 title={advert.title}>{advert.title.substring(0, 45)}{advert.title.length > 45 ? "..." : ""}</h2>
-                    <div class="row">
-                        <div id="star-container">
-                            <div id="grey-stars" class="stars" style={`background-image: url('${grayStar}');`}></div>
-                            <div
-                                id="yellow-stars"
-                                class="stars"
-                                style={`background-image: url('${yellowStar}'); width: ${24 * stars[i]}px;`}
-                            ></div>
-                            <div id="interaction-fields">
-                                {#each new Array(10) as _, num}
-                                    <button
-                                        on:mouseenter={() => {
-                                            setStars(i, (num + 1) / 2);
-                                        }}
-                                        on:click={() => {
-                                            clickStars(i, (num + 1) / 2);
-                                        }}
-                                        on:mouseleave={() => {
-                                            setToSavedStars(i);
-                                        }}
-                                    ></button>
-                                {/each}
+        {#each data.adverts as advert, i}
+            {#if advert.rating == null}
+                <div class="advert">
+                    <div class="owner-container">
+                        <div
+                            class="profile-picture"
+                            style={`background-image: url('data:image/jpeg;base64,${advert.owner.picture}')`}
+                        ></div>
+                        <a href={advert.ownerId ? `/profile/${advert.ownerId}` : ""}>{advert.owner.name}</a>
+                    </div>
+                    <form method="post" action="?/deleteItem" class="top-bar">
+                        <span>{advert.location.name} ({advert.location.zip})</span>
+                        <input type="hidden" name="advertId" value={advert.id} />
+                    </form>
+                    <div class="picture-container">
+                        <!-- svelte-ignore a11y-missing-content -->
+                        <a
+                            href={`/advert/${advert.id}`}
+                            title={advert.title}
+                            class="picture"
+                            style={`background-image: url('data:image/jpeg;base64,${advert.mainPicture.data}')`}
+                        ></a>
+                    </div>
+                    <div class="title-container">
+                        <h2 title={advert.title}>
+                            {advert.title.substring(0, 45)}{advert.title.length > 45 ? "..." : ""}
+                        </h2>
+                        <h2>{advert.purchaseId}</h2>
+                        <div class="row">
+                            <div id="star-container">
+                                <div
+                                    id="grey-stars"
+                                    class="stars"
+                                    style={`background-image: url('${grayStar}');`}
+                                ></div>
+                                <div
+                                    id="yellow-stars"
+                                    class="stars"
+                                    style={`background-image: url('${yellowStar}'); width: ${24 * stars[i]}px;`}
+                                ></div>
+                                <div id="interaction-fields">
+                                    {#each new Array(10) as _, num}
+                                        <button
+                                            on:mouseenter={() => {
+                                                setStars(i, (num + 1) / 2);
+                                            }}
+                                            on:click={() => {
+                                                clickStars(i, (num + 1) / 2);
+                                            }}
+                                            on:mouseleave={() => {
+                                                setToSavedStars(i);
+                                            }}
+                                        ></button>
+                                    {/each}
+                                </div>
                             </div>
+                            <button
+                                type="button"
+                                class="rate-button"
+                                on:click={() => {
+                                    rateAdvert(i);
+                                }}>Értékelés</button
+                            >
                         </div>
-                        <button
-                            type="button"
-                            class="rate-button"
-                            on:click={() => {
-                                rateAdvert(i);
-                            }}>Értékelés</button
-                        >
+                    </div>
+                    <div class="state-container">
+                        <span>{data.filters.states.find(i => i.id == advert.stateId)?.name}</span>
+                    </div>
+                    <div class="bottom-bar">
+                        <div class="data-container">
+                            <span>{advert.manufacturer.name}</span>
+                            <span>-</span>
+                            <span>{advert.model.name}</span>
+                        </div>
+                        <h3>{advert.priceHuf} HUF</h3>
                     </div>
                 </div>
-                <div class="state-container">
-                    <span>{data.filters.states.find(i => i.id == advert.stateId)?.name}</span>
-                </div>
-                <div class="bottom-bar">
-                    <div class="data-container">
-                        <span>{advert.manufacturer.name}</span>
-                        <span>-</span>
-                        <span>{advert.model.name}</span>
-                    </div>
-                    <h3>{advert.priceHuf} HUF</h3>
-                </div>
-            </div>
+            {/if}
         {/each}
         <hr />
         <div class="title-container">
