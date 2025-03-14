@@ -11,7 +11,6 @@
     export let data;
 </script>
 
-<!-- TODO review system -->
 <div id="cart-container">
     <div id="advert-list">
         <div class="title-container">
