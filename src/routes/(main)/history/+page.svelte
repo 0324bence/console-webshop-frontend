@@ -52,11 +52,10 @@
     }
 </script>
 
-<!-- TODO review system -->
 <div id="cart-container">
     <div id="advert-list">
         <div class="title-container">
-            <h2>Értékeletlen hirdetések</h2>
+            <h2>Nem értékelt hirdetések</h2>
         </div>
         {#each data.unratedAdverts as advert, i}
             <div class="advert">
