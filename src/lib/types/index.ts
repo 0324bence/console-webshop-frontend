@@ -5,6 +5,7 @@ interface User {
     bio: string;
     picture: string;
     regDate: Date;
+    rating: number;
 }
 
 interface Model {

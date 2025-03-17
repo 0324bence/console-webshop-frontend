@@ -99,7 +99,11 @@
         <div class="row">
             <div id="star-container">
                 <div id="grey-stars" class="stars" style={`background-image: url('${grayStar}');`}></div>
-                <div id="yellow-stars" class="stars" style={`background-image: url('${yellowStar}');`}></div>
+                <div
+                    id="yellow-stars"
+                    class="stars"
+                    style={`background-image: url('${yellowStar}'); width: ${24 * data.user.rating}px;`}
+                ></div>
             </div>
         </div>
         {#if data.isOwn}
@@ -285,7 +289,7 @@
 
                 #yellow-stars {
                     z-index: 2;
-                    width: calc(24px * 2.5);
+                    // width: calc(24px * 2.5);
                 }
             }
 

@@ -437,7 +437,7 @@
                             <div
                                 id="yellow-stars"
                                 class="stars"
-                                style={`background-image: url('${yellowStar}');`}
+                                style={`background-image: url('${yellowStar}');  width: ${24 * data.advert.owner.rating}px;`}
                             ></div>
                         </div>
                     </div>
