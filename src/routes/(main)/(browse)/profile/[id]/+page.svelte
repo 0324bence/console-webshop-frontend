@@ -96,16 +96,18 @@
             <span>Hirdetések:</span>
             <span>{data.advertCount} db</span>
         </div>
-        <div class="row">
-            <div id="star-container">
-                <div id="grey-stars" class="stars" style={`background-image: url('${grayStar}');`}></div>
-                <div
-                    id="yellow-stars"
-                    class="stars"
-                    style={`background-image: url('${yellowStar}'); width: ${24 * data.user.rating}px;`}
-                ></div>
+        {#if data.user.rating != null && data.user.rating != 0}
+            <div class="row">
+                <div id="star-container">
+                    <div id="grey-stars" class="stars" style={`background-image: url('${grayStar}');`}></div>
+                    <div
+                        id="yellow-stars"
+                        class="stars"
+                        style={`background-image: url('${yellowStar}'); width: ${24 * data.user.rating}px;`}
+                    ></div>
+                </div>
             </div>
-        </div>
+        {/if}
         {#if data.isOwn}
             <div class="row">
                 {#if !editingPassword}

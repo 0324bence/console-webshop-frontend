@@ -432,14 +432,20 @@
                                 >{data.advert.owner.name}</a
                             >
                         </h3>
-                        <div id="star-container" title="Felhasználó értékelése">
-                            <div id="grey-stars" class="stars" style={`background-image: url('${grayStar}');`}></div>
-                            <div
-                                id="yellow-stars"
-                                class="stars"
-                                style={`background-image: url('${yellowStar}');  width: ${24 * data.advert.owner.rating}px;`}
-                            ></div>
-                        </div>
+                        {#if data.advert.owner.rating != null && data.advert.owner.rating != 0}
+                            <div id="star-container" title="Felhasználó értékelése">
+                                <div
+                                    id="grey-stars"
+                                    class="stars"
+                                    style={`background-image: url('${grayStar}');`}
+                                ></div>
+                                <div
+                                    id="yellow-stars"
+                                    class="stars"
+                                    style={`background-image: url('${yellowStar}');  width: ${24 * data.advert.owner.rating}px;`}
+                                ></div>
+                            </div>
+                        {/if}
                     </div>
                 </div>
             </div>
