@@ -7,7 +7,6 @@
 </script>
 
 <!-- TODO pagination -->
-<!-- TODO nincs találat -->
 <div id="users-container">
     {#each data.users as user}
         <a href={`/profile/${user.id}`} class="user">
@@ -23,6 +22,9 @@
             </div>
         </a>
     {/each}
+    {#if data.users.length === 0}
+        <h1>Nem található ilyen nevű felhasználó</h1>
+    {/if}
     <!-- <div class="user">
         <div class="profile-picture-container">
             <div class="profile-picture"></div>
