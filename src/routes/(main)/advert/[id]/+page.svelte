@@ -70,6 +70,10 @@
             alert("A fájl mérete túl nagy!");
             return;
         }
+        if (!file.type.includes("image")) {
+            alert("A fájl nem kép!");
+            return;
+        }
         const base64 = await file.arrayBuffer().then(buffer => Buffer.from(buffer).toString("base64"));
         newFileData = base64;
         showImageModal = true;
@@ -97,6 +101,10 @@
         if (!file) return;
         if (file.size > 50000000) {
             alert("A fájl mérete túl nagy!");
+            return;
+        }
+        if (!file.type.includes("image")) {
+            alert("A fájl nem kép!");
             return;
         }
         const base64 = await file.arrayBuffer().then(buffer => Buffer.from(buffer).toString("base64"));

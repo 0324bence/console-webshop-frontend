@@ -56,6 +56,13 @@
             }
         }
 
+        for (const file of eventFiles) {
+            if (!file.type.includes("image")) {
+                alert("Valamely fájlok nem képek!");
+                return;
+            }
+        }
+
         for (let i = 0; i < eventFiles.length; i++) {
             const file = eventFiles[i] as File;
             const base64 = await file.arrayBuffer().then(buffer => Buffer.from(buffer).toString("base64"));
@@ -129,6 +136,13 @@
         for (const file of eventFiles) {
             if (file.size > 50000000) {
                 alert("Valamely fájlok mérete túl nagy!");
+                return;
+            }
+        }
+
+        for (const file of eventFiles) {
+            if (!file.type.includes("image")) {
+                alert("Valamely fájlok nem képek!");
                 return;
             }
         }

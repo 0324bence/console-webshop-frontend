@@ -43,6 +43,11 @@
             cancel();
         }
 
+        if (!file.type.includes("image")) {
+            alert("A fájl nem kép!");
+            cancel();
+        }
+
         return async ({ update }) => {
             invalidateAll();
             await update();
