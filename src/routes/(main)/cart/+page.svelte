@@ -10,7 +10,7 @@
 
     if (data.adverts.length > 0) {
         totalPrice = data.adverts
-            .map(e => e.priceHuf)
+            .map(e => (!e.isSold ? e.priceHuf : 0))
             .reduce((prev, currV, currI) => {
                 return prev + currV;
             });
@@ -20,7 +20,7 @@
 <div id="cart-container">
     <div id="advert-list">
         {#each data.adverts as advert}
-            <div class="advert">
+            <div class={"advert " + (advert.isSold ? "sold" : "")}>
                 <div class="owner-container">
                     <div
                         class="profile-picture"
@@ -44,6 +44,11 @@
                 </div>
                 <div class="title-container">
                     <h2 title={advert.title}>{advert.title.substring(0, 45)}{advert.title.length > 45 ? "..." : ""}</h2>
+                    {#if advert.isSold}
+                        <div class="button-container">
+                            <span class="sold-text">ELADVA</span>
+                        </div>
+                    {/if}
                 </div>
                 <div class="state-container">
                     <span>{data.filters.states.find(i => i.id == advert.stateId)?.name}</span>
@@ -70,7 +75,7 @@
                 </span>
                 <span>HUF</span>
             </p>
-            <button type="submit" disabled={data.adverts.length < 1}>Vásárlás</button>
+            <button type="submit" disabled={totalPrice < 1}>Vásárlás</button>
         </form>
     </div>
 </div>
@@ -118,10 +123,26 @@
                 // padding-left: 1.4rem;
                 gap: 0.5rem;
                 word-break: break-word;
+                position: relative;
 
                 @include tablet {
                     grid-template-columns: 40% 60%;
                     height: 20rem;
+                }
+
+                .sold-text {
+                    color: $color-red;
+                    font-size: 3rem;
+                    font-weight: bold;
+                }
+
+                &.sold {
+                    // filter: grayscale(100%) brightness(0.9);
+
+                    h2,
+                    h3 {
+                        text-decoration: line-through;
+                    }
                 }
 
                 .owner-container {
