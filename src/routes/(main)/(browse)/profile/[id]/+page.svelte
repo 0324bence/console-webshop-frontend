@@ -295,7 +295,7 @@
                 }
 
                 #yellow-stars {
-                    z-index: 2;
+                    z-index: 1;
                     // width: calc(24px * 2.5);
                 }
             }
