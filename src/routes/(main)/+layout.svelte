@@ -150,7 +150,7 @@
     </div>
 </div>
 <div id="footer">
-    <a href="/suggestion">Javaslat</a>
+    <a href="/suggestion">{data.ownUser?.isAdmin ? "Javaslatok olvasása" : "Javaslat küldése"}</a>
     <span>&copy; 2025</span>
 </div>
 
