@@ -6,6 +6,7 @@ interface User {
     picture: string;
     regDate: Date;
     rating: number;
+    isAdmin: boolean;
 }
 
 interface Model {
@@ -94,6 +95,17 @@ interface PurchaseItem {
     rating: number | null;
 }
 
+interface Suggestion {
+    title: string;
+    text: string;
+    userId: number;
+    createdTime: Date;
+}
+
+interface ExtendedSuggestion extends Suggestion {
+    user: User;
+}
+
 export type {
     User,
     Model,
@@ -107,5 +119,7 @@ export type {
     CartItem,
     Comment,
     localComment,
-    PurchaseItem
+    PurchaseItem,
+    Suggestion,
+    ExtendedSuggestion
 };

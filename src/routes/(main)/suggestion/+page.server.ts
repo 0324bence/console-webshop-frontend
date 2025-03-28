@@ -1,4 +1,13 @@
 import apiPath from "$lib/apiPath";
+import { redirect } from "@sveltejs/kit";
+import type { PageServerLoad } from "./$types";
+
+export const load: PageServerLoad = async ({ parent }) => {
+    const data = await parent();
+    if (data.ownUser?.isAdmin) {
+        return redirect(302, "/suggestion/admin");
+    }
+};
 
 export const actions = {
     suggestion: async ({ cookies, request }) => {
