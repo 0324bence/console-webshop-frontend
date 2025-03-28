@@ -1,4 +1,3 @@
-<!-- TODO responsivity -->
 <div id="form-container">
     <form id="form" action="?/suggestion" method="post">
         <h1>Javaslat küldése</h1>
@@ -17,6 +16,15 @@
         // align-items: center;
         height: 100%;
         padding: 10rem;
+
+        @include tablet {
+            padding: 5rem;
+        }
+
+        @include mobile {
+            padding: 1rem;
+        }
+
         flex: 1;
     }
 
