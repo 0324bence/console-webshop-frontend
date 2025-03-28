@@ -392,7 +392,7 @@
     </div>
 </form>
 <div id="footer">
-    <a href="/suggestion">Új menüpont kérvényezése</a>
+    <a href="/suggestion">Javaslat</a>
     <span>&copy; 2025</span>
 </div>
 
