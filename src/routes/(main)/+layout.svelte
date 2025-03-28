@@ -149,9 +149,27 @@
         <slot />
     </div>
 </div>
+<div id="footer">
+    <a href="/suggestion">Javaslat</a>
+    <span>&copy; 2025</span>
+</div>
 
 <style lang="scss">
     @import "$lib/styles/variables.scss";
+
+    #footer {
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        padding: 0.5rem;
+        background-color: $color-blue;
+        color: $color-white;
+        height: 7rem;
+
+        a {
+            color: $color-white;
+        }
+    }
 
     #nologin {
         height: 100%;

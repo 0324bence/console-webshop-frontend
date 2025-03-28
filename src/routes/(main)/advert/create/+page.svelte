@@ -391,10 +391,11 @@
         <button type="submit">Létrehozás</button>
     </div>
 </form>
-<div id="footer">
+
+<!-- <div id="footer">
     <a href="/suggestion">Javaslat</a>
     <span>&copy; 2025</span>
-</div>
+</div> -->
 
 <style lang="scss">
     @import "$lib/styles/variables";
@@ -469,19 +470,19 @@
         }
     }
 
-    #footer {
-        display: flex;
-        justify-content: space-around;
-        align-items: center;
-        padding: 0.5rem;
-        background-color: $color-blue;
-        color: $color-white;
-        height: 7rem;
+    // #footer {
+    //     display: flex;
+    //     justify-content: space-around;
+    //     align-items: center;
+    //     padding: 0.5rem;
+    //     background-color: $color-blue;
+    //     color: $color-white;
+    //     height: 7rem;
 
-        a {
-            color: $color-white;
-        }
-    }
+    //     a {
+    //         color: $color-white;
+    //     }
+    // }
 
     #main-content-container {
         display: flex;
