@@ -554,6 +554,11 @@
                 // display: none;
             }
 
+            // Last .filter-group
+            .filter-group:last-child {
+                margin-bottom: 1rem;
+            }
+
             .filter-group {
                 display: flex;
                 flex-direction: column;
