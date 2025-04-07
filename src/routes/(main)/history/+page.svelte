@@ -85,7 +85,7 @@
                         <h2 title={advert.title}>
                             {advert.title.substring(0, 45)}{advert.title.length > 45 ? "..." : ""}
                         </h2>
-                        <h2>{advert.purchaseId}</h2>
+                        <!-- <h2>{advert.purchaseId}</h2> -->
                         <div class="row">
                             <div id="star-container">
                                 <div
