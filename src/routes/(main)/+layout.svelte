@@ -25,7 +25,19 @@
 
     function searchAdvert() {
         // console.log("searching for advert ", searchFieldValue);
-        goto($page.url.pathname + "?title=" + searchFieldValue + "&");
+        console.log($page.url);
+        let url = new URL($page.url.origin);
+        if (!$page.url.pathname.endsWith("profiles")) {
+            url.search = $page.url.search;
+            url.pathname = $page.url.pathname;
+        }
+        if (url.searchParams.has("title")) {
+            url.searchParams.set("title", searchFieldValue);
+        } else {
+            url.searchParams.append("title", searchFieldValue);
+        }
+        // goto(($page.url.pathname.length > 1 ? "/" + $page.url.search + "&" : "/?") + "title=" + searchFieldValue + "&");
+        goto(url.toString());
     }
 
     function searchUser() {
@@ -123,6 +135,8 @@
                 </button>
                 <div id="user-menu" class={userMenu ? "" : "hidden"}>
                     <a href="/profile" class="menu-item">Profil</a>
+                    <a href="/history" class="menu-item">Vásárlási előzmények</a>
+                    <a href="/sales" class="menu-item">Eladott termékek</a>
                     <a href="/bookmarks" class="menu-item">Könyvjelzők</a>
                     <a href="/advert/create" class="menu-item">Új hirdetés</a>
                     <a href="/auth/logout" class="menu-item" data-sveltekit-reload>Kijelentkezés</a>
@@ -135,9 +149,27 @@
         <slot />
     </div>
 </div>
+<div id="footer">
+    <a href="/suggestion">{data.ownUser?.isAdmin ? "Javaslatok olvasása" : "Javaslat küldése"}</a>
+    <span>&copy; 2025</span>
+</div>
 
 <style lang="scss">
     @import "$lib/styles/variables.scss";
+
+    #footer {
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        padding: 0.5rem;
+        background-color: $color-blue;
+        color: $color-white;
+        height: 7rem;
+
+        a {
+            color: $color-white;
+        }
+    }
 
     #nologin {
         height: 100%;
@@ -158,7 +190,7 @@
         flex-direction: column;
         min-height: 100vh;
         width: 100%;
-        min-width: 450px;
+        min-width: 350px;
         background-color: darken($color-white, 10%);
     }
 
@@ -304,7 +336,7 @@
                 flex-direction: column;
                 gap: 2px;
                 align-items: stretch;
-                z-index: -1;
+                z-index: 50000;
                 top: 100%;
                 right: 0;
                 background-color: $color-dark-blue;

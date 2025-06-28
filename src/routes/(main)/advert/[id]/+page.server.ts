@@ -3,6 +3,7 @@ import type { Actions, PageServerLoad } from "./$types";
 import apiPath from "$lib/apiPath";
 import type { Comment, LocalAdvert, Manufacturer, Model, Picture, User, localComment } from "$lib/types";
 import noImage from "$lib/images/noImage";
+import placeholder from "$lib/images/userPlaceholder";
 
 interface ExtendedLocalAdvert extends LocalAdvert {
     owner: User;
@@ -145,7 +146,7 @@ export const load: PageServerLoad = async ({ params, parent, url }) => {
                     name: "Ismeretlen",
                     email: "Ismeretlen",
                     bio: "Ismeretlen",
-                    picture: "",
+                    picture: placeholder,
                     regDate: new Date()
                 };
             }
@@ -183,6 +184,22 @@ export const load: PageServerLoad = async ({ params, parent, url }) => {
         isOwn = data.ownUser.id === advert.ownerId;
     }
 
+    let editable = false;
+    if (isOwn) {
+        const inCartReq = await fetch(`${apiPath}/adverts/${advert.id}/isInCart`, {
+            headers: {
+                Authorization: `Bearer ${data.token}`,
+                "Content-Type": "application/json"
+            }
+        });
+        if (inCartReq.ok) {
+            const inCartJSON = await inCartReq.json();
+            editable = !inCartJSON.result;
+        }
+    }
+
+    const isSold = advert.isSold == 1;
+
     return {
         advert,
         models,
@@ -190,7 +207,9 @@ export const load: PageServerLoad = async ({ params, parent, url }) => {
         inCart,
         inBookmarks,
         comments,
-        commentCount
+        commentCount,
+        editable,
+        isSold
     };
 };
 
@@ -235,7 +254,8 @@ export const actions = {
         if (res.ok) {
             return "ok";
         } else {
-            return error(500, "Hiba történt az adatok mentése közben");
+            const data = await res.json();
+            return error(data.statusCode, data.message);
         }
     },
     editPicture: async ({ cookies, request, params }) => {
@@ -264,7 +284,8 @@ export const actions = {
                 })
             });
             if (!primaryReq.ok) {
-                return error(500, "Hiba történt a kép beállítása közben");
+                const data = await primaryReq.json();
+                return error(data.statusCode, data.message);
             }
         }
         const res = await fetch(`${apiPath}/adverts/${advertId}/pictures/`, {
@@ -278,7 +299,12 @@ export const actions = {
                 ...body
             })
         });
-        return "ok";
+        if (res.ok) {
+            return "ok";
+        } else {
+            const data = await res.json();
+            return error(data.statusCode, data.message);
+        }
     },
     addPicture: async ({ cookies, request, params }) => {
         console.log("addPicture");
@@ -305,7 +331,8 @@ export const actions = {
             body: JSON.stringify(body)
         });
         if (!res.ok) {
-            return error(500, "Hiba történt a kép feltöltése közben");
+            const data = await res.json();
+            return error(data.statusCode, data.message);
         }
         if (isPriority == "1") {
             const resp = await res.json();
@@ -320,7 +347,8 @@ export const actions = {
                 })
             });
             if (!primaryReq.ok) {
-                return error(500, "Hiba történt a kép beállítása közben");
+                const data = await primaryReq.json();
+                return error(data.statusCode, data.message);
             }
         }
         return "ok";
@@ -342,7 +370,8 @@ export const actions = {
             }
         });
         if (!res.ok) {
-            return error(500, "Hiba történt a kép törlése közben");
+            const data = await res.json();
+            return error(data.statusCode, data.message);
         }
     },
     addToCart: async ({ cookies, params, request }) => {
@@ -362,6 +391,23 @@ export const actions = {
                 advertId
             })
         });
+    },
+    removeFromCart: async ({ cookies, params, request }) => {
+        const token = cookies.get("token");
+        if (token === undefined) {
+            return redirect(301, "/auth/");
+        }
+        const advertId = params.id;
+        const res = await fetch(`${apiPath}/cart/${advertId}`, {
+            method: "DELETE",
+            headers: {
+                Authorization: "Bearer " + token,
+                "Content-Type": "application/json"
+            }
+        });
+        if (!res.ok) {
+            return res.json();
+        }
     },
     addToBookmarks: async ({ cookies, params, request }) => {
         const token = cookies.get("token");
@@ -416,7 +462,8 @@ export const actions = {
             })
         });
         if (!res.ok) {
-            return error(500, "Hiba történt a komment hozzáadása közben");
+            const data = await res.json();
+            return error(data.statusCode, data.message);
         }
     },
     addCommentToComment: async ({ cookies, params, request }) => {
@@ -442,7 +489,8 @@ export const actions = {
             })
         });
         if (!res.ok) {
-            return error(500, "Hiba történt a komment hozzáadása közben");
+            const data = await res.json();
+            return error(data.statusCode, data.message);
         }
         return "ok";
     }

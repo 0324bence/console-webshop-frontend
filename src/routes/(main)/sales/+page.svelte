@@ -3,22 +3,19 @@
     //Testing
     import nincskep from "$lib/images/nincs-kep-fekvo.png";
     import placeholder from "$lib/images/placeholder.png";
+    import grayStar from "$lib/images/star_gray.svg";
+    import yellowStar from "$lib/images/star_yellow.svg";
+    import apiPath from "$lib/apiPath";
+    import { invalidateAll } from "$app/navigation";
 
     export let data;
-
-    let totalPrice = 0;
-
-    if (data.adverts.length > 0) {
-        totalPrice = data.adverts
-            .map(e => e.priceHuf)
-            .reduce((prev, currV, currI) => {
-                return prev + currV;
-            });
-    }
 </script>
 
 <div id="cart-container">
     <div id="advert-list">
+        <div class="title-container">
+            <h2>Eladott termékek</h2>
+        </div>
         {#each data.adverts as advert}
             <div class="advert">
                 <div class="owner-container">
@@ -31,7 +28,6 @@
                 <form method="post" action="?/deleteItem" class="top-bar">
                     <span>{advert.location.name} ({advert.location.zip})</span>
                     <input type="hidden" name="advertId" value={advert.id} />
-                    <button class="delete-button" type="submit" style={`background-image: url('${trash}')`}></button>
                 </form>
                 <div class="picture-container">
                     <!-- svelte-ignore a11y-missing-content -->
@@ -43,19 +39,17 @@
                     ></a>
                 </div>
                 <div class="title-container">
-                    <h2 title={advert.title} style={advert.isSold == 1 ? "text-decoration: line-through;" : ""}>
-                        {advert.title.substring(0, 45)}{advert.title.length > 45 ? "..." : ""}
-                    </h2>
-                    <form class="button-container" method="post" action="?/addToCart">
-                        <input type="hidden" name="advertId" value={advert.id} />
-                        <button
-                            type="submit"
-                            formaction={advert.inCart ? "?/removeFromCart" : "?/addToCart"}
-                            disabled={data.ownUser?.id === advert.ownerId || advert.isSold == 1}
-                        >
-                            {advert.isSold == 1 ? "Eladva" : advert.inCart ? "Kosárban van" : "Kosárba"}
-                        </button>
-                    </form>
+                    <h2 title={advert.title}>{advert.title.substring(0, 45)}{advert.title.length > 45 ? "..." : ""}</h2>
+                    <div class="row">
+                        <div id="star-container">
+                            <div id="grey-stars" class="stars" style={`background-image: url('${grayStar}');`}></div>
+                            <div
+                                id="yellow-stars"
+                                class="stars"
+                                style={`background-image: url('${yellowStar}'); width: ${24 * (advert.rating ?? 0)}px;`}
+                            ></div>
+                        </div>
+                    </div>
                 </div>
                 <div class="state-container">
                     <span>{data.filters.states.find(i => i.id == advert.stateId)?.name}</span>
@@ -70,19 +64,6 @@
                 </div>
             </div>
         {/each}
-    </div>
-    <div id="info-box-container">
-        <div id="info-box">
-            <h2>Könyvjelzők:</h2>
-            <p>Termékek: <span>{data.adverts.length}</span><span>db</span></p>
-            <p class="price">
-                Összesen:
-                <span>
-                    {totalPrice}
-                </span>
-                <span>HUF</span>
-            </p>
-        </div>
     </div>
 </div>
 
@@ -229,6 +210,85 @@
             align-items: stretch;
             justify-content: space-between;
 
+            .row {
+                width: 100%;
+                display: flex;
+                gap: 2rem;
+
+                .rate-button {
+                    padding: 0.25rem 0.5rem;
+                    border-radius: 10px;
+                    border: 1px solid $color-dark-blue;
+                    font-size: 1rem;
+                    cursor: pointer;
+
+                    &:hover {
+                        background-color: $color-dark-blue;
+                        color: $color-white;
+                    }
+
+                    &:active {
+                        background-color: $color-dark-blue;
+                        color: $color-white;
+                    }
+
+                    &:disabled {
+                        background-color: darken($color-white, 30%);
+                        color: $color-black;
+                        cursor: not-allowed;
+
+                        &:hover {
+                            background-color: darken($color-white, 30%);
+                            color: $color-black;
+                        }
+                    }
+                }
+
+                #star-container {
+                    width: calc(24px * 5);
+                    height: calc(24px * 1);
+                    position: relative;
+
+                    .stars {
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 100%;
+                        background-size: 24px;
+                        background-repeat: repeat-x;
+                        background-position: left;
+                    }
+
+                    #yellow-stars {
+                        z-index: 2;
+                        // width: calc(24px * 2.5);
+                    }
+
+                    #interaction-fields {
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 100%;
+                        display: grid;
+                        grid-template-columns: repeat(10, 1fr);
+                        z-index: 5;
+
+                        button {
+                            border: none;
+                            outline: none;
+                            cursor: pointer;
+                            background: none;
+
+                            &:focus {
+                                background-color: rgb(255, 255, 255, 0.5);
+                            }
+                        }
+                    }
+                }
+            }
+
             .button-container {
                 display: flex;
                 justify-content: flex-end;
@@ -316,6 +376,11 @@
 
                     &:hover {
                         background-color: darken($color-blue, 10%);
+                    }
+
+                    &:disabled {
+                        background-color: darken($color-blue, 30%);
+                        cursor: not-allowed;
                     }
                 }
             }

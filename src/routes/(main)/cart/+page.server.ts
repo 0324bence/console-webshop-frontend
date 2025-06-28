@@ -1,6 +1,6 @@
 import apiPath from "$lib/apiPath";
 import type { CartItem, LocalAdvert, Manufacturer, Model, Picture, User } from "$lib/types";
-import { error } from "@sveltejs/kit";
+import { error, redirect } from "@sveltejs/kit";
 import type { Actions, PageServerLoad } from "./$types";
 import noImage from "$lib/images/noImage";
 import placeholder from "$lib/images/placeholder.png";
@@ -146,5 +146,20 @@ export const actions = {
         if (!res.ok) {
             return res.json();
         }
+    },
+    purchase: async ({ cookies, request }) => {
+        const token = cookies.get("token");
+        const res = await fetch(`${apiPath}/cart/purchase`, {
+            method: "POST",
+            headers: {
+                Authorization: "Bearer " + token,
+                "Content-Type": "application/json"
+            }
+        });
+        if (!res.ok) {
+            const edata = await res.json();
+            return error(res.status, edata.message);
+        }
+        return redirect(301, "/history");
     }
 } satisfies Actions;

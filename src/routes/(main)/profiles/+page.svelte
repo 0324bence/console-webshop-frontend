@@ -7,10 +7,9 @@
 </script>
 
 <!-- TODO pagination -->
-<!-- TODO nincs találat -->
 <div id="users-container">
     {#each data.users as user}
-        <div class="user">
+        <a href={`/profile/${user.id}`} class="user">
             <div class="profile-picture-container">
                 <div
                     class="profile-picture"
@@ -19,10 +18,13 @@
             </div>
             <div class="data">
                 <h2>{user.name}</h2>
-                <p>{user.regDate}</p>
+                <!-- <p>{user.regDate}</p> -->
             </div>
-        </div>
+        </a>
     {/each}
+    {#if data.users.length === 0}
+        <h1>Nem található ilyen nevű felhasználó</h1>
+    {/if}
     <!-- <div class="user">
         <div class="profile-picture-container">
             <div class="profile-picture"></div>
@@ -42,6 +44,7 @@
         flex-wrap: wrap;
         justify-content: center;
         gap: 1rem;
+        padding: 1rem;
 
         .user {
             display: grid;
@@ -53,6 +56,7 @@
             border-radius: 0.3rem;
             height: 12em;
             width: 10rem;
+            text-align: center;
             // border: 1px solid $color-black;
             background-color: $color-white;
             box-shadow: 1px 1px 5px 0px $color-black;
@@ -76,7 +80,8 @@
                 display: flex;
                 flex-direction: column;
                 justify-content: flex-start;
-                align-items: flex-start;
+                text-align: center;
+                align-items: center;
                 h2 {
                     font-size: 1.3rem;
                     margin: 0;

@@ -5,6 +5,8 @@
     import { invalidateAll, onNavigate } from "$app/navigation";
     import { enhance } from "$app/forms";
     import placeholder from "$lib/images/placeholder.png";
+    import grayStar from "$lib/images/star_gray.svg";
+    import yellowStar from "$lib/images/star_yellow.svg";
 
     export let data: PageData;
 
@@ -41,6 +43,11 @@
             cancel();
         }
 
+        if (!file.type.includes("image")) {
+            alert("A fájl nem kép!");
+            cancel();
+        }
+
         return async ({ update }) => {
             invalidateAll();
             await update();
@@ -50,7 +57,7 @@
     let editingPassword = false;
 </script>
 
-<!-- TODO image hover responsivity -->
+<!-- TODO star functionality -->
 <div id="profile-container">
     <!-- <div id="profile"> -->
     <form
@@ -94,6 +101,18 @@
             <span>Hirdetések:</span>
             <span>{data.advertCount} db</span>
         </div>
+        {#if data.user.rating != null && data.user.rating != 0}
+            <div class="row">
+                <div id="star-container">
+                    <div id="grey-stars" class="stars" style={`background-image: url('${grayStar}');`}></div>
+                    <div
+                        id="yellow-stars"
+                        class="stars"
+                        style={`background-image: url('${yellowStar}'); width: ${24 * data.user.rating}px;`}
+                    ></div>
+                </div>
+            </div>
+        {/if}
         {#if data.isOwn}
             <div class="row">
                 {#if !editingPassword}
@@ -183,7 +202,7 @@
         }
 
         @include mobile {
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: 1fr 1.5fr;
             grid-template-rows: 50% 50%;
             gap: 0.5rem;
             padding: 0.5rem;
@@ -199,7 +218,7 @@
                 height: 100%;
                 padding: 1rem;
                 padding-left: 0;
-                margin-right: 1rem;
+                margin-right: 0;
             }
 
             @include mobile {
@@ -217,13 +236,21 @@
 
             input {
                 position: absolute;
-                width: 100%;
+                aspect-ratio: 1/1;
                 height: 100%;
+
+                @include tablet {
+                    top: 1rem;
+                    height: calc(100% - 2rem);
+                }
+
                 top: 0;
                 left: 0;
                 border-radius: 50%;
 
-                visibility: hidden;
+                & {
+                    visibility: hidden;
+                }
 
                 &:hover::before {
                     content: "Kép módosítása";
@@ -250,6 +277,28 @@
             display: flex;
             align-items: start;
             gap: 0.2rem;
+
+            #star-container {
+                width: calc(24px * 5);
+                height: calc(24px * 1);
+                position: relative;
+
+                .stars {
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background-size: contain;
+                    background-repeat: repeat-x;
+                    background-position: left;
+                }
+
+                #yellow-stars {
+                    z-index: 1;
+                    // width: calc(24px * 2.5);
+                }
+            }
 
             form {
                 display: flex;

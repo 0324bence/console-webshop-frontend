@@ -5,6 +5,8 @@ interface User {
     bio: string;
     picture: string;
     regDate: Date;
+    rating: number;
+    isAdmin: boolean;
 }
 
 interface Model {
@@ -85,6 +87,25 @@ interface localComment extends Comment {
     user: User;
 }
 
+interface PurchaseItem {
+    id: number;
+    userId: number;
+    advertId: number;
+    createdTime: string;
+    rating: number | null;
+}
+
+interface Suggestion {
+    title: string;
+    text: string;
+    userId: number;
+    createdTime: Date;
+}
+
+interface ExtendedSuggestion extends Suggestion {
+    user: User;
+}
+
 export type {
     User,
     Model,
@@ -97,5 +118,8 @@ export type {
     BasicFilters,
     CartItem,
     Comment,
-    localComment
+    localComment,
+    PurchaseItem,
+    Suggestion,
+    ExtendedSuggestion
 };

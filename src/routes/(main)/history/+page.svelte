@@ -3,24 +3,146 @@
     //Testing
     import nincskep from "$lib/images/nincs-kep-fekvo.png";
     import placeholder from "$lib/images/placeholder.png";
+    import grayStar from "$lib/images/star_gray.svg";
+    import yellowStar from "$lib/images/star_yellow.svg";
+    import apiPath from "$lib/apiPath";
+    import { invalidateAll } from "$app/navigation";
 
     export let data;
 
-    let totalPrice = 0;
+    let stars = new Array(data.adverts.length).fill(0);
+    let savedStars = new Array(data.adverts.length).fill(0);
 
-    if (data.adverts.length > 0) {
-        totalPrice = data.adverts
-            .map(e => (!e.isSold ? e.priceHuf : 0))
-            .reduce((prev, currV, currI) => {
-                return prev + currV;
-            });
+    let timeout: NodeJS.Timeout | number;
+    let setable = true;
+
+    function setStars(index: number, value: number) {
+        // if (setable) stars[index] = value;
+        stars[index] = value;
+    }
+    function setToSavedStars(index: number) {
+        stars[index] = savedStars[index];
+    }
+    function clickStars(index: number, value: number) {
+        // clearTimeout(timeout as NodeJS.Timeout);
+        // setable = false;
+        savedStars[index] = value;
+        // timeout = setTimeout(() => {
+        //     setable = true;
+        // }, 500);
+    }
+    async function rateAdvert(index: number) {
+        const req = await fetch(`${apiPath}/ratings`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${data.token}`
+            },
+            body: JSON.stringify({
+                purchaseId: data.adverts[index].purchaseId,
+                value: stars[index]
+            })
+        });
+        if (!req.ok) {
+            console.error("Error while rating advert");
+            console.log(await req.json());
+            return;
+        }
+        invalidateAll();
     }
 </script>
 
+<!-- Show purchase time -->
 <div id="cart-container">
     <div id="advert-list">
-        {#each data.adverts as advert}
-            <div class={"advert " + (advert.isSold ? "sold" : "")}>
+        <div class="title-container">
+            <h2>Nem értékelt hirdetések</h2>
+        </div>
+        {#each data.adverts as advert, i}
+            {#if advert.rating == null}
+                <div class="advert">
+                    <div class="owner-container">
+                        <div
+                            class="profile-picture"
+                            style={`background-image: url('data:image/jpeg;base64,${advert.owner.picture}')`}
+                        ></div>
+                        <a href={advert.ownerId ? `/profile/${advert.ownerId}` : ""}>{advert.owner.name}</a>
+                    </div>
+                    <form method="post" action="?/deleteItem" class="top-bar">
+                        <span>{advert.location.name} ({advert.location.zip})</span>
+                        <input type="hidden" name="advertId" value={advert.id} />
+                    </form>
+                    <div class="picture-container">
+                        <!-- svelte-ignore a11y-missing-content -->
+                        <a
+                            href={`/advert/${advert.id}`}
+                            title={advert.title}
+                            class="picture"
+                            style={`background-image: url('data:image/jpeg;base64,${advert.mainPicture.data}')`}
+                        ></a>
+                    </div>
+                    <div class="title-container">
+                        <h2 title={advert.title}>
+                            {advert.title.substring(0, 45)}{advert.title.length > 45 ? "..." : ""}
+                        </h2>
+                        <!-- <h2>{advert.purchaseId}</h2> -->
+                        <div class="row">
+                            <div id="star-container">
+                                <div
+                                    id="grey-stars"
+                                    class="stars"
+                                    style={`background-image: url('${grayStar}');`}
+                                ></div>
+                                <div
+                                    id="yellow-stars"
+                                    class="stars"
+                                    style={`background-image: url('${yellowStar}'); width: ${24 * stars[i]}px;`}
+                                ></div>
+                                <div id="interaction-fields">
+                                    {#each new Array(10) as _, num}
+                                        <button
+                                            on:mouseenter={() => {
+                                                setStars(i, (num + 1) / 2);
+                                            }}
+                                            on:click={() => {
+                                                clickStars(i, (num + 1) / 2);
+                                            }}
+                                            on:mouseleave={() => {
+                                                setToSavedStars(i);
+                                            }}
+                                        ></button>
+                                    {/each}
+                                </div>
+                            </div>
+                            <button
+                                type="button"
+                                class="rate-button"
+                                on:click={() => {
+                                    rateAdvert(i);
+                                }}>Értékelés</button
+                            >
+                        </div>
+                    </div>
+                    <div class="state-container">
+                        <span>{data.filters.states.find(i => i.id == advert.stateId)?.name}</span>
+                    </div>
+                    <div class="bottom-bar">
+                        <div class="data-container">
+                            <span>{advert.manufacturer.name}</span>
+                            <span>-</span>
+                            <span>{advert.model.name}</span>
+                        </div>
+                        <h3>{advert.priceHuf} HUF</h3>
+                    </div>
+                </div>
+            {/if}
+        {/each}
+        <hr />
+        <div class="title-container">
+            <h2>Értékelt hirdetések</h2>
+        </div>
+        {#each data.ratedAdverts as advert}
+            <div class="advert">
                 <div class="owner-container">
                     <div
                         class="profile-picture"
@@ -31,7 +153,6 @@
                 <form method="post" action="?/deleteItem" class="top-bar">
                     <span>{advert.location.name} ({advert.location.zip})</span>
                     <input type="hidden" name="advertId" value={advert.id} />
-                    <button class="delete-button" type="submit" style={`background-image: url('${trash}')`}></button>
                 </form>
                 <div class="picture-container">
                     <!-- svelte-ignore a11y-missing-content -->
@@ -44,11 +165,16 @@
                 </div>
                 <div class="title-container">
                     <h2 title={advert.title}>{advert.title.substring(0, 45)}{advert.title.length > 45 ? "..." : ""}</h2>
-                    {#if advert.isSold}
-                        <div class="button-container">
-                            <span class="sold-text">ELADVA</span>
+                    <div class="row">
+                        <div id="star-container">
+                            <div id="grey-stars" class="stars" style={`background-image: url('${grayStar}');`}></div>
+                            <div
+                                id="yellow-stars"
+                                class="stars"
+                                style={`background-image: url('${yellowStar}'); width: ${24 * advert.rating}px;`}
+                            ></div>
                         </div>
-                    {/if}
+                    </div>
                 </div>
                 <div class="state-container">
                     <span>{data.filters.states.find(i => i.id == advert.stateId)?.name}</span>
@@ -63,20 +189,6 @@
                 </div>
             </div>
         {/each}
-    </div>
-    <div id="info-box-container">
-        <form method="post" action="?/purchase" id="info-box">
-            <h2>Kosár:</h2>
-            <p>Termékek: <span>{data.adverts.length}</span><span>db</span></p>
-            <p class="price">
-                Összesen:
-                <span>
-                    {totalPrice}
-                </span>
-                <span>HUF</span>
-            </p>
-            <button type="submit" disabled={totalPrice < 1}>Vásárlás</button>
-        </form>
     </div>
 </div>
 
@@ -123,26 +235,10 @@
                 // padding-left: 1.4rem;
                 gap: 0.5rem;
                 word-break: break-word;
-                position: relative;
 
                 @include tablet {
                     grid-template-columns: 40% 60%;
                     height: 20rem;
-                }
-
-                .sold-text {
-                    color: $color-red;
-                    font-size: 3rem;
-                    font-weight: bold;
-                }
-
-                &.sold {
-                    // filter: grayscale(100%) brightness(0.9);
-
-                    h2,
-                    h3 {
-                        text-decoration: line-through;
-                    }
                 }
 
                 .owner-container {
@@ -238,6 +334,85 @@
             flex-direction: column;
             align-items: stretch;
             justify-content: space-between;
+
+            .row {
+                width: 100%;
+                display: flex;
+                gap: 2rem;
+
+                .rate-button {
+                    padding: 0.25rem 0.5rem;
+                    border-radius: 10px;
+                    border: 1px solid $color-dark-blue;
+                    font-size: 1rem;
+                    cursor: pointer;
+
+                    &:hover {
+                        background-color: $color-dark-blue;
+                        color: $color-white;
+                    }
+
+                    &:active {
+                        background-color: $color-dark-blue;
+                        color: $color-white;
+                    }
+
+                    &:disabled {
+                        background-color: darken($color-white, 30%);
+                        color: $color-black;
+                        cursor: not-allowed;
+
+                        &:hover {
+                            background-color: darken($color-white, 30%);
+                            color: $color-black;
+                        }
+                    }
+                }
+
+                #star-container {
+                    width: calc(24px * 5);
+                    height: calc(24px * 1);
+                    position: relative;
+
+                    .stars {
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 100%;
+                        background-size: 24px;
+                        background-repeat: repeat-x;
+                        background-position: left;
+                    }
+
+                    #yellow-stars {
+                        z-index: 2;
+                        // width: calc(24px * 2.5);
+                    }
+
+                    #interaction-fields {
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 100%;
+                        display: grid;
+                        grid-template-columns: repeat(10, 1fr);
+                        z-index: 5;
+
+                        button {
+                            border: none;
+                            outline: none;
+                            cursor: pointer;
+                            background: none;
+
+                            &:focus {
+                                background-color: rgb(255, 255, 255, 0.5);
+                            }
+                        }
+                    }
+                }
+            }
 
             .button-container {
                 display: flex;

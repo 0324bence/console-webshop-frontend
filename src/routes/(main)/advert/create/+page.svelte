@@ -56,6 +56,13 @@
             }
         }
 
+        for (const file of eventFiles) {
+            if (!file.type.includes("image")) {
+                alert("Valamely fájlok nem képek!");
+                return;
+            }
+        }
+
         for (let i = 0; i < eventFiles.length; i++) {
             const file = eventFiles[i] as File;
             const base64 = await file.arrayBuffer().then(buffer => Buffer.from(buffer).toString("base64"));
@@ -129,6 +136,13 @@
         for (const file of eventFiles) {
             if (file.size > 50000000) {
                 alert("Valamely fájlok mérete túl nagy!");
+                return;
+            }
+        }
+
+        for (const file of eventFiles) {
+            if (!file.type.includes("image")) {
+                alert("Valamely fájlok nem képek!");
                 return;
             }
         }
@@ -304,7 +318,7 @@
                     />
                 </div>
             </div>
-            <div class="row">
+            <div class="row manufacturerRow">
                 <div class="group">
                     <label for="manufacturer">Gyártó:</label>
                     <select required bind:value={brandId} name="brandId" id="brandId" on:change={manufacturerSelect}>
@@ -378,6 +392,11 @@
     </div>
 </form>
 
+<!-- <div id="footer">
+    <a href="/suggestion">Javaslat</a>
+    <span>&copy; 2025</span>
+</div> -->
+
 <style lang="scss">
     @import "$lib/styles/variables";
 
@@ -450,6 +469,20 @@
             }
         }
     }
+
+    // #footer {
+    //     display: flex;
+    //     justify-content: space-around;
+    //     align-items: center;
+    //     padding: 0.5rem;
+    //     background-color: $color-blue;
+    //     color: $color-white;
+    //     height: 7rem;
+
+    //     a {
+    //         color: $color-white;
+    //     }
+    // }
 
     #main-content-container {
         display: flex;
@@ -723,6 +756,12 @@
                         flex-direction: column;
                     }
 
+                    &.manufacturerRow {
+                        @include mobile {
+                            flex-direction: column-reverse;
+                        }
+                    }
+
                     .group {
                         display: flex;
                         align-items: center;
@@ -743,6 +782,14 @@
 
                         .locationSeach-container {
                             width: 50%;
+
+                            @include tablet {
+                                width: 75%;
+                            }
+
+                            @include mobile {
+                                width: 100%;
+                            }
                         }
                     }
                 }

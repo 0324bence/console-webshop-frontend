@@ -14,6 +14,9 @@
     import Cart from "$lib/svgs/Cart.svelte";
     import RootComment from "$lib/components/RootComment.svelte";
     import placeholder from "$lib/images/placeholder.png";
+    import grayStar from "$lib/images/star_gray.svg";
+    import yellowStar from "$lib/images/star_yellow.svg";
+    import SvelteMarkdown from "svelte-markdown";
 
     export let data;
 
@@ -67,6 +70,10 @@
             alert("A fájl mérete túl nagy!");
             return;
         }
+        if (!file.type.includes("image")) {
+            alert("A fájl nem kép!");
+            return;
+        }
         const base64 = await file.arrayBuffer().then(buffer => Buffer.from(buffer).toString("base64"));
         newFileData = base64;
         showImageModal = true;
@@ -94,6 +101,10 @@
         if (!file) return;
         if (file.size > 50000000) {
             alert("A fájl mérete túl nagy!");
+            return;
+        }
+        if (!file.type.includes("image")) {
+            alert("A fájl nem kép!");
             return;
         }
         const base64 = await file.arrayBuffer().then(buffer => Buffer.from(buffer).toString("base64"));
@@ -127,6 +138,7 @@
     }
 
     let addtoCartForm: HTMLFormElement;
+    let removeFromCartForm: HTMLFormElement;
     let addtoBookmarksForm: HTMLFormElement;
     let removeFromBookmarksForm: HTMLFormElement;
 
@@ -193,10 +205,9 @@
     }
 </script>
 
-<!-- TODO comments -->
-<!-- TODO Edit responsivity -->
 <!-- Markdown viewer and editor style not working -->
 <form action="?/addToCart" method="post" bind:this={addtoCartForm} class="hidden"></form>
+<form action="?/removeFromCart" method="post" bind:this={removeFromCartForm} class="hidden"></form>
 <form action="?/addToBookmarks" method="post" bind:this={addtoBookmarksForm} class="hidden"></form>
 <form action="?/removeFromBookmarks" method="post" bind:this={removeFromBookmarksForm} class="hidden"></form>
 
@@ -393,6 +404,8 @@
                             type="button"
                             style={`background-image: url('${edit}');`}
                             on:click={() => (editMode = true)}
+                            disabled={!data.editable}
+                            title={data.editable ? "Szerkesztés" : "Nem szerkeszthető"}
                         ></button>
                     </div>
                 {:else if data.isOwn && editMode}
@@ -421,7 +434,27 @@
                             {data.advert.title}
                         </h1>
                     {/if}
-                    <h3><a href={`/profile/${data.advert.ownerId}`}>{data.advert.owner.name}</a></h3>
+                    <div class="row">
+                        <h3>
+                            <a href={data.advert.ownerId ? `/profile/${data.advert.ownerId}` : ""}
+                                >{data.advert.owner.name}</a
+                            >
+                        </h3>
+                        {#if data.advert.owner.rating != null && data.advert.owner.rating != 0}
+                            <div id="star-container" title="Felhasználó értékelése">
+                                <div
+                                    id="grey-stars"
+                                    class="stars"
+                                    style={`background-image: url('${grayStar}');`}
+                                ></div>
+                                <div
+                                    id="yellow-stars"
+                                    class="stars"
+                                    style={`background-image: url('${yellowStar}');  width: ${24 * data.advert.owner.rating}px;`}
+                                ></div>
+                            </div>
+                        {/if}
+                    </div>
                 </div>
             </div>
             <div id="data">
@@ -464,10 +497,11 @@
                     </button>
                     <button
                         type="button"
-                        on:click={() => addtoCartForm.requestSubmit()}
-                        disabled={data.inCart || data.isOwn}
+                        on:click={() =>
+                            data.inCart ? removeFromCartForm.requestSubmit() : addtoCartForm.requestSubmit()}
+                        disabled={data.isOwn || data.isSold}
                     >
-                        {data.inCart ? "Kosárban van" : "Kosárba"}
+                        {data.isSold ? "Eladva" : data.inCart ? "Kosárban van" : "Kosárba"}
                     </button>
                 </div>
             </div>
@@ -546,11 +580,12 @@
         </div>
     </div>
     <div id="description-container">
-        <div class="description">
+        <div class="description markdown-body">
             {#if data.isOwn && editMode}
                 <MarkdownEditor {carta} bind:value={descValue} mode="tabs" theme="default" />
             {:else}
-                <Markdown {carta} value={data.advert.description} />
+                <SvelteMarkdown source={DOMPurify.sanitize(data.advert.description)} />
+                <!-- <Markdown {carta} value={data.advert.description} /> -->
             {/if}
             <!-- <p>
                 {data.advert.description}
@@ -980,7 +1015,7 @@
 
                 @include desktop {
                     h1 {
-                        font-size: 2.2rem !important;
+                        font-size: 2.2rem;
                         font-weight: bold;
                     }
                 }
@@ -1022,6 +1057,12 @@
                             &:hover {
                                 border: 1px solid $color-dark-blue;
                             }
+
+                            &:disabled {
+                                cursor: not-allowed;
+                                filter: opacity(50%);
+                                border: none;
+                            }
                         }
                     }
 
@@ -1030,6 +1071,32 @@
                         display: flex;
                         flex-direction: column;
                         align-items: flex-end;
+
+                        .row {
+                            display: flex;
+                            gap: 1rem;
+                            #star-container {
+                                width: calc(24px * 5);
+                                height: calc(24px * 1);
+                                position: relative;
+
+                                .stars {
+                                    position: absolute;
+                                    top: 0;
+                                    left: 0;
+                                    width: 100%;
+                                    height: 100%;
+                                    background-size: 24px;
+                                    background-repeat: repeat-x;
+                                    background-position: left;
+                                }
+
+                                #yellow-stars {
+                                    // z-index: 2;
+                                    // width: calc(24px * 2.5);
+                                }
+                            }
+                        }
 
                         input {
                             font-size: 2.2rem;
@@ -1193,6 +1260,11 @@
                             width: 100%;
                             gap: 1px;
                             background-color: $color-black;
+
+                            @include mobile {
+                                flex-direction: column;
+                                gap: 1px;
+                            }
 
                             .cell {
                                 width: 100%;

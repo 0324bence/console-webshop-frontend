@@ -1,6 +1,6 @@
 import apiPath from "$lib/apiPath";
-import type { CartItem, LocalAdvert, Manufacturer, Model, Picture, User } from "$lib/types";
-import { error, redirect } from "@sveltejs/kit";
+import type { PurchaseItem, LocalAdvert, Manufacturer, Model, Picture, User } from "$lib/types";
+import { error } from "@sveltejs/kit";
 import type { Actions, PageServerLoad } from "./$types";
 import noImage from "$lib/images/noImage";
 import placeholder from "$lib/images/placeholder.png";
@@ -9,23 +9,32 @@ interface ExtendedLocalAdvert extends LocalAdvert {
     owner: User;
     manufacturer: Manufacturer;
     model: Model;
-    inCart: boolean;
+    rating: number | null;
+    purchaseId: number;
+}
+
+interface ExtendedRatedLocalAdvert extends ExtendedLocalAdvert {
+    rating: number;
+}
+
+interface ExtendedUnratedLocalAdvert extends ExtendedLocalAdvert {
+    rating: null;
 }
 
 export const load: PageServerLoad = async ({ cookies, parent }) => {
     const data = await parent();
 
-    const res = await fetch(`${apiPath}/bookmarks`, {
+    const res = await fetch(`${apiPath}/purchases/bySelf`, {
         headers: {
             Authorization: "Bearer " + data.token,
             "Content-Type": "application/json"
         }
     });
-    const bookmarks: CartItem[] = await res.json();
+    const cart: PurchaseItem[] = await res.json();
 
     let adverts: ExtendedLocalAdvert[] = [];
 
-    for (const item of bookmarks) {
+    for (const item of cart) {
         const advertReq = await fetch(`${apiPath}/adverts/${item.advertId}`);
         if (!advertReq.ok || advertReq.status !== 200) {
             return error(404, "Advert not found");
@@ -35,6 +44,8 @@ export const load: PageServerLoad = async ({ cookies, parent }) => {
 
         const advertRes = await advertReq.json();
         const advert: ExtendedLocalAdvert = advertRes;
+        advert.rating = item.rating;
+        advert.purchaseId = item.id;
         const pictureReq = await fetch(`${apiPath}/adverts/${advert.id}/primaryPicture`);
         if (pictureReq.ok) {
             try {
@@ -124,83 +135,19 @@ export const load: PageServerLoad = async ({ cookies, parent }) => {
             };
         }
 
-        let inCart = false;
-        const cartReq = await fetch(`${apiPath}/cart/${advert.id}`, {
-            headers: {
-                Authorization: `Bearer ${data.token}`,
-                "Content-Type": "application/json"
-            }
-        });
-        if (cartReq.ok) {
-            inCart = true;
-        } else {
-            inCart = false;
-        }
-        advert.inCart = inCart;
-
         adverts.push(advert);
     }
 
+    const ratedAdverts: ExtendedRatedLocalAdvert[] = adverts
+        .filter(advert => advert.rating != null)
+        .map(advert => ({ ...advert, rating: advert.rating as number }));
+    const unratedAdverts: ExtendedUnratedLocalAdvert[] = adverts
+        .filter(advert => advert.rating == null)
+        .map(advert => ({ ...advert, rating: advert.rating as null }));
+
     return {
-        adverts
+        adverts,
+        ratedAdverts,
+        unratedAdverts
     };
 };
-
-export const actions = {
-    deleteItem: async ({ cookies, request }) => {
-        const token = cookies.get("token");
-        const data = await request.formData();
-        const advertId = data.get("advertId");
-        const res = await fetch(`${apiPath}/bookmarks/${advertId}`, {
-            method: "DELETE",
-            headers: {
-                Authorization: "Bearer " + token,
-                "Content-Type": "application/json"
-            }
-        });
-        if (!res.ok) {
-            return res.json();
-        }
-    },
-    addToCart: async ({ cookies, params, request }) => {
-        const token = cookies.get("token");
-        if (token === undefined) {
-            return redirect(301, "/auth/");
-        }
-        const data = await request.formData();
-        const advertId = data.get("advertId");
-
-        const res = await fetch(`${apiPath}/cart`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`
-            },
-            body: JSON.stringify({
-                advertId
-            })
-        });
-        if (!res.ok) {
-            return error(500, "Hiba történt a kosárba helyezés során");
-        }
-        return "ok";
-    },
-    removeFromCart: async ({ cookies, params, request }) => {
-        const token = cookies.get("token");
-        if (token === undefined) {
-            return redirect(301, "/auth/");
-        }
-        const data = await request.formData();
-        const advertId = data.get("advertId");
-        const res = await fetch(`${apiPath}/cart/${advertId}`, {
-            method: "DELETE",
-            headers: {
-                Authorization: "Bearer " + token,
-                "Content-Type": "application/json"
-            }
-        });
-        if (!res.ok) {
-            return res.json();
-        }
-    }
-} satisfies Actions;
